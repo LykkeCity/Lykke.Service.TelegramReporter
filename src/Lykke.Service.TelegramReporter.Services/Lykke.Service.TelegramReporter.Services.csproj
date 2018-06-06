@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>Lykke.Service.TelegramReporter.Services</AssemblyName>
+    <RootNamespace>Lykke.Service.TelegramReporter.Services</RootNamespace>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HttpToSocks5Proxy" Version="1.0.5" />
+    <PackageReference Include="Lykke.Common" Version="6.8.4" />
+    <PackageReference Include="Lykke.Service.CrossMarketLiquidity.Client" Version="1.0.21-beta" />
+    <PackageReference Include="Telegram.Bot" Version="14.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lykke.Service.TelegramReporter.Core\Lykke.Service.TelegramReporter.Core.csproj" />
+  </ItemGroup>
+
+</Project>

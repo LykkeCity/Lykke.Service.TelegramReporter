@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>Lykke.Service.TelegramReporter.Core</AssemblyName>
+    <RootNamespace>Lykke.Service.TelegramReporter.Core</RootNamespace>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Domain\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lykke.Common" Version="6.8.4" />
+    <PackageReference Include="Lykke.Service.CrossMarketLiquidity.Client" Version="1.0.21-beta" />
+  </ItemGroup>
+
+</Project>
