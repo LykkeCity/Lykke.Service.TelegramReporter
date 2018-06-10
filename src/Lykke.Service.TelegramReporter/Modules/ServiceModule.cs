@@ -10,6 +10,7 @@ using Lykke.SettingsReader;
 using System.Linq;
 using Common.Log;
 using Lykke.Service.TelegramReporter.Core.Services;
+using Lykke.Service.TelegramReporter.Core.Services.CrossMarketLiquidity;
 using Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity;
 
 namespace Lykke.Service.TelegramReporter.Modules
@@ -32,13 +33,6 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<ILog>()
                 .SingleInstance();
 
-            builder.RegisterType<TelegramService>()
-                .WithParameter("settings", _appSettings.CurrentValue.TelegramReporterService.Telegram)
-                .As<IStartable>()
-                .As<IStopable>()
-                .AutoActivate()
-                .SingleInstance();
-
             builder.RegisterInstance<ICrossMarketLiquidityClient[]>(
                 _appSettings.CurrentValue.CrossMarketLiquidityServiceClient.Instances
                     .Select(i => new CrossMarketLiquidityClient(i.ServiceUrl, _log)).ToArray());
@@ -48,8 +42,33 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .AutoActivate()
                 .SingleInstance();
 
-            builder.RegisterType<CMLSummaryProvider>()
-                .As<ICMLSummaryProvider>()
+            builder.RegisterType<TelegramService>()
+                .As<ITelegramSender>()
+                .WithParameter("settings", _appSettings.CurrentValue.TelegramReporterService.Telegram)
+                .As<IStartable>()
+                .As<IStopable>()
+                .AutoActivate()
+                .SingleInstance();
+
+            builder.RegisterType<CmlSummaryProvider>()
+                .As<ICmlSummaryProvider>()
+                .SingleInstance();
+
+            builder.RegisterType<CmlSummarySubscriber>()
+                .As<ITelegramSubscriber>();
+
+            builder.RegisterType<CmlStateProvider>()
+                .As<ICmlStateProvider>()
+                .SingleInstance();
+
+            builder.RegisterType<CmlStateSubscriber>()
+                .As<ITelegramSubscriber>();
+
+            builder.RegisterType<CmlPublisher>()
+                .WithParameter("publisherSettings", _appSettings.CurrentValue.TelegramReporterService.CmlPublisher)
+                .As<IStartable>()
+                .As<IStopable>()
+                .AutoActivate()
                 .SingleInstance();
         }
     }
