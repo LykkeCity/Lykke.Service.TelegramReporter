@@ -30,7 +30,7 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
             var keyboard =
                 new InlineKeyboardMarkup(
                     _crossMarketLiquidityInstanceManager.Keys.Select(k =>
-                        InlineKeyboardButton.WithCallbackData($"{CmlStateCommand} {k}")));
+                        InlineKeyboardButton.WithCallbackData(k, $"{CmlStateCommand} {k}")));
 
             await telegramSender.SendTextMessageAsync(message.Chat.Id,
                 "Select an instance",

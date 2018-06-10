@@ -75,6 +75,7 @@ namespace Lykke.Service.TelegramReporter.Services
             try
             {
                 var callbackQuery = callbackQueryEventArgs.CallbackQuery;
+                await _client.SendChatActionAsync(callbackQuery.Message.Chat.Id, ChatAction.Typing);
 
                 string command = ExtractCommand(callbackQuery.Data);
 
