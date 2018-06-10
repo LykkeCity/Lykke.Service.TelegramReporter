@@ -17,7 +17,7 @@ namespace Lykke.Service.TelegramReporter.Services.Instances
             _clients = clients;
         }
 
-        public void Start()
+        public async void Start()
         {
             var tasks = new List<Task<CMLSettingsDto>>();
             foreach (var client in _clients)
@@ -25,7 +25,7 @@ namespace Lykke.Service.TelegramReporter.Services.Instances
                 tasks.Add(client.GetCMLSettingsAsync());
             }
 
-            CMLSettingsDto[] settings = Task.WhenAll(tasks).GetAwaiter().GetResult();
+            CMLSettingsDto[] settings = await Task.WhenAll(tasks);
             for (int i = 0; i < _clients.Length; i++)
             {
                 AddInstance(settings[i].LykkeAssetPair.Name, _clients[i]);
