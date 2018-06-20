@@ -13,7 +13,9 @@
 
   <ItemGroup>
     <PackageReference Include="Lykke.Common" Version="6.8.4" />
-    <PackageReference Include="Lykke.Service.CrossMarketLiquidity.Client" Version="1.0.21-beta" />
+    <PackageReference Include="Lykke.Sdk" Version="1.2.0" />
+    <PackageReference Include="Lykke.Service.CrossMarketLiquidity.Client" Version="1.0.1" />
+    <PackageReference Include="Telegram.Bot" Version="14.5.0" />
   </ItemGroup>
 
 </Project>

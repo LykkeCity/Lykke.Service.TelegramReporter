@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using Lykke.Service.TelegramReporter.Core.Settings;
+using Lykke.SettingsReader.Attributes;
 
 namespace Lykke.Service.TelegramReporter.Settings
 {
@@ -9,5 +10,8 @@ namespace Lykke.Service.TelegramReporter.Settings
         public DbSettings Db { get; set; }
 
         public TelegramSettings Telegram { get; set; }
+
+        [Optional]
+        public PublisherSettings CmlPublisher { get; set; }
     }
 }
