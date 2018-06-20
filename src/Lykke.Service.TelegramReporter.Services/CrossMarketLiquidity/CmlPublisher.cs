@@ -29,6 +29,11 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
 
         public void Start()
         {
+            if (_publisherSettings == null || _publisherSettings.ChatId == 0)
+            {
+                return;
+            }
+
             _timer = new Timer(_publisherSettings.TimeSpan.TotalMilliseconds);
             _timer.Elapsed += (sender, e) => Publish();
             _timer.Start();
