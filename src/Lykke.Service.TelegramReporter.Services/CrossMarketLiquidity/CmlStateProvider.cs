@@ -1,4 +1,5 @@
-﻿using Lykke.Service.CrossMarketLiquidity.Client;
+﻿using System;
+using Lykke.Service.CrossMarketLiquidity.Client;
 using Lykke.Service.CrossMarketLiquidity.Client.AutorestClient.Models;
 using Lykke.Service.TelegramReporter.Core.Instances;
 using Lykke.Service.TelegramReporter.Core.Services.CrossMarketLiquidity;
@@ -10,7 +11,7 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
 {
     public class CmlStateProvider : ICmlStateProvider
     {
-        private ICrossMarketLiquidityInstanceManager _crossMarketLiquidityInstanceManager;
+        private readonly ICrossMarketLiquidityInstanceManager _crossMarketLiquidityInstanceManager;
 
         public CmlStateProvider(ICrossMarketLiquidityInstanceManager crossMarketLiquidityInstanceManager)
         {
@@ -41,29 +42,28 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
             ICrossMarketLiquidityClient client = _crossMarketLiquidityInstanceManager[instanceId];
             var tradingAlgorithmPropertiesTask = client.GetTradingAlgorithmPropertiesAsync();
             var inventoryStateTask = client.GetInventoryStateAsync();
+            var settingsTask = client.GetCMLSettingsAsync();
 
-            await Task.WhenAll(tradingAlgorithmPropertiesTask, inventoryStateTask);
+            await Task.WhenAll(tradingAlgorithmPropertiesTask, inventoryStateTask, settingsTask);
 
-            return GetStateMessage(instanceId, tradingAlgorithmPropertiesTask.Result, inventoryStateTask.Result);
+            return GetStateMessage(instanceId, tradingAlgorithmPropertiesTask.Result, inventoryStateTask.Result, settingsTask.Result);
         }
 
-        private string GetStateMessage(string instanceId, 
-            TradingAlgorithmPropertiesDto tradingAlgorithmProperties, 
-            InventoryStateDto inventoryState)
+        private string GetStateMessage(string instanceId,
+            TradingAlgorithmPropertiesDto tradingAlgorithmProperties,
+            InventoryStateDto inventoryState,
+            CMLSettingsDto settings)
         {
             const string instanceIdHeader = "Name";
 
-            return $"{instanceIdHeader}: {instanceId}\r\n" +
-                   "Properties of the Trading Algorithm\r\n" +
+            return $"======= {DateTime.UtcNow:yyyy/MM/dd HH:mm:ss} =======\r\n\r\n" +
+                   $"{instanceIdHeader}: {instanceId}\r\n" +
                    $"{nameof(TradingAlgorithmPropertiesDto.Mode)}: {tradingAlgorithmProperties.Mode}\r\n" +
-                   $"{nameof(TradingAlgorithmPropertiesDto.Status)}: {tradingAlgorithmProperties.Status}\r\n" +
-                   "\r\nLykke Balance\r\n" +
-                   $"{inventoryState.LykkeBalances.Asset.BaseAsset}: {inventoryState.LykkeBalances.BaseAssetBalance}\r\n" +
-                   $"{inventoryState.LykkeBalances.Asset.QuoteAsset}: {inventoryState.LykkeBalances.QuoteAssetBalance}\r\n" +
-                   "\r\nExternal Balance\r\n" +
-                   $"{inventoryState.ExternalBalances.Asset.BaseAsset}: {inventoryState.ExternalBalances.BaseAssetBalance}\r\n" +
-                   $"{inventoryState.ExternalBalances.Asset.QuoteAsset}: {inventoryState.ExternalBalances.QuoteAssetBalance}\r\n" +
-                   "\r\nInventory State\r\n" +
+                   $"{nameof(TradingAlgorithmPropertiesDto.Status)}: {tradingAlgorithmProperties.Status}\r\n\r\n" +
+                   $"Lykke {inventoryState.LykkeBalances.Asset.BaseAsset}: {inventoryState.LykkeBalances.BaseAssetBalance}\r\n" +
+                   $"Lykke {inventoryState.LykkeBalances.Asset.QuoteAsset}: {inventoryState.LykkeBalances.QuoteAssetBalance}\r\n\r\n" +
+                   $"{settings.ExternalAssetPair.Exchange} {inventoryState.ExternalBalances.Asset.BaseAsset}: {inventoryState.ExternalBalances.BaseAssetBalance}\r\n" +
+                   $"{settings.ExternalAssetPair.Exchange} {inventoryState.ExternalBalances.Asset.QuoteAsset}: {inventoryState.ExternalBalances.QuoteAssetBalance}\r\n\r\n" +
                    $"{nameof(InventoryStateDto.AbsoluteInventory)}: {inventoryState.AbsoluteInventory}\r\n" +
                    $"{nameof(InventoryStateDto.RealizedPnL)}: {inventoryState.RealizedPnL}\r\n" +
                    $"{nameof(InventoryStateDto.LykkeUnrealizedPnl)}: {inventoryState.LykkeUnrealizedPnl}\r\n" +
