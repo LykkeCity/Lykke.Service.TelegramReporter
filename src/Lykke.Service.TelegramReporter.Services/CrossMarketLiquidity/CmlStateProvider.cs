@@ -65,9 +65,9 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
                    $"{settings.ExternalAssetPair.Exchange} {inventoryState.ExternalBalances.Asset.BaseAsset}: {inventoryState.ExternalBalances.BaseAssetBalance}\r\n" +
                    $"{settings.ExternalAssetPair.Exchange} {inventoryState.ExternalBalances.Asset.QuoteAsset}: {inventoryState.ExternalBalances.QuoteAssetBalance}\r\n\r\n" +
                    $"{nameof(InventoryStateDto.AbsoluteInventory)}: {inventoryState.AbsoluteInventory}\r\n" +
-                   $"{nameof(InventoryStateDto.RealizedPnL)}: {inventoryState.RealizedPnL}\r\n" +
-                   $"{nameof(InventoryStateDto.LykkeUnrealizedPnl)}: {inventoryState.LykkeUnrealizedPnl}\r\n" +
-                   $"{nameof(InventoryStateDto.ExternalUnrealizedPnl)}: {inventoryState.ExternalUnrealizedPnl}\r\n" +
+                   $"{nameof(InventoryStateDto.RealizedPnL)}: {Math.Round(inventoryState.RealizedPnL, 4)}\r\n" +
+                   $"{nameof(InventoryStateDto.LykkeUnrealizedPnl)}: {Math.Round(inventoryState.LykkeUnrealizedPnl, 4)}\r\n" +
+                   $"{nameof(InventoryStateDto.ExternalUnrealizedPnl)}: {Math.Round(inventoryState.ExternalUnrealizedPnl, 4)}\r\n" +
                    $"{nameof(InventoryStateDto.RealizedBuyVolumeTotal)}: {inventoryState.RealizedBuyVolumeTotal}\r\n" +
                    $"{nameof(InventoryStateDto.RealizedSellVolumeTotal)}: {inventoryState.RealizedSellVolumeTotal}";
         }
