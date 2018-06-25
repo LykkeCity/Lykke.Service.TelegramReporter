@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Common;
-using Lykke.Sdk;
 using Lykke.Service.CrossMarketLiquidity.Client;
 using Lykke.Service.TelegramReporter.Core.Instances;
 using Lykke.Service.TelegramReporter.Services;
@@ -11,7 +10,9 @@ using System.Linq;
 using Common.Log;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.CrossMarketLiquidity;
+using Lykke.Service.TelegramReporter.Core.Services.SpreadEngine;
 using Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity;
+using Lykke.Service.TelegramReporter.Services.SpreadEngine;
 
 namespace Lykke.Service.TelegramReporter.Modules
 {    
@@ -42,6 +43,13 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .AutoActivate()
                 .SingleInstance();
 
+            builder.RegisterType<SpreadEngineInstanceManager>()
+                .WithParameter(TypedParameter.From(_appSettings.CurrentValue.SpreadEngineServiceClient.Instances))
+                .As<ISpreadEngineInstanceManager>()
+                .As<IStartable>()
+                .AutoActivate()
+                .SingleInstance();
+
             builder.RegisterType<TelegramService>()
                 .As<ITelegramSender>()
                 .WithParameter("settings", _appSettings.CurrentValue.TelegramReporterService.Telegram)
@@ -62,6 +70,13 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .SingleInstance();
 
             builder.RegisterType<CmlStateSubscriber>()
+                .As<ITelegramSubscriber>();
+
+            builder.RegisterType<SpreadEngineStateProvider>()
+                .As<ISpreadEngineStateProvider>()
+                .SingleInstance();
+
+            builder.RegisterType<SpreadEngineStateSubscriber>()
                 .As<ITelegramSubscriber>();
 
             builder.RegisterType<CmlPublisher>()

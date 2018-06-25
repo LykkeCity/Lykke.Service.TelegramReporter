@@ -9,5 +9,6 @@ namespace Lykke.Service.TelegramReporter.Settings
         public TelegramReporterSettings TelegramReporterService { get; set; }
 
         public CrossMarketLiquidityServiceClientInstancesSettings CrossMarketLiquidityServiceClient { get; set; }
+        public SpreadEngineServiceClientInstancesSettings SpreadEngineServiceClient { get; set; }
     }
 }
