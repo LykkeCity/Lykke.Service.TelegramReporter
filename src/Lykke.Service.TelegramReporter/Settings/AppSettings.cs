@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using Lykke.Sdk.Settings;
+using Lykke.Service.SpreadEngine.Client;
 
 namespace Lykke.Service.TelegramReporter.Settings
 {
@@ -9,6 +10,6 @@ namespace Lykke.Service.TelegramReporter.Settings
         public TelegramReporterSettings TelegramReporterService { get; set; }
 
         public CrossMarketLiquidityServiceClientInstancesSettings CrossMarketLiquidityServiceClient { get; set; }
-        public SpreadEngineServiceClientInstancesSettings SpreadEngineServiceClient { get; set; }
+        public SpreadEngineServiceClientSettings SpreadEngineServiceClient { get; set; }
     }
 }
