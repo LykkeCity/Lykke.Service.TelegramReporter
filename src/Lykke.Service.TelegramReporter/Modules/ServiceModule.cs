@@ -43,12 +43,12 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .AutoActivate()
                 .SingleInstance();
 
-            //builder.RegisterType<SpreadEngineInstanceManager>()
-            //    .WithParameter(TypedParameter.From(_appSettings.CurrentValue.SpreadEngineServiceClient.Instances))
-            //    .As<ISpreadEngineInstanceManager>()
-            //    .As<IStartable>()
-            //    .AutoActivate()
-            //    .SingleInstance();
+            builder.RegisterType<SpreadEngineInstanceManager>()
+                .WithParameter(TypedParameter.From(_appSettings.CurrentValue.SpreadEngineServiceClient.Instances))
+                .As<ISpreadEngineInstanceManager>()
+                .As<IStartable>()
+                .AutoActivate()
+                .SingleInstance();
 
             builder.RegisterType<TelegramService>()
                 .As<ITelegramSender>()
@@ -72,12 +72,12 @@ namespace Lykke.Service.TelegramReporter.Modules
             builder.RegisterType<CmlStateSubscriber>()
                 .As<ITelegramSubscriber>();
 
-            //builder.RegisterType<SpreadEngineStateProvider>()
-            //    .As<ISpreadEngineStateProvider>()
-            //    .SingleInstance();
+            builder.RegisterType<SpreadEngineStateProvider>()
+                .As<ISpreadEngineStateProvider>()
+                .SingleInstance();
 
-            //builder.RegisterType<SpreadEngineStateSubscriber>()
-            //    .As<ITelegramSubscriber>();
+            builder.RegisterType<SpreadEngineStateSubscriber>()
+                .As<ITelegramSubscriber>();
 
             builder.RegisterType<CmlPublisher>()
                 .WithParameter("publisherSettings", _appSettings.CurrentValue.TelegramReporterService.CmlPublisher)
