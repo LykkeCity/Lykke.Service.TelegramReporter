@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using Common;
 using Lykke.Service.CrossMarketLiquidity.Client;
 using Lykke.Service.TelegramReporter.Core.Instances;
@@ -8,6 +9,7 @@ using Lykke.Service.TelegramReporter.Settings;
 using Lykke.SettingsReader;
 using System.Linq;
 using Common.Log;
+using Lykke.Service.Assets.Client;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.CrossMarketLiquidity;
 using Lykke.Service.TelegramReporter.Core.Services.SpreadEngine;
@@ -71,6 +73,10 @@ namespace Lykke.Service.TelegramReporter.Modules
 
             builder.RegisterType<CmlStateSubscriber>()
                 .As<ITelegramSubscriber>();
+
+            builder.RegisterInstance(new AssetsService(new Uri(_appSettings.CurrentValue.AssetsServiceClient.ServiceUrl)))
+                .As<IAssetsService>()
+                .SingleInstance();
 
             builder.RegisterType<SpreadEngineStateProvider>()
                 .As<ISpreadEngineStateProvider>()
