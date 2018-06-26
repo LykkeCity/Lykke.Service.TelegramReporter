@@ -44,22 +44,18 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
 
         public async Task<string> GetStateMessageAsync(int instanceId)
         {
-            var assetPairs = await _assetsService.AssetPairGetAllAsync();
-            var assetPairList = assetPairs
-                .OrderBy(o => o.BaseAssetId)
-                .ThenBy(o => o.QuotingAssetId)
-                .Select(o => o.Id)
-                .ToArray();
-
             var taskTraders = _spreadEngineInstanceManager[instanceId]
-                .Traders.GetAsync(assetPairList);
+                .Traders.GetAsync(Array.Empty<string>());
 
             var balancesTask = _spreadEngineInstanceManager[instanceId]
                 .Balances.GetAsync();
 
             await Task.WhenAll(taskTraders, balancesTask);
 
-            return GetStateMessage(taskTraders.Result, balancesTask.Result);
+            var traders = taskTraders.Result;
+            var balances = balancesTask.Result;
+
+            return GetStateMessage(traders, balances);
         }
 
         private string GetStateMessage(IReadOnlyList<TraderModel> traders, IReadOnlyList<BalanceModel> balances)
