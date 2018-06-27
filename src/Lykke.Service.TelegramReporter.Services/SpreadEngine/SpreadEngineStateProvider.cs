@@ -44,6 +44,8 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
 
         public async Task<string> GetStateMessageAsync(int instanceId)
         {
+            var assetPairs = await _assetsService.AssetPairGetAllAsync();
+
             var taskTraders = _spreadEngineInstanceManager[instanceId]
                 .Traders.GetAsync(Array.Empty<string>());
 
@@ -53,7 +55,14 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
             await Task.WhenAll(taskTraders, balancesTask);
 
             var traders = taskTraders.Result;
-            var balances = balancesTask.Result;
+
+            var assetPairsInTraders = traders.Select(x => x.AssetPairId);
+            var assetPairsForBalances = assetPairs
+                .Where(x => assetPairsInTraders.Contains(x.Id))
+                .SelectMany(x => new[] {x.BaseAssetId, x.QuotingAssetId})
+                .Distinct()
+                .ToHashSet();
+            var balances = balancesTask.Result.Where(x => assetPairsForBalances.Contains(x.AssetId)).ToArray();
 
             return GetStateMessage(traders, balances);
         }
