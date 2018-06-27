@@ -65,6 +65,7 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .SingleInstance();
 
             builder.RegisterType<CmlSummarySubscriber>()
+                .WithParameter("publisherSettings", _appSettings.CurrentValue.TelegramReporterService.CmlPublisher)
                 .As<ITelegramSubscriber>();
 
             builder.RegisterType<CmlStateProvider>()
@@ -72,6 +73,7 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .SingleInstance();
 
             builder.RegisterType<CmlStateSubscriber>()
+                .WithParameter("publisherSettings", _appSettings.CurrentValue.TelegramReporterService.CmlPublisher)
                 .As<ITelegramSubscriber>();
 
             builder.RegisterInstance(new AssetsService(new Uri(_appSettings.CurrentValue.AssetsServiceClient.ServiceUrl)))
@@ -83,6 +85,7 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .SingleInstance();
 
             builder.RegisterType<SpreadEngineStateSubscriber>()
+                .WithParameter("publisherSettings", _appSettings.CurrentValue.TelegramReporterService.SpreadEnginePublisher)
                 .As<ITelegramSubscriber>();
 
             builder.RegisterType<CmlPublisher>()
