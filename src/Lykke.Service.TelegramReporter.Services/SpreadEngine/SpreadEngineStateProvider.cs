@@ -80,7 +80,7 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
                     $"{trader.AssetPairId} inv: <abs inventory>; " +
                     $"({trader.SellVolumeCoefficient:0.000}/{trader.BuyVolumeCoefficient:0.000}); " +
                     $"daily: <daily sell volume>/<daily buy volume>; " +
-                    $"PL: {trader.PnL}\r\n"
+                    $"PL: {trader.PnL:0.000}\r\n"
                 );
             }
 
