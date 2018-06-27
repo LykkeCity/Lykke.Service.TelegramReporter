@@ -13,7 +13,7 @@
     <PackageReference Include="Lykke.HttpClientGenerator" Version="1.0.0" />
     <PackageReference Include="Lykke.Service.Assets.Client" Version="3.3.1" />
     <PackageReference Include="Lykke.Service.CrossMarketLiquidity.Client" Version="1.0.1" />
-    <PackageReference Include="Lykke.Service.SpreadEngine.Client" Version="1.0.7" />
+    <PackageReference Include="Lykke.Service.SpreadEngine.Client" Version="1.0.10-beta" />
     <PackageReference Include="Telegram.Bot" Version="14.5.0" />
   </ItemGroup>
 

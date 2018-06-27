@@ -91,6 +91,13 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<IStopable>()
                 .AutoActivate()
                 .SingleInstance();
+
+            builder.RegisterType<SpreadEnginePublisher>()
+                .WithParameter("publisherSettings", _appSettings.CurrentValue.TelegramReporterService.SpreadEnginePublisher)
+                .As<IStartable>()
+                .As<IStopable>()
+                .AutoActivate()
+                .SingleInstance();
         }
     }
 }

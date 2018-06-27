@@ -72,6 +72,7 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
             var state = new StringBuilder();
 
             state.Append($"======= {DateTime.UtcNow:yyyy/MM/dd HH:mm:ss} =======\r\n\r\n");
+            state.Append($"Spread Engine State:\r\n\r\n");
 
             foreach (var trader in traders)
             {
@@ -79,7 +80,7 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
                     $"{trader.AssetPairId} inv: <abs inventory>; " +
                     $"({trader.SellVolumeCoefficient:0.000}/{trader.BuyVolumeCoefficient:0.000}); " +
                     $"daily: <daily sell volume>/<daily buy volume>; " +
-                    $"PL: <PnL>\r\n"
+                    $"PL: {trader.PnL}\r\n"
                 );
             }
 

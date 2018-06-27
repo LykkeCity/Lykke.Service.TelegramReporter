@@ -4,12 +4,13 @@ using System.Threading.Tasks;
 using Lykke.Service.TelegramReporter.Core.Instances;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.SpreadEngine;
+using Lykke.Service.TelegramReporter.Core.Settings;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
 {
-    public class SpreadEngineStateSubscriber : ITelegramSubscriber
+    public class SpreadEngineStateSubscriber : ChatSubscriber
     {
         private const string SpreadEngineStateCommand = "/spreadenginestate";
 
@@ -20,34 +21,36 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
         private readonly ISpreadEngineInstanceManager _spreadEngineInstanceManager;
 
         public SpreadEngineStateSubscriber(ISpreadEngineStateProvider spreadEngineStateProvider,
-            ISpreadEngineInstanceManager spreadEngineInstanceManager)
+            ISpreadEngineInstanceManager spreadEngineInstanceManager,
+            PublisherSettings publisherSettings)
+            : base(publisherSettings)
         {
             _spreadEngineStateProvider = spreadEngineStateProvider;
             _spreadEngineInstanceManager = spreadEngineInstanceManager;
         }
 
-        public string Command => SpreadEngineStateCommand;
+        public override string Command => SpreadEngineStateCommand;
 
-        public async Task ProcessMessageAsync(ITelegramSender telegramSender, Message message)
+        public override async Task ProcessMessageInternalAsync(ITelegramSender telegramSender, Message message)
         {
             var keyboard =
                 new InlineKeyboardMarkup(
                     _spreadEngineInstanceManager.Instances.Select(k =>
                         InlineKeyboardButton.WithCallbackData(k.DisplayName, $"{SpreadEngineStateCommand} {k.Index}")));
 
-            await telegramSender.SendTextMessageAsync(message.Chat.Id,
+            await telegramSender.SendTextMessageAsync(PublisherSettings.ChatId,
                 "Select an instance",
                 replyToMessageId: message.MessageId,
                 replyMarkup: keyboard);
         }
 
-        public async Task ProcessCallbackQuery(ITelegramSender telegramSender,
+        public override async Task ProcessCallbackQueryInternal(ITelegramSender telegramSender,
             CallbackQuery callbackQuery)
         {
             var instanceId = ExtractInstanceId(callbackQuery.Data);
             var result = await _spreadEngineStateProvider.GetStateMessageAsync(int.Parse(instanceId));
 
-            await telegramSender.SendTextMessageAsync(callbackQuery.Message.Chat.Id,
+            await telegramSender.SendTextMessageAsync(PublisherSettings.ChatId,
                 result,
                 replyToMessageId: callbackQuery.Message.MessageId);
         }

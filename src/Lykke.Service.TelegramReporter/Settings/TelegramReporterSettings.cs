@@ -11,7 +11,8 @@ namespace Lykke.Service.TelegramReporter.Settings
 
         public TelegramSettings Telegram { get; set; }
 
-        [Optional]
         public PublisherSettings CmlPublisher { get; set; }
+
+        public PublisherSettings SpreadEnginePublisher { get; set; }
     }
 }

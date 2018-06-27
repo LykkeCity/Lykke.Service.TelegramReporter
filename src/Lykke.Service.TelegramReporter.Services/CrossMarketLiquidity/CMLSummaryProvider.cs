@@ -64,7 +64,8 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
                 volumeTotal = (inventoryState.RealizedBuyVolumeTotal + inventoryState.RealizedSellVolumeTotal);
             }
 
-            return $"{instanceIdHeader}: {instanceId}\r\n" +
+            return "Cross Market Liquidity Summary:\r\n\r\n" +
+                   $"{instanceIdHeader}: {instanceId}\r\n" +
                    $"{inventoryHeader}: {inventoryState?.AbsoluteInventory ?? 0}\r\n" +
                    $"{volumeTotalHeader}: {volumeTotal}\r\n" +
                    $"{realizedPnLHeader}: {inventoryState?.RealizedPnL ?? 0:0.####}\r\n" +
