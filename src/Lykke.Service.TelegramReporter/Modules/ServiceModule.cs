@@ -64,17 +64,23 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<ICmlSummaryProvider>()
                 .SingleInstance();
 
-            builder.RegisterType<CmlSummarySubscriber>()
-                .WithParameter("publisherSettings", _appSettings.CurrentValue.TelegramReporterService.CmlPublisher)
-                .As<ITelegramSubscriber>();
+            foreach (var publisherSettings in _appSettings.CurrentValue.TelegramReporterService.CmlPublisher)
+            {
+                builder.RegisterType<CmlSummarySubscriber>()
+                    .WithParameter("publisherSettings", publisherSettings)
+                    .As<ITelegramSubscriber>();
+            }            
 
             builder.RegisterType<CmlStateProvider>()
                 .As<ICmlStateProvider>()
                 .SingleInstance();
 
-            builder.RegisterType<CmlStateSubscriber>()
-                .WithParameter("publisherSettings", _appSettings.CurrentValue.TelegramReporterService.CmlPublisher)
-                .As<ITelegramSubscriber>();
+            foreach (var publisherSettings in _appSettings.CurrentValue.TelegramReporterService.CmlPublisher)
+            {
+                builder.RegisterType<CmlStateSubscriber>()
+                    .WithParameter("publisherSettings", publisherSettings)
+                    .As<ITelegramSubscriber>();
+            }
 
             builder.RegisterInstance(new AssetsService(new Uri(_appSettings.CurrentValue.AssetsServiceClient.ServiceUrl)))
                 .As<IAssetsService>()
@@ -84,23 +90,32 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<ISpreadEngineStateProvider>()
                 .SingleInstance();
 
-            builder.RegisterType<SpreadEngineStateSubscriber>()
-                .WithParameter("publisherSettings", _appSettings.CurrentValue.TelegramReporterService.SpreadEnginePublisher)
-                .As<ITelegramSubscriber>();
+            foreach (var publisherSettings in _appSettings.CurrentValue.TelegramReporterService.SpreadEnginePublisher)
+            {
+                builder.RegisterType<SpreadEngineStateSubscriber>()
+                    .WithParameter("publisherSettings", publisherSettings)
+                    .As<ITelegramSubscriber>();
+            }
 
-            builder.RegisterType<CmlPublisher>()
-                .WithParameter("publisherSettings", _appSettings.CurrentValue.TelegramReporterService.CmlPublisher)
-                .As<IStartable>()
-                .As<IStopable>()
-                .AutoActivate()
-                .SingleInstance();
+            foreach (var publisherSettings in _appSettings.CurrentValue.TelegramReporterService.CmlPublisher)
+            {
+                builder.RegisterType<CmlPublisher>()
+                    .WithParameter("publisherSettings", publisherSettings)
+                    .As<IStartable>()
+                    .As<IStopable>()
+                    .AutoActivate()
+                    .SingleInstance();
+            }
 
-            builder.RegisterType<SpreadEnginePublisher>()
-                .WithParameter("publisherSettings", _appSettings.CurrentValue.TelegramReporterService.SpreadEnginePublisher)
-                .As<IStartable>()
-                .As<IStopable>()
-                .AutoActivate()
-                .SingleInstance();
+            foreach (var publisherSettings in _appSettings.CurrentValue.TelegramReporterService.SpreadEnginePublisher)
+            {
+                builder.RegisterType<SpreadEnginePublisher>()
+                    .WithParameter("publisherSettings", publisherSettings)
+                    .As<IStartable>()
+                    .As<IStopable>()
+                    .AutoActivate()
+                    .SingleInstance();
+            }
         }
     }
 }

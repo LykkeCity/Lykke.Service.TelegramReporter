@@ -6,5 +6,5 @@ namespace Lykke.Service.TelegramReporter.Core.Settings
     {
         public TimeSpan TimeSpan { get; set; }
         public long ChatId { get; set; }
-}
+    }
 }
