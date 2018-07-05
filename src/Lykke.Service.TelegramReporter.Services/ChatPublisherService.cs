@@ -178,6 +178,7 @@ namespace Lykke.Service.TelegramReporter.Services
                 if (cmlPublisherSettings.All(x => x.ChatId != chatId))
                 {
                     _cmlPublishers[chatId].Stop();
+                    _cmlPublishers[chatId].Dispose();
                     _cmlPublishers.Remove(chatId, out _);
                 }
             }
@@ -190,6 +191,7 @@ namespace Lykke.Service.TelegramReporter.Services
                 if (sePublisherSettings.All(x => x.ChatId != chatId))
                 {
                     _sePublishers[chatId].Stop();
+                    _sePublishers[chatId].Dispose();
                     _sePublishers.Remove(chatId, out _);
                 }
             }
