@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Common.Log;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Instances;
 using Lykke.Service.TelegramReporter.Core.Services;
@@ -22,8 +24,8 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
 
         public SpreadEngineStateSubscriber(ISpreadEngineStateProvider spreadEngineStateProvider,
             ISpreadEngineInstanceManager spreadEngineInstanceManager,
-            IChatPublisherSettingsRepository repo)
-            : base(repo)
+            IChatPublisherSettingsRepository repo, ILog log)
+            : base(repo, log)
         {
             _spreadEngineStateProvider = spreadEngineStateProvider;
             _spreadEngineInstanceManager = spreadEngineInstanceManager;
@@ -33,34 +35,48 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
 
         public override async Task ProcessMessageInternalAsync(ITelegramSender telegramSender, Message message)
         {
-            var allowedChatIds = await GetAllowedChatIds();
-            if (allowedChatIds.Contains(message.Chat.Id))
+            try
             {
-                var keyboard =
-                    new InlineKeyboardMarkup(
-                        _spreadEngineInstanceManager.Instances.Select(k =>
-                            InlineKeyboardButton.WithCallbackData(k.DisplayName,
-                                $"{SpreadEngineStateCommand} {k.Index}")));
+                var allowedChatIds = await GetAllowedChatIds();
+                if (allowedChatIds.Contains(message.Chat.Id))
+                {
+                    var keyboard =
+                        new InlineKeyboardMarkup(
+                            _spreadEngineInstanceManager.Instances.Select(k =>
+                                InlineKeyboardButton.WithCallbackData(k.DisplayName,
+                                    $"{SpreadEngineStateCommand} {k.Index}")));
 
-                await telegramSender.SendTextMessageAsync(message.Chat.Id,
-                    "Select an instance",
-                    replyToMessageId: message.MessageId,
-                    replyMarkup: keyboard);
+                    await telegramSender.SendTextMessageAsync(message.Chat.Id,
+                        "Select an instance",
+                        replyToMessageId: message.MessageId,
+                        replyMarkup: keyboard);
+                }
+            }
+            catch (Exception ex)
+            {
+                await Log.WriteErrorAsync(nameof(SpreadEngineStateSubscriber), nameof(ProcessMessageInternalAsync), "", ex);
             }
         }
 
         public override async Task ProcessCallbackQueryInternal(ITelegramSender telegramSender,
             CallbackQuery callbackQuery)
         {
-            var allowedChatIds = await GetAllowedChatIds();
-            if (allowedChatIds.Contains(callbackQuery.Message.Chat.Id))
+            try
             {
-                var instanceId = ExtractInstanceId(callbackQuery.Data);
-                var result = await _spreadEngineStateProvider.GetStateMessageAsync(int.Parse(instanceId));
+                var allowedChatIds = await GetAllowedChatIds();
+                if (allowedChatIds.Contains(callbackQuery.Message.Chat.Id))
+                {
+                    var instanceId = ExtractInstanceId(callbackQuery.Data);
+                    var result = await _spreadEngineStateProvider.GetStateMessageAsync(int.Parse(instanceId));
 
-                await telegramSender.SendTextMessageAsync(callbackQuery.Message.Chat.Id,
-                    result,
-                    replyToMessageId: callbackQuery.Message.MessageId);
+                    await telegramSender.SendTextMessageAsync(callbackQuery.Message.Chat.Id,
+                        result,
+                        replyToMessageId: callbackQuery.Message.MessageId);
+                }
+            }
+            catch (Exception ex)
+            {
+                await Log.WriteErrorAsync(nameof(SpreadEngineStateSubscriber), nameof(ProcessCallbackQueryInternal), "", ex);
             }
         }
 

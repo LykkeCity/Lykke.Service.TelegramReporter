@@ -151,7 +151,7 @@ namespace Lykke.Service.TelegramReporter.Services
             if (!exist)
             {
                 var newChatPublisher = new CmlPublisher(_telegramSender,
-                    _cmlSummaryProvider, _cmlStateProvider, publisherSettings);
+                    _cmlSummaryProvider, _cmlStateProvider, publisherSettings, _log);
 
                 newChatPublisher.Start();
                 _cmlPublishers[publisherSettings.ChatId] = newChatPublisher;
@@ -164,7 +164,7 @@ namespace Lykke.Service.TelegramReporter.Services
             if (!exist)
             {
                 var newChatPublisher = new SpreadEnginePublisher(_telegramSender,
-                    _seStateProvider, publisherSettings);
+                    _seStateProvider, publisherSettings, _log);
 
                 newChatPublisher.Start();
                 _sePublishers[publisherSettings.ChatId] = newChatPublisher;

@@ -155,9 +155,9 @@ namespace Lykke.Service.TelegramReporter.Services
                 replyToMessageId: message.MessageId);
         }
 
-        public Task<Message> SendTextMessageAsync(ChatId chatId, string text, ParseMode parseMode = ParseMode.Default, bool disableWebPagePreview = false, bool disableNotification = false, int replyToMessageId = 0, IReplyMarkup replyMarkup = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<Message> SendTextMessageAsync(ChatId chatId, string text, ParseMode parseMode = ParseMode.Default, bool disableWebPagePreview = false, bool disableNotification = false, int replyToMessageId = 0, IReplyMarkup replyMarkup = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return _client.SendTextMessageAsync(chatId, text, parseMode, disableWebPagePreview, 
+            return await _client.SendTextMessageAsync(chatId, text, parseMode, disableWebPagePreview,
                 disableNotification, replyToMessageId, replyMarkup, cancellationToken);
         }
 
