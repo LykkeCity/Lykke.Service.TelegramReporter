@@ -4,5 +4,675 @@
         <name>Lykke.Service.TelegramReporter.Client</name>
     </assembly>
     <members>
+        <member name="T:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.BaseUri">
+            <summary>
+            The base URI of the service.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.SerializationSettings">
+            <summary>
+            Gets or sets json serialization settings.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.DeserializationSettings">
+            <summary>
+            Gets or sets json deserialization settings.
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherCmlchatpublishersettingsGetWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Gets CML chat publishers.
+            </summary>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherCmlchatpublishersettingsPutWithHttpMessagesAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Adds CML chat publisher.
+            </summary>
+            <param name='chatPublisher'>
+            CML chat publisher to add.
+            </param>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherCmlchatpublishersettingsDeleteWithHttpMessagesAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Deletes CML chat publisher.
+            </summary>
+            <param name='chatPublisherSettingsId'>
+            CML chat publisher settings Id
+            </param>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherSechatpublishersettingsGetWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Gets SE chat publishers.
+            </summary>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherSechatpublishersettingsPutWithHttpMessagesAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Adds SE chat publisher.
+            </summary>
+            <param name='chatPublisher'>
+            SE chat publisher to add.
+            </param>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherSechatpublishersettingsDeleteWithHttpMessagesAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Deletes SE chat publisher.
+            </summary>
+            <param name='chatPublisherSettingsId'>
+            SE chat publisher settings Id
+            </param>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.IsAliveWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Checks service is alive
+            </summary>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsDto.#ctor">
+            <summary>
+            Initializes a new instance of the ChatPublisherSettingsDto class.
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsDto.#ctor(System.String,System.Int64,System.String)">
+            <summary>
+            Initializes a new instance of the ChatPublisherSettingsDto class.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsDto.ChatPublisherSettingsId">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsDto.TimeSpan">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsDto.ChatId">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsDto.Validate">
+            <summary>
+            Validate the object.
+            </summary>
+            <exception cref="T:Microsoft.Rest.ValidationException">
+            Thrown if validation fails
+            </exception>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost.#ctor">
+            <summary>
+            Initializes a new instance of the ChatPublisherSettingsPost class.
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost.#ctor(System.String,System.Int64)">
+            <summary>
+            Initializes a new instance of the ChatPublisherSettingsPost class.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost.TimeSpan">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost.ChatId">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost.Validate">
+            <summary>
+            Validate the object.
+            </summary>
+            <exception cref="T:Microsoft.Rest.ValidationException">
+            Thrown if validation fails
+            </exception>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ErrorResponse.#ctor">
+            <summary>
+            Initializes a new instance of the ErrorResponse class.
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ErrorResponse.#ctor(System.String,System.Collections.Generic.IDictionary{System.String,System.Collections.Generic.IList{System.String}})">
+            <summary>
+            Initializes a new instance of the ErrorResponse class.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ErrorResponse.ErrorMessage">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ErrorResponse.ModelErrors">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IsAliveResponse.#ctor">
+            <summary>
+            Initializes a new instance of the IsAliveResponse class.
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IsAliveResponse.#ctor(System.Boolean,System.String,System.String,System.String,System.Collections.Generic.IList{Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IssueIndicator})">
+            <summary>
+            Initializes a new instance of the IsAliveResponse class.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IsAliveResponse.Name">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IsAliveResponse.Version">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IsAliveResponse.Env">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IsAliveResponse.IsDebug">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IsAliveResponse.IssueIndicators">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IsAliveResponse.Validate">
+            <summary>
+            Validate the object.
+            </summary>
+            <exception cref="T:Microsoft.Rest.ValidationException">
+            Thrown if validation fails
+            </exception>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IssueIndicator.#ctor">
+            <summary>
+            Initializes a new instance of the IssueIndicator class.
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IssueIndicator.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the IssueIndicator class.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IssueIndicator.Type">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IssueIndicator.Value">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.BaseUri">
+            <summary>
+            The base URI of the service.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.SerializationSettings">
+            <summary>
+            Gets or sets json serialization settings.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.DeserializationSettings">
+            <summary>
+            Gets or sets json deserialization settings.
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.#ctor(System.Net.Http.DelegatingHandler[])">
+            <summary>
+            Initializes a new instance of the TelegramReporterAPI class.
+            </summary>
+            <param name='handlers'>
+            Optional. The delegating handlers to add to the http client pipeline.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.#ctor(System.Net.Http.HttpClientHandler,System.Net.Http.DelegatingHandler[])">
+            <summary>
+            Initializes a new instance of the TelegramReporterAPI class.
+            </summary>
+            <param name='rootHandler'>
+            Optional. The http client handler used to handle http transport.
+            </param>
+            <param name='handlers'>
+            Optional. The delegating handlers to add to the http client pipeline.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.#ctor(System.Uri,System.Net.Http.DelegatingHandler[])">
+            <summary>
+            Initializes a new instance of the TelegramReporterAPI class.
+            </summary>
+            <param name='baseUri'>
+            Optional. The base URI of the service.
+            </param>
+            <param name='handlers'>
+            Optional. The delegating handlers to add to the http client pipeline.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown when a required parameter is null
+            </exception>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.#ctor(System.Uri,System.Net.Http.HttpClientHandler,System.Net.Http.DelegatingHandler[])">
+            <summary>
+            Initializes a new instance of the TelegramReporterAPI class.
+            </summary>
+            <param name='baseUri'>
+            Optional. The base URI of the service.
+            </param>
+            <param name='rootHandler'>
+            Optional. The http client handler used to handle http transport.
+            </param>
+            <param name='handlers'>
+            Optional. The delegating handlers to add to the http client pipeline.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown when a required parameter is null
+            </exception>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.Initialize">
+            <summary>
+            Initializes client properties.
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherCmlchatpublishersettingsGetWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Gets CML chat publishers.
+            </summary>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherCmlchatpublishersettingsPutWithHttpMessagesAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Adds CML chat publisher.
+            </summary>
+            <param name='chatPublisher'>
+            CML chat publisher to add.
+            </param>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherCmlchatpublishersettingsDeleteWithHttpMessagesAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Deletes CML chat publisher.
+            </summary>
+            <param name='chatPublisherSettingsId'>
+            CML chat publisher settings Id
+            </param>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherSechatpublishersettingsGetWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Gets SE chat publishers.
+            </summary>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherSechatpublishersettingsPutWithHttpMessagesAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Adds SE chat publisher.
+            </summary>
+            <param name='chatPublisher'>
+            SE chat publisher to add.
+            </param>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherSechatpublishersettingsDeleteWithHttpMessagesAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Deletes SE chat publisher.
+            </summary>
+            <param name='chatPublisherSettingsId'>
+            SE chat publisher settings Id
+            </param>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.IsAliveWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Checks service is alive
+            </summary>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="T:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions">
+            <summary>
+            Extension methods for TelegramReporterAPI.
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherCmlchatpublishersettingsGet(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI)">
+            <summary>
+            Gets CML chat publishers.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherCmlchatpublishersettingsGetAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.Threading.CancellationToken)">
+            <summary>
+            Gets CML chat publishers.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherCmlchatpublishersettingsPut(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost)">
+            <summary>
+            Adds CML chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisher'>
+            CML chat publisher to add.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherCmlchatpublishersettingsPutAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Threading.CancellationToken)">
+            <summary>
+            Adds CML chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisher'>
+            CML chat publisher to add.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherCmlchatpublishersettingsDelete(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.String)">
+            <summary>
+            Deletes CML chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisherSettingsId'>
+            CML chat publisher settings Id
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherCmlchatpublishersettingsDeleteAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Deletes CML chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisherSettingsId'>
+            CML chat publisher settings Id
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherSechatpublishersettingsGet(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI)">
+            <summary>
+            Gets SE chat publishers.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherSechatpublishersettingsGetAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.Threading.CancellationToken)">
+            <summary>
+            Gets SE chat publishers.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherSechatpublishersettingsPut(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost)">
+            <summary>
+            Adds SE chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisher'>
+            SE chat publisher to add.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherSechatpublishersettingsPutAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Threading.CancellationToken)">
+            <summary>
+            Adds SE chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisher'>
+            SE chat publisher to add.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherSechatpublishersettingsDelete(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.String)">
+            <summary>
+            Deletes SE chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisherSettingsId'>
+            SE chat publisher settings Id
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherSechatpublishersettingsDeleteAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Deletes SE chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisherSettingsId'>
+            SE chat publisher settings Id
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.IsAlive(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI)">
+            <summary>
+            Checks service is alive
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.IsAliveAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.Threading.CancellationToken)">
+            <summary>
+            Checks service is alive
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.ITelegramReporterClient.IsAliveAsync(System.Threading.CancellationToken)">
+            <summary>
+            Checks if service is alive
+            </summary>
+            <param name="cancellationToken"></param>
+            <returns>IsAlive response</returns>
+            <exception cref="T:Lykke.Service.TelegramReporter.Client.Exceptions.ApiException">Thrown on getting error response.</exception>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">Thrown on getting incorrect http response.</exception>
+            <exception cref="T:System.OperationCanceledException">Thrown on canceled token</exception>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.ITelegramReporterClient.GetCmlChatPublisherSettings(System.Threading.CancellationToken)">
+            <summary>
+            Gets CML chat publishers.
+            </summary>
+            <param name="cancellationToken"></param>
+            <returns>CML chat publishers</returns>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.ITelegramReporterClient.GetSeChatPublisherSettings(System.Threading.CancellationToken)">
+            <summary>
+            Gets SE chat publishers.
+            </summary>
+            <param name="cancellationToken"></param>
+            <returns>SE chat publishers</returns>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.ITelegramReporterClient.AddCmlChatPublisherSettingsAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Threading.CancellationToken)">
+            <summary>
+            Adds CML chat publisher.
+            </summary>
+            <param name="chatPublisher">CML chat publisher to add.</param>
+            <param name="cancellationToken"></param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.ITelegramReporterClient.AddSeChatPublisherSettingsAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Threading.CancellationToken)">
+            <summary>
+            Adds SE chat publisher.
+            </summary>
+            <param name="chatPublisher">SE chat publisher to add.</param>
+            <param name="cancellationToken"></param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.ITelegramReporterClient.RemoveCmlChatPublisherSettingsAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Deletes CML chat publisher.
+            </summary>
+            <param name="chatPublisherSettingsId">CML chat publisher Id</param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.ITelegramReporterClient.RemoveSeChatPublisherSettingsAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Deletes SE chat publisher.
+            </summary>
+            <param name="chatPublisherSettingsId">SE chat publisher Id</param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+        </member>
     </members>
 </doc>

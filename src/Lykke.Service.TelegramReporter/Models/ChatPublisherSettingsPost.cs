@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Lykke.Service.TelegramReporter.Core.Settings
+namespace Lykke.Service.TelegramReporter.Models
 {
-    public class PublisherSettings
+    public class ChatPublisherSettingsPost
     {
         public TimeSpan TimeSpan { get; set; }
         public long ChatId { get; set; }

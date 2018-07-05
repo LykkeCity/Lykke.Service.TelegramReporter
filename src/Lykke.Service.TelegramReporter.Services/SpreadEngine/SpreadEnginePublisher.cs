@@ -1,6 +1,6 @@
-﻿using Lykke.Service.TelegramReporter.Core.Services;
+﻿using Lykke.Service.TelegramReporter.Core.Domain.Model;
+using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.SpreadEngine;
-using Lykke.Service.TelegramReporter.Core.Settings;
 
 namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
 {
@@ -10,7 +10,7 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
 
         public SpreadEnginePublisher(ITelegramSender telegramSender,
             ISpreadEngineStateProvider spreadEngineStateProvider,
-            PublisherSettings publisherSettings)
+            IChatPublisherSettings publisherSettings)
             : base(telegramSender, publisherSettings)
         {
             _spreadEngineStateProvider = spreadEngineStateProvider;

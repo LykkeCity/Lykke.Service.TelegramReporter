@@ -1,6 +1,6 @@
-﻿using Lykke.Service.TelegramReporter.Core.Services;
+﻿using Lykke.Service.TelegramReporter.Core.Domain.Model;
+using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.CrossMarketLiquidity;
-using Lykke.Service.TelegramReporter.Core.Settings;
 
 namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
 {
@@ -12,7 +12,7 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
         public CmlPublisher(ITelegramSender telegramSender,
             ICmlSummaryProvider cmlSummaryProvider,
             ICmlStateProvider cmlStateProvider,
-            PublisherSettings publisherSettings)
+            IChatPublisherSettings publisherSettings)
             : base(telegramSender, publisherSettings)
         {
             _cmlSummaryProvider = cmlSummaryProvider;

@@ -1,7 +1,7 @@
 ﻿using Lykke.Service.TelegramReporter.Core.Services;
 using System.Threading.Tasks;
+using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services.CrossMarketLiquidity;
-using Lykke.Service.TelegramReporter.Core.Settings;
 using Telegram.Bot.Types;
 
 namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
@@ -13,7 +13,7 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
         private readonly ICmlSummaryProvider _cmlSummaryProvider;
 
         public CmlSummarySubscriber(ICmlSummaryProvider cmlSummaryProvider,
-            PublisherSettings publisherSettings)
+            IChatPublisherSettings publisherSettings)
             : base(publisherSettings)
         {
             _cmlSummaryProvider = cmlSummaryProvider;

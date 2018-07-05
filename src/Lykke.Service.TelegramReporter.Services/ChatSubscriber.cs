@@ -1,15 +1,15 @@
 ﻿using System.Threading.Tasks;
+using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services;
-using Lykke.Service.TelegramReporter.Core.Settings;
 using Telegram.Bot.Types;
 
 namespace Lykke.Service.TelegramReporter.Services
 {
     public abstract class ChatSubscriber : ITelegramSubscriber
     {
-        protected PublisherSettings PublisherSettings;
+        public IChatPublisherSettings PublisherSettings { get; private set; }
 
-        protected ChatSubscriber(PublisherSettings publisherSettings)
+        protected ChatSubscriber(IChatPublisherSettings publisherSettings)
         {
             PublisherSettings = publisherSettings;
         }

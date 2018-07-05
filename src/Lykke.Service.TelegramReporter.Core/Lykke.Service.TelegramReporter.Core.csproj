@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Domain\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Lykke.Common" Version="6.8.4" />
     <PackageReference Include="Lykke.Sdk" Version="1.2.0" />
     <PackageReference Include="Lykke.Service.CrossMarketLiquidity.Client" Version="1.0.1" />

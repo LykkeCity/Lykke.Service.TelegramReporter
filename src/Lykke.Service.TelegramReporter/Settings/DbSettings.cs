@@ -6,5 +6,7 @@ namespace Lykke.Service.TelegramReporter.Settings
     {
         [AzureTableCheck]
         public string LogsConnString { get; set; }
+        [AzureTableCheck]
+        public string DataConnString { get; set; }
     }
 }

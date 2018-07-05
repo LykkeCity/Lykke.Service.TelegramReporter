@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Instances;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.SpreadEngine;
-using Lykke.Service.TelegramReporter.Core.Settings;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -22,7 +22,7 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
 
         public SpreadEngineStateSubscriber(ISpreadEngineStateProvider spreadEngineStateProvider,
             ISpreadEngineInstanceManager spreadEngineInstanceManager,
-            PublisherSettings publisherSettings)
+            IChatPublisherSettings publisherSettings)
             : base(publisherSettings)
         {
             _spreadEngineStateProvider = spreadEngineStateProvider;
