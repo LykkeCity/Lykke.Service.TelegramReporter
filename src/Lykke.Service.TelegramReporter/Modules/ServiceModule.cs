@@ -96,6 +96,15 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<ISpreadEngineStateProvider>()
                 .SingleInstance();
 
+            builder.RegisterType<CmlSummarySubscriber>()
+                .As<ITelegramSubscriber>();
+
+            builder.RegisterType<CmlStateSubscriber>()
+                .As<ITelegramSubscriber>();
+
+            builder.RegisterType<SpreadEngineStateSubscriber>()
+                .As<ITelegramSubscriber>();
+
             builder.RegisterType<ChatPublisherService>()
                 .As<IChatPublisherService>()
                 .As<IStartable>()

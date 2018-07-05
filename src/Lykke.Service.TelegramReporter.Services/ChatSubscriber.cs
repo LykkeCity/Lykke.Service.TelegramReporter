@@ -1,5 +1,6 @@
-﻿using System.Threading.Tasks;
-using Lykke.Service.TelegramReporter.Core.Domain.Model;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Telegram.Bot.Types;
 
@@ -7,11 +8,11 @@ namespace Lykke.Service.TelegramReporter.Services
 {
     public abstract class ChatSubscriber : ITelegramSubscriber
     {
-        public IChatPublisherSettings PublisherSettings { get; private set; }
+        protected readonly IChatPublisherSettingsRepository _repo;
 
-        protected ChatSubscriber(IChatPublisherSettings publisherSettings)
+        protected ChatSubscriber(IChatPublisherSettingsRepository repo)
         {
-            PublisherSettings = publisherSettings;
+            _repo = repo;
         }
 
         public abstract string Command { get; }
@@ -41,7 +42,9 @@ namespace Lykke.Service.TelegramReporter.Services
 
         private async Task<bool> ValidateChat(long chatId, ITelegramSender telegramSender)
         {
-            if (chatId != PublisherSettings.ChatId)
+            var allowedChatIds = await GetAllowedChatIds();
+
+            if (!allowedChatIds.Contains(chatId))
             {
                 await telegramSender.SendTextMessageAsync(chatId, "Unrecognized chat");
 
@@ -50,5 +53,7 @@ namespace Lykke.Service.TelegramReporter.Services
 
             return true;
         }
+
+        protected abstract Task<long[]> GetAllowedChatIds();
     }
 }

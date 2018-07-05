@@ -1,5 +1,4 @@
-﻿using System;
-using Lykke.SettingsReader.Attributes;
+﻿using Lykke.SettingsReader.Attributes;
 
 namespace Lykke.Service.TelegramReporter.Core.Settings
 {

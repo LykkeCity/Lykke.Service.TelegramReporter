@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Lykke.Service.TelegramReporter.Core.Settings
+﻿namespace Lykke.Service.TelegramReporter.Core.Settings
 {
     public class Socks5ProxySettings
     {

@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Lykke.Service.TelegramReporter.Core.Domain.Model;
+using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Instances;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.SpreadEngine;
@@ -22,8 +22,8 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
 
         public SpreadEngineStateSubscriber(ISpreadEngineStateProvider spreadEngineStateProvider,
             ISpreadEngineInstanceManager spreadEngineInstanceManager,
-            IChatPublisherSettings publisherSettings)
-            : base(publisherSettings)
+            IChatPublisherSettingsRepository repo)
+            : base(repo)
         {
             _spreadEngineStateProvider = spreadEngineStateProvider;
             _spreadEngineInstanceManager = spreadEngineInstanceManager;
@@ -33,28 +33,42 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
 
         public override async Task ProcessMessageInternalAsync(ITelegramSender telegramSender, Message message)
         {
-            var keyboard =
-                new InlineKeyboardMarkup(
-                    _spreadEngineInstanceManager.Instances.Select(k =>
-                        InlineKeyboardButton.WithCallbackData(k.DisplayName, $"{SpreadEngineStateCommand} {k.Index}")));
+            var allowedChatIds = await GetAllowedChatIds();
+            if (allowedChatIds.Contains(message.Chat.Id))
+            {
+                var keyboard =
+                    new InlineKeyboardMarkup(
+                        _spreadEngineInstanceManager.Instances.Select(k =>
+                            InlineKeyboardButton.WithCallbackData(k.DisplayName,
+                                $"{SpreadEngineStateCommand} {k.Index}")));
 
-            await telegramSender.SendTextMessageAsync(PublisherSettings.ChatId,
-                "Select an instance",
-                replyToMessageId: message.MessageId,
-                replyMarkup: keyboard);
+                await telegramSender.SendTextMessageAsync(message.Chat.Id,
+                    "Select an instance",
+                    replyToMessageId: message.MessageId,
+                    replyMarkup: keyboard);
+            }
         }
 
         public override async Task ProcessCallbackQueryInternal(ITelegramSender telegramSender,
             CallbackQuery callbackQuery)
         {
-            var instanceId = ExtractInstanceId(callbackQuery.Data);
-            var result = await _spreadEngineStateProvider.GetStateMessageAsync(int.Parse(instanceId));
+            var allowedChatIds = await GetAllowedChatIds();
+            if (allowedChatIds.Contains(callbackQuery.Message.Chat.Id))
+            {
+                var instanceId = ExtractInstanceId(callbackQuery.Data);
+                var result = await _spreadEngineStateProvider.GetStateMessageAsync(int.Parse(instanceId));
 
-            await telegramSender.SendTextMessageAsync(PublisherSettings.ChatId,
-                result,
-                replyToMessageId: callbackQuery.Message.MessageId);
+                await telegramSender.SendTextMessageAsync(callbackQuery.Message.Chat.Id,
+                    result,
+                    replyToMessageId: callbackQuery.Message.MessageId);
+            }
         }
-        
+
+        protected override async Task<long[]> GetAllowedChatIds()
+        {
+            return (await _repo.GetSeChatPublisherSettings()).Select(x => x.ChatId).ToArray();
+        }
+
         private string ExtractInstanceId(string data)
         {
             var match = InstanceIdRegex.Match(data);

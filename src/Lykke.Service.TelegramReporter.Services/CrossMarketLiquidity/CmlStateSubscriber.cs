@@ -4,7 +4,7 @@ using Lykke.Service.TelegramReporter.Core.Services.CrossMarketLiquidity;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Lykke.Service.TelegramReporter.Core.Domain.Model;
+using Lykke.Service.TelegramReporter.Core.Domain;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -22,8 +22,8 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
 
         public CmlStateSubscriber(ICmlStateProvider cmlStateProvider,
             ICrossMarketLiquidityInstanceManager crossMarketLiquidityInstanceManager,
-            IChatPublisherSettings publisherSettings)
-            : base (publisherSettings)
+            IChatPublisherSettingsRepository repo)
+            : base (repo)
         {
             _cmlStateProvider = cmlStateProvider;
             _crossMarketLiquidityInstanceManager = crossMarketLiquidityInstanceManager;
@@ -33,26 +33,39 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
 
         public override async Task ProcessMessageInternalAsync(ITelegramSender telegramSender, Message message)
         {
-            var keyboard =
-                new InlineKeyboardMarkup(
-                    _crossMarketLiquidityInstanceManager.Keys.Select(k =>
-                        InlineKeyboardButton.WithCallbackData(k, $"{CmlStateCommand} {k}")));
+            var allowedChatIds = await GetAllowedChatIds();
+            if (allowedChatIds.Contains(message.Chat.Id))
+            {
+                var keyboard =
+                    new InlineKeyboardMarkup(
+                        _crossMarketLiquidityInstanceManager.Keys.Select(k =>
+                            InlineKeyboardButton.WithCallbackData(k, $"{CmlStateCommand} {k}")));
 
-            await telegramSender.SendTextMessageAsync(PublisherSettings.ChatId,
-                "Select an instance",
-                replyToMessageId: message.MessageId,
-                replyMarkup: keyboard);
+                await telegramSender.SendTextMessageAsync(message.Chat.Id,
+                    "Select an instance",
+                    replyToMessageId: message.MessageId,
+                    replyMarkup: keyboard);
+            }
         }
 
         public override async Task ProcessCallbackQueryInternal(ITelegramSender telegramSender, CallbackQuery callbackQuery)
         {
-            var instanceId = ExtractInstanceId(callbackQuery.Data);
-            var result = await _cmlStateProvider.GetStateMessageAsync(instanceId);
+            var allowedChatIds = await GetAllowedChatIds();
+            if (allowedChatIds.Contains(callbackQuery.Message.Chat.Id))
+            {
+                var instanceId = ExtractInstanceId(callbackQuery.Data);
+                var result = await _cmlStateProvider.GetStateMessageAsync(instanceId);
 
-            await telegramSender.SendTextMessageAsync(PublisherSettings.ChatId,
-                result,
-                replyToMessageId: callbackQuery.Message.MessageId);
-        }        
+                await telegramSender.SendTextMessageAsync(callbackQuery.Message.Chat.Id,
+                    result,
+                    replyToMessageId: callbackQuery.Message.MessageId);
+            }
+        }
+
+        protected override async Task<long[]> GetAllowedChatIds()
+        {
+            return (await _repo.GetCmlChatPublisherSettings()).Select(x => x.ChatId).ToArray();
+        }
 
         private string ExtractInstanceId(string data)
         {
