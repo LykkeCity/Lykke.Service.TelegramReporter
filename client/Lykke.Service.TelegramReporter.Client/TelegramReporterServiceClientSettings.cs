@@ -1,6 +1,4 @@
-using System;
-
-namespace Lykke.Service.TelegramReporter.Client 
+﻿namespace Lykke.Service.TelegramReporter.Client 
 {
     public class TelegramReporterServiceClientSettings 
     {

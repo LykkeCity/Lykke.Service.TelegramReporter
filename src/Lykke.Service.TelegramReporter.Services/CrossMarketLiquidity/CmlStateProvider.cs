@@ -57,6 +57,7 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
             const string instanceIdHeader = "Name";
 
             return $"======= {DateTime.UtcNow:yyyy/MM/dd HH:mm:ss} =======\r\n\r\n" +
+                   "Cross Market Liquidity State:\r\n\r\n" +
                    $"{instanceIdHeader}: {instanceId}\r\n" +
                    $"{nameof(TradingAlgorithmPropertiesDto.Mode)}: {tradingAlgorithmProperties.Mode}\r\n" +
                    $"{nameof(TradingAlgorithmPropertiesDto.Status)}: {tradingAlgorithmProperties.Status}\r\n\r\n" +
