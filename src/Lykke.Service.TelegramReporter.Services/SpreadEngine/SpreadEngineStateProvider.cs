@@ -85,24 +85,54 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
 
             var balances = balancesTask.Result;
 
-            var tradersInventories = tradersInventoriesTasks.Select(x => x.Result).ToArray();
+            var assetInventories = new List<AssetInventoryModel>();
 
+            var volume = 0M;
 
+            foreach (var assetPairId in assetPairs.Keys)
+            {
+                var assetId = assetPairId.Replace(baseAssetId, "");
 
-            return GetStateMessage(traders, balances, tradersInventories);
+                var balance = balances.FirstOrDefault(o => o.AssetId == assetId)?.Amount ?? 0m;
+
+                var inventory = assetPairs[assetPairId].Result;
+
+                volume += inventory?.Absolute ?? 0;
+
+                assetInventories.Add(new AssetInventoryModel
+                {
+                    AssetId = assetId,
+                    Balance = balance,
+                    BaseVolume = inventory?.Absolute ?? 0,
+                    Volume = inventory?.AbsoluteQuote ?? 0
+                });
+            }
+
+            var baseAssetBalance = balances.FirstOrDefault(o => o.AssetId == baseAssetId)?.Amount ?? 0m;
+
+            assetInventories.Add(new AssetInventoryModel
+            {
+                AssetId = baseAssetId,
+                Balance = baseAssetBalance,
+                BaseVolume = 0,
+                Volume = volume
+            });
+
+            assetInventories = assetInventories.OrderBy(o => o.AssetId).ToList();
+
+            return GetStateMessage(traders, balances, assetPairs, assetInventories);
         }
 
-        private string GetStateMessage(IReadOnlyList<TraderModel> traders, IReadOnlyList<BalanceModel> balances, IReadOnlyList<InventoryModel> tradersInventories)
+        private string GetStateMessage(IReadOnlyList<TraderModel> traders, IReadOnlyList<BalanceModel> balances, IDictionary<string, Task<InventoryModel>> assetPairs, IList<AssetInventoryModel> assetInventories)
         {
             var state = new StringBuilder();
 
             state.Append($"======= {DateTime.UtcNow:yyyy/MM/dd HH:mm:ss} =======\r\n\r\n");
             state.Append($"Spread Engine State:\r\n\r\n");
 
-            for (var i = 0; i < traders.Count; i++)
+            foreach (var trader in traders)
             {
-                var trader = traders[i];
-                var traderInventory = tradersInventories[i];
+                var traderInventory = assetPairs[trader.AssetPairId].Result;
 
                 state.Append(
                     $"{trader.AssetPairId} inv: {traderInventory.Absolute:0.000}; " +
@@ -115,16 +145,26 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
             state.Append("\r\n");
             state.Append("Balances:\r\n");
 
-
-
-            foreach (var balance in balances)
+            foreach (var inventoryModel in assetInventories)
             {
                 state.Append(
-                    $"{balance.AssetId} {balance.Amount:0.000} {:0.000} {:0.000}\r\n"
+                    $"{inventoryModel.AssetId} Balance: {inventoryModel.Balance:0.000} " +
+                    $"Inventory: {inventoryModel.Volume:0.000} Base Inventory: {inventoryModel.BaseVolume:0.000}\r\n"
                 );
             }
 
             return state.ToString();
         }
+    }
+
+    internal class AssetInventoryModel
+    {
+        public string AssetId { get; set; }
+
+        public decimal Volume { get; set; }
+
+        public decimal BaseVolume { get; set; }
+
+        public decimal Balance { get; set; }
     }
 }
