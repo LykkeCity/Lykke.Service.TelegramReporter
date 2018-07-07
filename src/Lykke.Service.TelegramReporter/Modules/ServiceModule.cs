@@ -15,8 +15,10 @@ using Lykke.Service.Assets.Client;
 using Lykke.Service.TelegramReporter.AzureRepositories;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Services;
+using Lykke.Service.TelegramReporter.Core.Services.Balance;
 using Lykke.Service.TelegramReporter.Core.Services.CrossMarketLiquidity;
 using Lykke.Service.TelegramReporter.Core.Services.SpreadEngine;
+using Lykke.Service.TelegramReporter.Services.Balance;
 using Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity;
 using Lykke.Service.TelegramReporter.Services.SpreadEngine;
 using Microsoft.Extensions.DependencyInjection;
@@ -94,6 +96,10 @@ namespace Lykke.Service.TelegramReporter.Modules
 
             builder.RegisterType<SpreadEngineStateProvider>()
                 .As<ISpreadEngineStateProvider>()
+                .SingleInstance();
+
+            builder.RegisterType<BalanceWarningProvider>()
+                .As<IBalanceWarningProvider>()
                 .SingleInstance();
 
             builder.RegisterType<CmlSummarySubscriber>()

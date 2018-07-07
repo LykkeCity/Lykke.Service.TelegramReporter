@@ -53,6 +53,21 @@ namespace Lykke.Service.TelegramReporter.Controllers
         }
 
         /// <summary>
+        /// Gets balance chat publishers.
+        /// </summary>
+        /// <returns>Balance chat publishers</returns>
+        [HttpGet("balancechatpublishersettings", Name = "GetBalanceChatPublisherSettings")]
+        [Produces("application/json")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(IReadOnlyList<ChatPublisherSettingsDto>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetBalanceChatPublisherSettings()
+        {
+            var chatPublishers = await _chatPublisherService.GetBalanceChatPublishers();
+            var vm = _mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
+            return Ok(vm);
+        }
+
+        /// <summary>
         /// Adds CML chat publisher.
         /// </summary>
         /// <param name="chatPublisher">CML chat publisher to add.</param>
@@ -111,6 +126,35 @@ namespace Lykke.Service.TelegramReporter.Controllers
         }
 
         /// <summary>
+        /// Adds balance chat publisher.
+        /// </summary>
+        /// <param name="chatPublisher">Balance chat publisher to add.</param>
+        [HttpPut("balancechatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddBalanceChatPublisherSettingsAsync([FromBody] ChatPublisherSettingsPost chatPublisher)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ErrorResponse.Create(ModelState));
+            }
+
+            var model = _mapper
+                .Map<ChatPublisherSettings>(chatPublisher);
+
+            try
+            {
+                await _chatPublisherService.AddBalanceChatPublisherAsync(model);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponse.Create(ex.Message));
+            }
+
+            return StatusCode((int)HttpStatusCode.OK);
+        }
+
+        /// <summary>
         /// Deletes CML chat publisher.
         /// </summary>
         /// <param name="chatPublisherSettingsId">CML chat publisher settings Id</param>
@@ -133,6 +177,19 @@ namespace Lykke.Service.TelegramReporter.Controllers
         public async Task<IActionResult> RemoveSeChatPublisherSettingsAsync(string chatPublisherSettingsId)
         {
             await _chatPublisherService.RemoveSeChatPublisherAsync(chatPublisherSettingsId);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Deletes balance chat publisher.
+        /// </summary>
+        /// <param name="chatPublisherSettingsId">Balance chat publisher settings Id</param>
+        /// <returns></returns>
+        [HttpDelete("balancechatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> RemoveBalanceChatPublisherSettingsAsync(string chatPublisherSettingsId)
+        {
+            await _chatPublisherService.RemoveBalanceChatPublisherAsync(chatPublisherSettingsId);
             return NoContent();
         }
     }
