@@ -39,7 +39,7 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
                 sb.AppendLine(task.Result);
                 sb.AppendLine();
             }
-            return sb.ToString();
+            return ChatMessageHelper.CheckSizeAndCutMessageIfNeeded(sb.ToString());
         }
 
         public async Task<string> GetStateMessageAsync(int instanceId)
@@ -120,7 +120,8 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
 
             assetInventories = assetInventories.OrderBy(o => o.AssetId).ToList();
 
-            return GetStateMessage(traders, balances, assetPairs, assetInventories);
+            var message = GetStateMessage(traders, balances, assetPairs, assetInventories);
+            return ChatMessageHelper.CheckSizeAndCutMessageIfNeeded(message);
         }
 
         private string GetStateMessage(IReadOnlyList<TraderModel> traders, IReadOnlyList<BalanceModel> balances, IDictionary<string, Task<InventoryModel>> assetPairs, IList<AssetInventoryModel> assetInventories)

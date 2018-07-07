@@ -33,7 +33,7 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
                 sb.AppendLine(task.Result);
                 sb.AppendLine();
             }
-            return sb.ToString();
+            return ChatMessageHelper.CheckSizeAndCutMessageIfNeeded(sb.ToString());
         }
 
         public async Task<string> GetSummaryMessageAsync(string instanceId)
@@ -44,7 +44,8 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
 
             await Task.WhenAll(inventoryStateTask, balancesTask);
 
-            return GetSummaryMessage(instanceId, inventoryStateTask.Result, balancesTask.Result);
+            var message = GetSummaryMessage(instanceId, inventoryStateTask.Result, balancesTask.Result);
+            return ChatMessageHelper.CheckSizeAndCutMessageIfNeeded(message);
         }
 
         private string GetSummaryMessage(string instanceId, InventoryStateDto inventoryState,
