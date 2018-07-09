@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Lykke.Service.TelegramReporter.Core.Services.Balance;
@@ -13,9 +14,11 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
 
             foreach (var balanceIssue in balancesWithIssues)
             {
-                sb.AppendLine($"Wallet: {balanceIssue.ClientId} " +
-                              $"Asset: {balanceIssue.AssetId} " +
-                              $"Balance: {balanceIssue.Balance:0.000} " +
+                sb.AppendLine($"======= {DateTime.UtcNow:yyyy/MM/dd HH:mm:ss} =======\r\n\r\n" +
+                              "Balance Warning:\r\n\r\n" +
+                              $"Wallet: {balanceIssue.ClientId}\r\n" +
+                              $"Asset: {balanceIssue.AssetId}\r\n" +
+                              $"Balance: {balanceIssue.Balance:0.000}\r\n" +
                               $"MinBalance: {balanceIssue.MinBalance:0.000}");
                 sb.AppendLine();
             }
