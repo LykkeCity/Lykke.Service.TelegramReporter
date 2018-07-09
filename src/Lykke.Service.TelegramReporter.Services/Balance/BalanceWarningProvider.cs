@@ -1,25 +1,26 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 using Lykke.Service.TelegramReporter.Core.Services.Balance;
 
 namespace Lykke.Service.TelegramReporter.Services.Balance
 {
     public class BalanceWarningProvider : IBalanceWarningProvider
     {
-        //private ICrossMarketLiquidityInstanceManager _crossMarketLiquidityInstanceManager;
-
-        public BalanceWarningProvider(/*ICrossMarketLiquidityInstanceManager crossMarketLiquidityInstanceManager*/)
+        public Task<string> GetWarningMessageAsync(IList<BalanceIssueDto> balancesWithIssues)
         {
-            //_crossMarketLiquidityInstanceManager = crossMarketLiquidityInstanceManager;
-        }
+            var sb = new StringBuilder();
 
-        public async Task<string> GetWarningMessageAsync()
-        {
-            return "";
-        }
+            foreach (var balanceIssue in balancesWithIssues)
+            {
+                sb.AppendLine($"Wallet: {balanceIssue.ClientId} " +
+                              $"Asset: {balanceIssue.AssetId} " +
+                              $"Balance: {balanceIssue.Balance:0.000} " +
+                              $"MinBalance: {balanceIssue.MinBalance:0.000}");
+                sb.AppendLine();
+            }
 
-        public async Task<string> GetWarningMessageAsync(string instanceId)
-        {
-            return "";
+            return Task.FromResult(ChatMessageHelper.CheckSizeAndCutMessageIfNeeded(sb.ToString()));
         }
     }
 }

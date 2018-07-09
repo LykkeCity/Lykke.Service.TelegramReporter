@@ -12,12 +12,17 @@ namespace Lykke.Service.TelegramReporter.Settings
 
         public CrossMarketLiquidityServiceClientInstancesSettings CrossMarketLiquidityServiceClient { get; set; }
         public AssetsServiceClientSettings AssetsServiceClient { get; set; }
+        public BalanceServiceClientSettings BalancesServiceClient { get; set; }
         public SpreadEngineServiceClientSettings SpreadEngineServiceClient { get; set; }
     }
 
     public class AssetsServiceClientSettings
     {
-        [HttpCheck("api/isalive")]
+        public string ServiceUrl { get; set; }
+    }
+
+    public class BalanceServiceClientSettings
+    {
         public string ServiceUrl { get; set; }
     }
 }

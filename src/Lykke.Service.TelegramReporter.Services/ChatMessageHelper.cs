@@ -8,7 +8,7 @@
         {
             if (message.Length > CharactersLimit)
             {
-                message = message.Substring(0, CharactersLimit);
+                message = message.Substring(0, CharactersLimit - 3) + "...";
             }
 
             return message;

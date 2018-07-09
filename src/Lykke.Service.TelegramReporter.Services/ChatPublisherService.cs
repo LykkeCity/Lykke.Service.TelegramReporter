@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Common;
 using Common.Log;
+using Lykke.Service.Balances.Client;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services.Balance;
@@ -21,6 +22,8 @@ namespace Lykke.Service.TelegramReporter.Services
     public class ChatPublisherService : IChatPublisherService, IStartable, IStopable
     {
         private readonly IChatPublisherSettingsRepository _repo;
+        private readonly IBalanceWarningRepository _balanceWarningRepository;
+        private readonly IBalancesClient _balancesClient;
         private readonly ILog _log;
 
         private readonly ICmlSummaryProvider _cmlSummaryProvider;
@@ -35,7 +38,10 @@ namespace Lykke.Service.TelegramReporter.Services
         private readonly ConcurrentDictionary<long, ChatPublisher> _sePublishers = new ConcurrentDictionary<long, ChatPublisher>();
         private readonly ConcurrentDictionary<long, ChatPublisher> _balancePublishers = new ConcurrentDictionary<long, ChatPublisher>();
 
-        public ChatPublisherService(IChatPublisherSettingsRepository repo, ILog log,
+        public ChatPublisherService(IChatPublisherSettingsRepository repo,
+            IBalanceWarningRepository balanceWarningRepository,
+            IBalancesClient balancesClient,
+            ILog log,
             ITelegramSender telegramSender,
             ICmlSummaryProvider cmlSummaryProvider,
             ICmlStateProvider cmlStateProvider,
@@ -45,6 +51,8 @@ namespace Lykke.Service.TelegramReporter.Services
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
             _log = log.CreateComponentScope(nameof(ChatPublisherService));
 
+            _balanceWarningRepository = balanceWarningRepository;
+            _balancesClient = balancesClient;
             _cmlSummaryProvider = cmlSummaryProvider;
             _cmlStateProvider = cmlStateProvider;
             _seStateProvider = seStateProvider;
@@ -219,7 +227,7 @@ namespace Lykke.Service.TelegramReporter.Services
             var exist = _balancePublishers.ContainsKey(publisherSettings.ChatId);
             if (!exist)
             {
-                var newChatPublisher = new BalancePublisher(_telegramSender,
+                var newChatPublisher = new BalancePublisher(_telegramSender, _balanceWarningRepository, _balancesClient,
                     _balanceWarningProvider, publisherSettings, _log);
 
                 newChatPublisher.Start();
