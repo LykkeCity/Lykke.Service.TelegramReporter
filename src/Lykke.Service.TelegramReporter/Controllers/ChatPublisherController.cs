@@ -212,7 +212,7 @@ namespace Lykke.Service.TelegramReporter.Controllers
         /// Adds balance warning.
         /// </summary>
         /// <param name="balanceWarning">Balance warning to add.</param>
-        [HttpPut("balancechatpublishersettings")]
+        [HttpPut("balancewarning")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddBalanceWarningAsync([FromBody] BalanceWarningPost balanceWarning)
