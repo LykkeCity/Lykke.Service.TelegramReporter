@@ -20,7 +20,7 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
                 sb.AppendLine($"Wallet: {balanceIssue.ClientId}\r\n" +
                               $"Asset: {balanceIssue.AssetId}\r\n" +
                               $"Balance: {balanceIssue.Balance:0.000}\r\n" +
-                              $"MinBalance: {balanceIssue.MinBalance:0.000}\r\n");
+                              $"Min Balance: {balanceIssue.MinBalance:0.000}\r\n");
                 sb.AppendLine();
             }
 
