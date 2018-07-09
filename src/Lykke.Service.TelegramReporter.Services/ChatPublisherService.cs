@@ -60,17 +60,17 @@ namespace Lykke.Service.TelegramReporter.Services
             _telegramSender = telegramSender;
         }
 
-        public async Task<IReadOnlyList<IChatPublisherSettings>> GetCmlChatPublishers()
+        public async Task<IReadOnlyList<IChatPublisherSettings>> GetCmlChatPublishersAsync()
         {
             return await _repo.GetCmlChatPublisherSettings();
         }
 
-        public async Task<IReadOnlyList<IChatPublisherSettings>> GetSeChatPublishers()
+        public async Task<IReadOnlyList<IChatPublisherSettings>> GetSeChatPublishersAsync()
         {
             return await _repo.GetSeChatPublisherSettings();
         }
 
-        public async Task<IReadOnlyList<IChatPublisherSettings>> GetBalanceChatPublishers()
+        public async Task<IReadOnlyList<IChatPublisherSettings>> GetBalanceChatPublishersAsync()
         {
             return await _repo.GetBalanceChatPublisherSettings();
         }
@@ -115,6 +115,21 @@ namespace Lykke.Service.TelegramReporter.Services
             EnsureInitialized();
             await _repo.RemoveBalanceChatPublisherSettingsAsync(chatPublisherId);
             await UpdateChatPublishers();
+        }
+
+        public async Task<IReadOnlyList<IBalanceWarning>> GetBalancesWarningsAsync()
+        {
+            return await _balanceWarningRepository.GetBalancesWarnings();
+        }
+
+        public async Task AddBalanceWarningAsync(IBalanceWarning balanceWarning)
+        {
+            await _balanceWarningRepository.AddBalanceWarningAsync(balanceWarning);
+        }
+
+        public async Task RemoveBalanceWarningAsync(string clientId, string assetId)
+        {
+            await _balanceWarningRepository.RemoveBalanceWarningAsync(clientId, assetId);
         }
 
         public void Start()

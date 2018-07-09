@@ -10,7 +10,10 @@ namespace Lykke.Service.TelegramReporter.AutoMapperProfiles
         {
             CreateMap<IChatPublisherSettings, ChatPublisherSettingsDto>();
             CreateMap<ChatPublisherSettingsPost, ChatPublisherSettings>()
-                .ForMember(x => x.ChatPublisherSettingsId, opt => opt.Ignore());            
+                .ForMember(x => x.ChatPublisherSettingsId, opt => opt.Ignore());
+
+            CreateMap<IBalanceWarning, BalanceWarningDto>();
+            CreateMap<BalanceWarningPost, BalanceWarning>();
         }
     }
 }
