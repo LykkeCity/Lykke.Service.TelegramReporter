@@ -53,7 +53,8 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
                 {"BTCCHF", null},
                 {"BTCJPY", null},
                 {"BTCEUR", null},
-                {"BTCGBP", null}
+                {"BTCGBP", null},
+                {"BTCAUD", null}
             };
 
             var balancesTask = _spreadEngineInstanceManager[instanceId]
@@ -133,10 +134,15 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
 
             foreach (var trader in traders)
             {
-                var traderInventory = assetPairs[trader.AssetPairId].Result;
+                var isFound = assetPairs.TryGetValue(trader.AssetPairId, out var traderInventoryTask);
+                var traderInventory = new InventoryModel();
+                if (isFound)
+                {
+                    traderInventory = traderInventoryTask?.Result;
+                }
 
                 state.Append(
-                    $"{trader.AssetPairId} inv: {traderInventory.Absolute:0.000}; " +
+                    $"{trader.AssetPairId} inv: {traderInventory?.Absolute:0.000}; " +
                     $"({trader.SellVolumeCoefficient:0.000}/{trader.BuyVolumeCoefficient:0.000}); " +
                     //$"daily: <daily sell volume>/<daily buy volume>; " +
                     $"PL: {trader.PnL:0.000}\r\n"
