@@ -86,9 +86,11 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
                     }
                 }
 
-                foreach (var balanceWarning in balanceWarnings)
+                var balanceWarningsInWallet = balanceWarnings.Where(x => x.Key == balanceWallet.Key);
+                foreach (var balanceWarning in balanceWarningsInWallet)
                 {
-                    if (!balances.ContainsKey(GetBalanceDictionaryKey(balanceWarning.Value.ClientId, balanceWarning.Value.AssetId)))
+                    if (!balances.ContainsKey(GetBalanceDictionaryKey(balanceWarning.Value.ClientId, balanceWarning.Value.AssetId))
+                        && balanceWarning.Value.MinBalance > 0M)
                     {
                         balanceIssues.Add(new BalanceIssueDto
                         {
