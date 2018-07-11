@@ -19,7 +19,7 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
             return new BalanceWarningEntity
             {
                 PartitionKey = balanceWarning.ClientId,
-                RowKey = balanceWarning.AssetId,
+                RowKey = balanceWarning.AssetId.ToUpperInvariant(),
                 MinBalance = balanceWarning.MinBalance,
             };
         }
@@ -47,7 +47,7 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
 
         public async Task RemoveBalanceWarningAsync(string clientId, string assetId)
         {
-            await _storage.DeleteAsync(clientId, assetId);
+            await _storage.DeleteAsync(clientId, assetId.ToUpperInvariant());
         }
     }
 }

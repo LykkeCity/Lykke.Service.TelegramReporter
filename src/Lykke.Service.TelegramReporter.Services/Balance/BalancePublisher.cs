@@ -63,24 +63,40 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
 
             foreach (var balanceWallet in balancesWallets)
             {
-                var balances = balanceWallet.Value.Result;
+                var balances = balanceWallet.Value.Result
+                    .ToDictionary(x => x.AssetId.ToUpperInvariant(), x => x);
+
                 foreach (var balance in balances)
                 {
                     var isWarningFound = balanceWarnings.TryGetValue(
-                        GetBalanceDictionaryKey(balanceWallet.Key, balance.AssetId), out var balanceWarning);
+                        GetBalanceDictionaryKey(balanceWallet.Key, balance.Key), out var balanceWarning);
 
                     if (isWarningFound)
                     {
-                        if (balance.Balance < balanceWarning.MinBalance)
+                        if (balance.Value.Balance < balanceWarning.MinBalance)
                         {
                             balanceIssues.Add(new BalanceIssueDto
                             {
                                 ClientId = balanceWallet.Key,
-                                AssetId = balance.AssetId,
-                                Balance = balance.Balance,
+                                AssetId = balance.Value.AssetId.ToUpperInvariant(),
+                                Balance = balance.Value.Balance,
                                 MinBalance = balanceWarning.MinBalance
                             });
                         }
+                    }
+                }
+
+                foreach (var balanceWarning in balanceWarnings)
+                {
+                    if (!balances.ContainsKey(balanceWarning.Value.AssetId))
+                    {
+                        balanceIssues.Add(new BalanceIssueDto
+                        {
+                            ClientId = balanceWallet.Key,
+                            AssetId = balanceWarning.Value.AssetId.ToUpperInvariant(),
+                            Balance = 0M,
+                            MinBalance = balanceWarning.Value.MinBalance
+                        });
                     }
                 }
             }
@@ -90,7 +106,7 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
 
         private string GetBalanceDictionaryKey(string clientId, string assetId)
         {
-            return $"{clientId}_{assetId}";
+            return $"{clientId}_{assetId.ToUpperInvariant()}";
         }
     }    
 }
