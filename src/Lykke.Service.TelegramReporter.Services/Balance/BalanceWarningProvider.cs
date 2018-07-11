@@ -18,6 +18,7 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
             foreach (var balanceIssue in balancesWithIssues)
             {
                 sb.AppendLine($"Wallet: {balanceIssue.ClientId}\r\n" +
+                              $"Name: {balanceIssue.Name}\r\n" +
                               $"Asset: {balanceIssue.AssetId}\r\n" +
                               $"Balance: {balanceIssue.Balance:0.000}\r\n" +
                               $"Min Balance: {balanceIssue.MinBalance:0.000}");

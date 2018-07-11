@@ -79,6 +79,7 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
                             {
                                 ClientId = balanceWallet.Key,
                                 AssetId = balance.Value.AssetId.ToUpperInvariant(),
+                                Name = balanceWarning.Name,
                                 Balance = balance.Value.Balance,
                                 MinBalance = balanceWarning.MinBalance
                             });
@@ -96,6 +97,7 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
                         {
                             ClientId = balanceWarning.Value.ClientId,
                             AssetId = balanceWarning.Value.AssetId.ToUpperInvariant(),
+                            Name = balanceWarning.Value.Name,
                             Balance = 0M,
                             MinBalance = balanceWarning.Value.MinBalance
                         });
