@@ -4,6 +4,7 @@
     {
         string ClientId { get; }
         string AssetId { get; }
+        string Name { get; }
         decimal MinBalance { get; }        
     }
 
@@ -11,6 +12,7 @@
     {
         public string ClientId { get; set; }
         public string AssetId { get; set; }
+        public string Name { get; set; }
         public decimal MinBalance { get; set; }        
     }
 }
