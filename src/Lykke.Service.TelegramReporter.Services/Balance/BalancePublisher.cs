@@ -64,12 +64,12 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
             foreach (var balanceWallet in balancesWallets)
             {
                 var balances = balanceWallet.Value.Result
-                    .ToDictionary(x => x.AssetId.ToUpperInvariant(), x => x);
+                    .ToDictionary(x => GetBalanceDictionaryKey(balanceWallet.Key, x.AssetId.ToUpperInvariant()), x => x);
 
                 foreach (var balance in balances)
                 {
                     var isWarningFound = balanceWarnings.TryGetValue(
-                        GetBalanceDictionaryKey(balanceWallet.Key, balance.Key), out var balanceWarning);
+                        GetBalanceDictionaryKey(balanceWallet.Key, balance.Value.AssetId), out var balanceWarning);
 
                     if (isWarningFound)
                     {
@@ -88,11 +88,11 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
 
                 foreach (var balanceWarning in balanceWarnings)
                 {
-                    if (!balances.ContainsKey(balanceWarning.Value.AssetId))
+                    if (!balances.ContainsKey(GetBalanceDictionaryKey(balanceWarning.Value.ClientId, balanceWarning.Value.AssetId)))
                     {
                         balanceIssues.Add(new BalanceIssueDto
                         {
-                            ClientId = balanceWallet.Key,
+                            ClientId = balanceWarning.Value.ClientId,
                             AssetId = balanceWarning.Value.AssetId.ToUpperInvariant(),
                             Balance = 0M,
                             MinBalance = balanceWarning.Value.MinBalance
