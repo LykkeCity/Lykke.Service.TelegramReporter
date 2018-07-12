@@ -12,11 +12,14 @@ using Autofac.Extensions.DependencyInjection;
 using AzureStorage.Tables;
 using Common.Log;
 using Lykke.Service.Assets.Client;
+using Lykke.Service.Balances.Client;
 using Lykke.Service.TelegramReporter.AzureRepositories;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Services;
+using Lykke.Service.TelegramReporter.Core.Services.Balance;
 using Lykke.Service.TelegramReporter.Core.Services.CrossMarketLiquidity;
 using Lykke.Service.TelegramReporter.Core.Services.SpreadEngine;
+using Lykke.Service.TelegramReporter.Services.Balance;
 using Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity;
 using Lykke.Service.TelegramReporter.Services.SpreadEngine;
 using Microsoft.Extensions.DependencyInjection;
@@ -92,8 +95,15 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<IAssetsService>()
                 .SingleInstance();
 
+            // Register Balance client
+            builder.RegisterBalancesClient(_appSettings.CurrentValue.BalancesServiceClient.ServiceUrl, _log);
+
             builder.RegisterType<SpreadEngineStateProvider>()
                 .As<ISpreadEngineStateProvider>()
+                .SingleInstance();
+
+            builder.RegisterType<BalanceWarningProvider>()
+                .As<IBalanceWarningProvider>()
                 .SingleInstance();
 
             builder.RegisterType<CmlSummarySubscriber>()
@@ -123,6 +133,12 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<IChatPublisherSettingsRepository>()
                 .WithParameter(TypedParameter.From(AzureTableStorage<ChatPublisherSettingsEntity>
                     .Create(_appSettings.ConnectionString(x => x.TelegramReporterService.Db.DataConnString), "ChatPublisherSettings", _log)))
+                .SingleInstance();
+
+            builder.RegisterType<BalanceWarningRepository>()
+                .As<IBalanceWarningRepository>()
+                .WithParameter(TypedParameter.From(AzureTableStorage<BalanceWarningEntity>
+                    .Create(_appSettings.ConnectionString(x => x.TelegramReporterService.Db.DataConnString), "BalancesWarnings", _log)))
                 .SingleInstance();
         }
     }
