@@ -42,6 +42,12 @@
     <ProjectReference Include="..\Lykke.Service.TelegramReporter.Core\Lykke.Service.TelegramReporter.Core.csproj" />
     <ProjectReference Include="..\Lykke.Service.TelegramReporter.Services\Lykke.Service.TelegramReporter.Services.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="Lykke.Service.NettingEngine.Client">
+      <HintPath>..\..\..\..\..\Users\Taras\.nuget\packages\lykke.service.nettingengine.client\0.1.1\lib\netstandard2.0\Lykke.Service.NettingEngine.Client.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
     <ItemGroup>
