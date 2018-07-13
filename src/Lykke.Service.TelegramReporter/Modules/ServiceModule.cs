@@ -18,11 +18,14 @@ using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.Balance;
 using Lykke.Service.TelegramReporter.Core.Services.CrossMarketLiquidity;
+using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
 using Lykke.Service.TelegramReporter.Core.Services.SpreadEngine;
 using Lykke.Service.TelegramReporter.Services.Balance;
 using Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity;
+using Lykke.Service.TelegramReporter.Services.NettingEngine;
 using Lykke.Service.TelegramReporter.Services.SpreadEngine;
 using Microsoft.Extensions.DependencyInjection;
+using Lykke.Service.RateCalculator.Client;
 
 namespace Lykke.Service.TelegramReporter.Modules
 {    
@@ -75,6 +78,13 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .AutoActivate()
                 .SingleInstance();
 
+            builder.RegisterType<NettingEngineInstanceManager>()
+                .WithParameter(TypedParameter.From(_appSettings.CurrentValue.NettingEngineServiceClient.Instances))
+                .As<INettingEngineInstanceManager>()
+                .As<IStartable>()
+                .AutoActivate()
+                .SingleInstance();
+
             builder.RegisterType<TelegramService>()
                 .As<ITelegramSender>()
                 .WithParameter("settings", _appSettings.CurrentValue.TelegramReporterService.Telegram)
@@ -98,8 +108,14 @@ namespace Lykke.Service.TelegramReporter.Modules
             // Register Balance client
             builder.RegisterBalancesClient(_appSettings.CurrentValue.BalancesServiceClient.ServiceUrl, _log);
 
+            builder.RegisterRateCalculatorClient(_appSettings.CurrentValue.RateCalculatorServiceClient.ServiceUrl, _log);
+
             builder.RegisterType<SpreadEngineStateProvider>()
                 .As<ISpreadEngineStateProvider>()
+                .SingleInstance();
+
+            builder.RegisterType<NettingEngineStateProvider>()
+                .As<INettingEngineStateProvider>()
                 .SingleInstance();
 
             builder.RegisterType<BalanceWarningProvider>()
@@ -113,6 +129,9 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<ITelegramSubscriber>();
 
             builder.RegisterType<SpreadEngineStateSubscriber>()
+                .As<ITelegramSubscriber>();
+
+            builder.RegisterType<NettingEngineStateSubscriber>()
                 .As<ITelegramSubscriber>();
 
             builder.RegisterType<ChatPublisherService>()

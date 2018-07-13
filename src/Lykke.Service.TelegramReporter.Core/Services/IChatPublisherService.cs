@@ -8,12 +8,15 @@ namespace Lykke.Service.TelegramReporter.Core.Services
     {
         Task<IReadOnlyList<IChatPublisherSettings>> GetCmlChatPublishersAsync();
         Task<IReadOnlyList<IChatPublisherSettings>> GetSeChatPublishersAsync();
+        Task<IReadOnlyList<IChatPublisherSettings>> GetNeChatPublishersAsync();
         Task<IReadOnlyList<IChatPublisherSettings>> GetBalanceChatPublishersAsync();
         Task AddCmlChatPublisherAsync(IChatPublisherSettings chatPublisher);
         Task AddSeChatPublisherAsync(IChatPublisherSettings chatPublisher);
+        Task AddNeChatPublisherAsync(IChatPublisherSettings chatPublisher);
         Task AddBalanceChatPublisherAsync(IChatPublisherSettings chatPublisher);
         Task RemoveCmlChatPublisherAsync(string chatPublisherId);
         Task RemoveSeChatPublisherAsync(string chatPublisherId);
+        Task RemoveNeChatPublisherAsync(string chatPublisherId);
         Task RemoveBalanceChatPublisherAsync(string chatPublisherId);
 
         Task<IReadOnlyList<IBalanceWarning>> GetBalancesWarningsAsync();
