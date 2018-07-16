@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Lykke.Service.Assets.Client;
-using Lykke.Service.Assets.Client.Models;
-using Lykke.Service.NettingEngine.Client.Models.Instruments;
 using Lykke.Service.TelegramReporter.Core.Instances;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
 using Lykke.Service.NettingEngine.Client.Extensions;
@@ -112,7 +110,7 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
             }
 
             state.Append("\r\n");
-            state.Append("Balances:\r\n");
+            state.Append("Balances:\r\n\r\n");
 
             foreach (var assetViewModel in assetsData)
             {

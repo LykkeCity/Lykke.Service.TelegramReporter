@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Args;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -76,20 +77,27 @@ namespace Lykke.Service.TelegramReporter.Services
                 var callbackQuery = callbackQueryEventArgs.CallbackQuery;
                 await _client.SendChatActionAsync(callbackQuery.Message.Chat.Id, ChatAction.Typing);
 
-                string command = ExtractCommand(callbackQuery.Data);
-
-                var tasks = new List<Task>();
-                foreach (ITelegramSubscriber subscriber in _subscribers)
+                if (!string.IsNullOrWhiteSpace(callbackQuery.Data))
                 {
-                    if (string.Equals(command, subscriber.Command, StringComparison.OrdinalIgnoreCase))
+                    string command = ExtractCommand(callbackQuery.Data);
+
+                    var tasks = new List<Task>();
+                    foreach (ITelegramSubscriber subscriber in _subscribers)
                     {
-                        tasks.Add(subscriber.ProcessCallbackQuery(this, callbackQuery));
+                        if (string.Equals(command, subscriber.Command, StringComparison.OrdinalIgnoreCase))
+                        {
+                            tasks.Add(subscriber.ProcessCallbackQuery(this, callbackQuery));
+                        }
                     }
-                }
 
-                if (tasks.Any())
-                {
-                    await Task.WhenAll(tasks);
+                    if (tasks.Any())
+                    {
+                        await Task.WhenAll(tasks);
+                    }
+                    else
+                    {
+                        await SendMessageAsync("Unknown command", callbackQuery.Message);
+                    }
                 }
                 else
                 {
@@ -109,19 +117,26 @@ namespace Lykke.Service.TelegramReporter.Services
             {
                 await _client.SendChatActionAsync(messageEventArgs.Message.Chat.Id, ChatAction.Typing);
 
-                string command = ExtractCommand(messageEventArgs.Message.Text);
-                var tasks = new List<Task>();
-                foreach (ITelegramSubscriber subscriber in _subscribers)
-                {
-                    if (string.Equals(command, subscriber.Command, StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrWhiteSpace(messageEventArgs.Message.Text))
+                {                    
+                    string command = ExtractCommand(messageEventArgs.Message.Text);
+                    var tasks = new List<Task>();
+                    foreach (ITelegramSubscriber subscriber in _subscribers)
                     {
-                        tasks.Add(subscriber.ProcessMessageAsync(this, messageEventArgs.Message));
+                        if (string.Equals(command, subscriber.Command, StringComparison.OrdinalIgnoreCase))
+                        {
+                            tasks.Add(subscriber.ProcessMessageAsync(this, messageEventArgs.Message));
+                        }
                     }
-                }
 
-                if (tasks.Any())
-                {
-                    await Task.WhenAll(tasks);
+                    if (tasks.Any())
+                    {
+                        await Task.WhenAll(tasks);
+                    }
+                    else
+                    {
+                        await SendMessageAsync("Unknown command", messageEventArgs.Message);
+                    }
                 }
                 else
                 {
@@ -155,10 +170,18 @@ namespace Lykke.Service.TelegramReporter.Services
                 replyToMessageId: message.MessageId);
         }
 
-        public async Task<Message> SendTextMessageAsync(ChatId chatId, string text, ParseMode parseMode = ParseMode.Default, bool disableWebPagePreview = false, bool disableNotification = false, int replyToMessageId = 0, IReplyMarkup replyMarkup = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task SendTextMessageAsync(ChatId chatId, string text, ParseMode parseMode = ParseMode.Default, bool disableWebPagePreview = false, bool disableNotification = false, int replyToMessageId = 0, IReplyMarkup replyMarkup = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return await _client.SendTextMessageAsync(chatId, text, parseMode, disableWebPagePreview,
-                disableNotification, replyToMessageId, replyMarkup, cancellationToken);
+            try
+            {
+                await _client.SendTextMessageAsync(chatId, text, parseMode, disableWebPagePreview,
+                    disableNotification, replyToMessageId, replyMarkup, cancellationToken);
+            }
+            catch (ChatNotFoundException ex)
+            {
+                await _log.WriteInfoAsync(nameof(TelegramService), nameof(SendTextMessageAsync),
+                    $"ChatId: {chatId.ToJson()}, Exception: {ex}");
+            }
         }
 
         public void Dispose()

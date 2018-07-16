@@ -150,13 +150,13 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
             }
 
             state.Append("\r\n");
-            state.Append("Balances:\r\n");
+            state.Append("Balances:\r\n\r\n");
 
             foreach (var inventoryModel in assetInventories)
             {
                 state.Append(
                     $"{inventoryModel.AssetId} Balance: {inventoryModel.Balance:0.000} " +
-                    $"Inventory: {inventoryModel.Volume:0.000} Base Inventory: {inventoryModel.BaseVolume:0.000}\r\n"
+                    $"Inventory: {inventoryModel.Volume:0.000}\r\n"
                 );
             }
 
