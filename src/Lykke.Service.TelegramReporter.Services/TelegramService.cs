@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Args;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -169,10 +170,18 @@ namespace Lykke.Service.TelegramReporter.Services
                 replyToMessageId: message.MessageId);
         }
 
-        public async Task<Message> SendTextMessageAsync(ChatId chatId, string text, ParseMode parseMode = ParseMode.Default, bool disableWebPagePreview = false, bool disableNotification = false, int replyToMessageId = 0, IReplyMarkup replyMarkup = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task SendTextMessageAsync(ChatId chatId, string text, ParseMode parseMode = ParseMode.Default, bool disableWebPagePreview = false, bool disableNotification = false, int replyToMessageId = 0, IReplyMarkup replyMarkup = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return await _client.SendTextMessageAsync(chatId, text, parseMode, disableWebPagePreview,
-                disableNotification, replyToMessageId, replyMarkup, cancellationToken);
+            try
+            {
+                await _client.SendTextMessageAsync(chatId, text, parseMode, disableWebPagePreview,
+                    disableNotification, replyToMessageId, replyMarkup, cancellationToken);
+            }
+            catch (ChatNotFoundException ex)
+            {
+                await _log.WriteInfoAsync(nameof(TelegramService), nameof(SendTextMessageAsync),
+                    $"ChatId: {chatId.ToJson()}, Exception: {ex}");
+            }
         }
 
         public void Dispose()

@@ -8,7 +8,7 @@ namespace Lykke.Service.TelegramReporter.Core.Services
 {
     public interface ITelegramSender
     {
-        Task<Message> SendTextMessageAsync(ChatId chatId,
+        Task SendTextMessageAsync(ChatId chatId,
             string text,
             ParseMode parseMode = ParseMode.Default,
             bool disableWebPagePreview = false,
