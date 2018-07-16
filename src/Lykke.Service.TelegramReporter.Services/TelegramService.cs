@@ -76,20 +76,27 @@ namespace Lykke.Service.TelegramReporter.Services
                 var callbackQuery = callbackQueryEventArgs.CallbackQuery;
                 await _client.SendChatActionAsync(callbackQuery.Message.Chat.Id, ChatAction.Typing);
 
-                string command = ExtractCommand(callbackQuery.Data);
-
-                var tasks = new List<Task>();
-                foreach (ITelegramSubscriber subscriber in _subscribers)
+                if (!string.IsNullOrWhiteSpace(callbackQuery.Data))
                 {
-                    if (string.Equals(command, subscriber.Command, StringComparison.OrdinalIgnoreCase))
+                    string command = ExtractCommand(callbackQuery.Data);
+
+                    var tasks = new List<Task>();
+                    foreach (ITelegramSubscriber subscriber in _subscribers)
                     {
-                        tasks.Add(subscriber.ProcessCallbackQuery(this, callbackQuery));
+                        if (string.Equals(command, subscriber.Command, StringComparison.OrdinalIgnoreCase))
+                        {
+                            tasks.Add(subscriber.ProcessCallbackQuery(this, callbackQuery));
+                        }
                     }
-                }
 
-                if (tasks.Any())
-                {
-                    await Task.WhenAll(tasks);
+                    if (tasks.Any())
+                    {
+                        await Task.WhenAll(tasks);
+                    }
+                    else
+                    {
+                        await SendMessageAsync("Unknown command", callbackQuery.Message);
+                    }
                 }
                 else
                 {
@@ -109,19 +116,26 @@ namespace Lykke.Service.TelegramReporter.Services
             {
                 await _client.SendChatActionAsync(messageEventArgs.Message.Chat.Id, ChatAction.Typing);
 
-                string command = ExtractCommand(messageEventArgs.Message.Text);
-                var tasks = new List<Task>();
-                foreach (ITelegramSubscriber subscriber in _subscribers)
-                {
-                    if (string.Equals(command, subscriber.Command, StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrWhiteSpace(messageEventArgs.Message.Text))
+                {                    
+                    string command = ExtractCommand(messageEventArgs.Message.Text);
+                    var tasks = new List<Task>();
+                    foreach (ITelegramSubscriber subscriber in _subscribers)
                     {
-                        tasks.Add(subscriber.ProcessMessageAsync(this, messageEventArgs.Message));
+                        if (string.Equals(command, subscriber.Command, StringComparison.OrdinalIgnoreCase))
+                        {
+                            tasks.Add(subscriber.ProcessMessageAsync(this, messageEventArgs.Message));
+                        }
                     }
-                }
 
-                if (tasks.Any())
-                {
-                    await Task.WhenAll(tasks);
+                    if (tasks.Any())
+                    {
+                        await Task.WhenAll(tasks);
+                    }
+                    else
+                    {
+                        await SendMessageAsync("Unknown command", messageEventArgs.Message);
+                    }
                 }
                 else
                 {
