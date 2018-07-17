@@ -82,7 +82,7 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
 
         protected override async Task<long[]> GetAllowedChatIds()
         {
-            return (await _repo.GetSeChatPublisherSettings()).Select(x => x.ChatId).ToArray();
+            return (await Repo.GetSeChatPublisherSettings()).Select(x => x.ChatId).ToArray();
         }
 
         private string ExtractInstanceId(string data)

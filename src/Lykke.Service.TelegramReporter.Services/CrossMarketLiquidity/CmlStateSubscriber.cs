@@ -80,7 +80,7 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
 
         protected override async Task<long[]> GetAllowedChatIds()
         {
-            return (await _repo.GetCmlChatPublisherSettings()).Select(x => x.ChatId).ToArray();
+            return (await Repo.GetCmlChatPublisherSettings()).Select(x => x.ChatId).ToArray();
         }
 
         private string ExtractInstanceId(string data)

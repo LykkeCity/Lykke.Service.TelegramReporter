@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Common;
 using Common.Log;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Services;
@@ -9,13 +10,13 @@ namespace Lykke.Service.TelegramReporter.Services
 {
     public abstract class ChatSubscriber : ITelegramSubscriber
     {
-        protected readonly IChatPublisherSettingsRepository _repo;
+        protected readonly IChatPublisherSettingsRepository Repo;
 
         protected readonly ILog Log;
 
         protected ChatSubscriber(IChatPublisherSettingsRepository repo, ILog log)
         {
-            _repo = repo;
+            Repo = repo;
             Log = log;
         }
 
@@ -23,8 +24,14 @@ namespace Lykke.Service.TelegramReporter.Services
 
         public async Task ProcessMessageAsync(ITelegramSender telegramSender, Message message)
         {
+            await Log.WriteInfoAsync(nameof(ChatSubscriber), nameof(ProcessMessageAsync), $"message: {message.ToJson()}",
+                "Command received.");
+
             if (!await ValidateChat(message.Chat.Id, telegramSender))
             {
+                await Log.WriteInfoAsync(nameof(ChatSubscriber), nameof(ProcessMessageAsync), $"message: {message.ToJson()}",
+                    "Unrecognized chat.");
+
                 return;
             }
 
@@ -33,8 +40,14 @@ namespace Lykke.Service.TelegramReporter.Services
 
         public async Task ProcessCallbackQuery(ITelegramSender telegramSender, CallbackQuery callbackQuery)
         {
+            await Log.WriteInfoAsync(nameof(ChatSubscriber), nameof(ProcessCallbackQuery), $"callbackQuery: {callbackQuery.ToJson()}",
+                "Command received.");
+
             if (!await ValidateChat(callbackQuery.Message.Chat.Id, telegramSender))
             {
+                await Log.WriteInfoAsync(nameof(ChatSubscriber), nameof(ProcessCallbackQuery), $"callbackQuery: {callbackQuery.ToJson()}",
+                    "Unrecognized chat.");
+
                 return;
             }
 
@@ -49,8 +62,8 @@ namespace Lykke.Service.TelegramReporter.Services
             var allowedChatIds = await GetAllowedChatIds();
 
             if (!allowedChatIds.Contains(chatId))
-            {
-                await telegramSender.SendTextMessageAsync(chatId, "Unrecognized chat");
+            {                
+                await telegramSender.SendTextMessageAsync(chatId, "Unrecognized chat");                
 
                 return false;
             }
