@@ -97,11 +97,17 @@ namespace Lykke.Service.TelegramReporter.Services
                     else
                     {
                         await SendMessageAsync("Unknown command", callbackQuery.Message);
+
+                        await _log.WriteInfoAsync(nameof(TelegramService), nameof(ClientOnOnCallbackQuery), $"callbackQueryEventArgs: {callbackQueryEventArgs.ToJson()}",
+                            "Unknown command.");
                     }
                 }
                 else
                 {
                     await SendMessageAsync("Unknown command", callbackQuery.Message);
+
+                    await _log.WriteInfoAsync(nameof(TelegramService), nameof(ClientOnOnCallbackQuery), $"callbackQueryEventArgs: {callbackQueryEventArgs.ToJson()}",
+                        "Unknown command.");
                 }
             }
             catch (Exception ex)
@@ -136,11 +142,17 @@ namespace Lykke.Service.TelegramReporter.Services
                     else
                     {
                         await SendMessageAsync("Unknown command", messageEventArgs.Message);
+
+                        await _log.WriteInfoAsync(nameof(TelegramService), nameof(ClientOnOnMessage), $"messageEventArgs: {messageEventArgs.ToJson()}",
+                            "Unknown command.");
                     }
                 }
                 else
                 {
                     await SendMessageAsync("Unknown command", messageEventArgs.Message);
+
+                    await _log.WriteInfoAsync(nameof(TelegramService), nameof(ClientOnOnMessage), $"messageEventArgs: {messageEventArgs.ToJson()}",
+                        "Unknown command.");
                 }
             }
             catch (Exception ex)
