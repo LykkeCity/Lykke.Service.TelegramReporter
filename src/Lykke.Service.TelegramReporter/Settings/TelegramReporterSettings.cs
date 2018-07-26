@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Lykke.Service.TelegramReporter.Core.Settings;
 
 namespace Lykke.Service.TelegramReporter.Settings
@@ -9,5 +10,7 @@ namespace Lykke.Service.TelegramReporter.Settings
         public DbSettings Db { get; set; }
 
         public TelegramSettings Telegram { get; set; }
+
+        public TimeSpan AssetsCacheExpirationPeriod { get; set; }
     }
 }
