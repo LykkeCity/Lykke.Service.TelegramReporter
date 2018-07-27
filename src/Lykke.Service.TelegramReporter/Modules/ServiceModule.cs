@@ -81,8 +81,6 @@ namespace Lykke.Service.TelegramReporter.Modules
             builder.RegisterType<NettingEngineInstanceManager>()
                 .WithParameter(TypedParameter.From(_appSettings.CurrentValue.NettingEngineServiceClient.Instances))
                 .As<INettingEngineInstanceManager>()
-                .As<IStartable>()
-                .AutoActivate()
                 .SingleInstance();
 
             builder.RegisterType<TelegramService>()
@@ -104,6 +102,10 @@ namespace Lykke.Service.TelegramReporter.Modules
             builder.RegisterInstance(new AssetsService(new Uri(_appSettings.CurrentValue.AssetsServiceClient.ServiceUrl)))
                 .As<IAssetsService>()
                 .SingleInstance();
+
+            _services.RegisterAssetsClient(AssetServiceSettings
+                .Create(new Uri(_appSettings.CurrentValue.AssetsServiceClient.ServiceUrl),
+                    _appSettings.CurrentValue.TelegramReporterService.AssetsCacheExpirationPeriod), _log);
 
             // Register Balance client
             builder.RegisterBalancesClient(_appSettings.CurrentValue.BalancesServiceClient.ServiceUrl, _log);

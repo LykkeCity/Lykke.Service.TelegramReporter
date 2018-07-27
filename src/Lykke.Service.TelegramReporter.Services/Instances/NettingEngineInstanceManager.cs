@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using Autofac;
 using Common.Log;
+using Lykke.Service.TelegramReporter.Core.Instances;
 using JetBrains.Annotations;
 using Lykke.Service.NettingEngine.Client.Api;
-using Lykke.Service.NettingEngine.Client.Models.Settings;
-using Lykke.Service.TelegramReporter.Core.Instances;
+using Lykke.Service.NettingEngine.Client.Models.ServiceInfo;
 
 namespace Lykke.Service.TelegramReporter.Services.Instances
 {
     [UsedImplicitly]
-    public class NettingEngineInstanceManager : INettingEngineInstanceManager, IStartable
+    public class NettingEngineInstanceManager : INettingEngineInstanceManager
     {
+        private readonly object _sync = new object();
         private readonly string[] _instances;
         private readonly ILog _log;
-
-        private readonly List<NettingEngineInstance> _spreadEngineInstances = new List<NettingEngineInstance>();
+        private List<NettingEngineInstance> _nettingEngineInstances;
 
         public NettingEngineInstanceManager(string[] instances, ILog log)
         {
@@ -24,20 +23,36 @@ namespace Lykke.Service.TelegramReporter.Services.Instances
         }
 
         public IReadOnlyList<NettingEngineInstance> Instances
-            => _spreadEngineInstances;
+        {
+            get
+            {
+                if (_nettingEngineInstances != null)
+                    return _nettingEngineInstances;
+
+                lock (_sync)
+                {
+                    if (_nettingEngineInstances == null)
+                    {
+                        Initialize();
+                    }
+                }
+                return _nettingEngineInstances;
+            }
+        }
 
         public NettingEngineInstance this[int index]
-            => _spreadEngineInstances[index];
+            => Instances[index];
 
-        public void Start()
+        private void Initialize()
         {
-            _spreadEngineInstances.Clear();
+            var instances = new List<NettingEngineInstance>();
 
-            for (int i = 0; i < _instances.Length; i++)
+            for (var i = 0; i < _instances.Length; i++)
             {
                 try
                 {
                     var generator = HttpClientGenerator.HttpClientGenerator.BuildForUrl(_instances[i])
+                        //.WithAdditionalCallsWrapper(new ExceptionHandlerCallsWrapper())
                         .WithoutRetries()
                         .WithoutCaching()
                         .Create();
@@ -53,24 +68,30 @@ namespace Lykke.Service.TelegramReporter.Services.Instances
                         Inventory = generator.Generate<IInventoryApi>(),
                         OrderBooks = generator.Generate<IOrderBooksApi>(),
                         Settings = generator.Generate<ISettingsApi>(),
-                        Trades = generator.Generate<ITradesApi>()
+                        Trades = generator.Generate<ITradesApi>(),
+                        AssetHedgeSettings = generator.Generate<IAssetHedgeSettingsApi>(),
+                        Exchanges = generator.Generate<IExchangesApi>(),
+                        ServiceInfo = generator.Generate<IServiceInfoApi>(),
+                        ExternalInstruments = generator.Generate<IExternalInstrumentsApi>(),
+                        HedgeLimitOrders = generator.Generate<IHedgeLimitOrdersApi>()
                     };
 
-                    ServiceSettingsModel serviceSettings = instance.Settings.GetAsync()
+                    ServiceInfoModel serviceInfo = instance.ServiceInfo.GetAsync()
                         .GetAwaiter()
                         .GetResult();
 
-                    instance.DisplayName = serviceSettings.Name;
-                    instance.Exchanges = serviceSettings.Exchanges;
+                    instance.DisplayName = serviceInfo.Name;
 
-                    _spreadEngineInstances.Add(instance);
+                    instances.Add(instance);
                 }
                 catch (Exception exception)
                 {
-                    _log.WriteWarning(nameof(Start), new { instance = _instances[i] }, "Can not create service instance.",
+                    _log.WriteWarning(nameof(Initialize), new { instance = _instances[i] }, "Can not create service instance.",
                         exception);
                 }
             }
+
+            _nettingEngineInstances = instances;
         }
     }
 }

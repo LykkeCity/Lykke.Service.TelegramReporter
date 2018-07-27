@@ -23,20 +23,12 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine.Data
 
         public IReadOnlyList<ItemViewModel> AllowArbitrage { get; set; }
 
-        public IReadOnlyList<ItemViewModel> Hedging { get; set; }
-
-        public string Exchange { get; set; }
-
-        public decimal? Tier1 { get; set; }
-
-        public decimal? Tier2 { get; set; }
-
-        public decimal? Tier3 { get; set; }
+        public IReadOnlyList<ItemViewModel> TraderTypes { get; set; }
 
         public ItemViewModel SelectedArbitrage
             => AllowArbitrage?.FirstOrDefault(o => o.Selected);
 
-        public ItemViewModel SelectedHedging
-            => Hedging?.FirstOrDefault(o => o.Selected);
+        public ItemViewModel SelectedTraderType
+            => TraderTypes?.FirstOrDefault(o => o.Selected);
     }
 }
