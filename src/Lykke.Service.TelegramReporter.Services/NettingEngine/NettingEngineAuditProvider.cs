@@ -51,7 +51,7 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
             {
                 case AuditEventType.InstrumentStarted:
                 case AuditEventType.InstrumentStopped:
-                    state.AppendLine($"Instrument: {instrument}");
+                    state.AppendLine($"{instrument}");
                     break;
                 case AuditEventType.InstrumentSettingsChanged:
                     await HandleInstrumentSettingsChanged(state, instrument, auditMessage);
