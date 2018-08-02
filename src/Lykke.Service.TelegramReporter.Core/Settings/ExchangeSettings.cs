@@ -1,4 +1,4 @@
-﻿namespace Lykke.Service.TelegramReporter.Rabbit
+﻿namespace Lykke.Service.TelegramReporter.Core.Settings
 {
     public class ExchangeSettings
     {

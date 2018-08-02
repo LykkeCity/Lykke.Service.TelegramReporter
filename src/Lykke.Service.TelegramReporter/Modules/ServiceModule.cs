@@ -26,7 +26,7 @@ using Lykke.Service.TelegramReporter.Services.NettingEngine;
 using Lykke.Service.TelegramReporter.Services.SpreadEngine;
 using Microsoft.Extensions.DependencyInjection;
 using Lykke.Service.RateCalculator.Client;
-using Lykke.Service.TelegramReporter.Rabbit;
+using Lykke.Service.TelegramReporter.Services.NettingEngine.Rabbit;
 
 namespace Lykke.Service.TelegramReporter.Modules
 {    

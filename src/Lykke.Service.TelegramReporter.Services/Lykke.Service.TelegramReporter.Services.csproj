@@ -11,6 +11,7 @@
     <PackageReference Include="HttpToSocks5Proxy" Version="1.0.5" />
     <PackageReference Include="Lykke.Common" Version="6.8.4" />
     <PackageReference Include="Lykke.HttpClientGenerator" Version="1.0.0" />
+    <PackageReference Include="Lykke.RabbitMqBroker" Version="7.0.0" />
     <PackageReference Include="Lykke.Service.Assets.Client" Version="4.0.1" />
     <PackageReference Include="Lykke.Service.Balances.Client" Version="1.1.2" />
     <PackageReference Include="Lykke.Service.CrossMarketLiquidity.Client" Version="1.0.3" />

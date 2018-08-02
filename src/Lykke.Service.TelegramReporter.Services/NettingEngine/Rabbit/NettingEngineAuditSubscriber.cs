@@ -7,9 +7,9 @@ using Lykke.RabbitMqBroker;
 using Lykke.RabbitMqBroker.Subscriber;
 using Lykke.Service.NettingEngine.Client.RabbitMq;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
-using Lykke.Service.TelegramReporter.Settings;
+using Lykke.Service.TelegramReporter.Core.Settings;
 
-namespace Lykke.Service.TelegramReporter.Rabbit
+namespace Lykke.Service.TelegramReporter.Services.NettingEngine.Rabbit
 {
     public class NettingEngineAuditSubscriber : IStartable, IStopable
     {
