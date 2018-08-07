@@ -129,6 +129,10 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<IBalanceWarningProvider>()
                 .SingleInstance();
 
+            builder.RegisterType<ExternalBalanceWarningProvider>()
+                .As<IExternalBalanceWarningProvider>()
+                .SingleInstance();
+
             builder.RegisterType<CmlSummarySubscriber>()
                 .As<ITelegramSubscriber>();
 
@@ -169,6 +173,12 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<IBalanceWarningRepository>()
                 .WithParameter(TypedParameter.From(AzureTableStorage<BalanceWarningEntity>
                     .Create(_appSettings.ConnectionString(x => x.TelegramReporterService.Db.DataConnString), "BalancesWarnings", _log)))
+                .SingleInstance();
+
+            builder.RegisterType<ExternalBalanceWarningRepository>()
+                .As<IExternalBalanceWarningRepository>()
+                .WithParameter(TypedParameter.From(AzureTableStorage<ExternalBalanceWarningEntity>
+                    .Create(_appSettings.ConnectionString(x => x.TelegramReporterService.Db.DataConnString), "ExternalBalancesWarnings", _log)))
                 .SingleInstance();
         }
 

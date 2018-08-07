@@ -83,6 +83,21 @@ namespace Lykke.Service.TelegramReporter.Controllers
         }
 
         /// <summary>
+        /// Gets external balance chat publishers.
+        /// </summary>
+        /// <returns>External balance chat publishers</returns>
+        [HttpGet("externalbalancechatpublishersettings", Name = "GetExternalBalanceChatPublisherSettingsAsync")]
+        [Produces("application/json")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(IReadOnlyList<ChatPublisherSettingsDto>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetExternalBalanceChatPublisherSettingsAsync()
+        {
+            var chatPublishers = await _chatPublisherService.GetExternalBalanceChatPublishersAsync();
+            var vm = _mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
+            return Ok(vm);
+        }
+
+        /// <summary>
         /// Adds CML chat publisher.
         /// </summary>
         /// <param name="chatPublisher">CML chat publisher to add.</param>
@@ -199,6 +214,35 @@ namespace Lykke.Service.TelegramReporter.Controllers
         }
 
         /// <summary>
+        /// Adds external balance chat publisher.
+        /// </summary>
+        /// <param name="chatPublisher">External balance chat publisher to add.</param>
+        [HttpPut("externalbalancechatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddExternalBalanceChatPublisherSettingsAsync([FromBody] ChatPublisherSettingsPost chatPublisher)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ErrorResponse.Create(ModelState));
+            }
+
+            var model = _mapper
+                .Map<ChatPublisherSettings>(chatPublisher);
+
+            try
+            {
+                await _chatPublisherService.AddExternalBalanceChatPublisherAsync(model);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponse.Create(ex.Message));
+            }
+
+            return StatusCode((int)HttpStatusCode.OK);
+        }
+
+        /// <summary>
         /// Deletes CML chat publisher.
         /// </summary>
         /// <param name="chatPublisherSettingsId">CML chat publisher settings Id</param>
@@ -251,6 +295,19 @@ namespace Lykke.Service.TelegramReporter.Controllers
         }
 
         /// <summary>
+        /// Deletes external balance chat publisher.
+        /// </summary>
+        /// <param name="chatPublisherSettingsId">External balance chat publisher settings Id</param>
+        /// <returns></returns>
+        [HttpDelete("externalbalancechatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> RemoveExternalBalanceChatPublisherSettingsAsync(string chatPublisherSettingsId)
+        {
+            await _chatPublisherService.RemoveExternalBalanceChatPublisherAsync(chatPublisherSettingsId);
+            return NoContent();
+        }
+
+        /// <summary>
         /// Gets balances warnings.
         /// </summary>
         /// <returns>Balances warnings</returns>
@@ -262,6 +319,21 @@ namespace Lykke.Service.TelegramReporter.Controllers
         {
             var balancesWarnings = await _chatPublisherService.GetBalancesWarningsAsync();
             var vm = _mapper.Map<IReadOnlyList<IBalanceWarning>, IReadOnlyList<BalanceWarningDto>>(balancesWarnings);
+            return Ok(vm);
+        }
+
+        /// <summary>
+        /// Gets external balances warnings.
+        /// </summary>
+        /// <returns>External balances warnings</returns>
+        [HttpGet("externalbalanceswarnings", Name = "GetExternalBalancesWarningsAsync")]
+        [Produces("application/json")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(IReadOnlyList<ExternalBalanceWarningDto>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetExternalBalancesWarningsAsync()
+        {
+            var balancesWarnings = await _chatPublisherService.GetExternalBalancesWarningsAsync();
+            var vm = _mapper.Map<IReadOnlyList<IExternalBalanceWarning>, IReadOnlyList<ExternalBalanceWarningDto>>(balancesWarnings);
             return Ok(vm);
         }
 
@@ -295,6 +367,35 @@ namespace Lykke.Service.TelegramReporter.Controllers
         }
 
         /// <summary>
+        /// Adds external balance warning.
+        /// </summary>
+        /// <param name="balanceWarning">External balance warning to add.</param>
+        [HttpPut("externalbalancewarning")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddExternalBalanceWarningAsync([FromBody] ExternalBalanceWarningPost balanceWarning)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ErrorResponse.Create(ModelState));
+            }
+
+            var model = _mapper
+                .Map<ExternalBalanceWarning>(balanceWarning);
+
+            try
+            {
+                await _chatPublisherService.AddExternalBalanceWarningAsync(model);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ErrorResponse.Create(ex.Message));
+            }
+
+            return StatusCode((int)HttpStatusCode.OK);
+        }
+
+        /// <summary>
         /// Deletes balance warning.
         /// </summary>
         /// <param name="clientId">Wallet</param>
@@ -305,6 +406,20 @@ namespace Lykke.Service.TelegramReporter.Controllers
         public async Task<IActionResult> RemoveBalanceWarningAsync(string clientId, string assetId)
         {
             await _chatPublisherService.RemoveBalanceWarningAsync(clientId, assetId);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Deletes external balance warning.
+        /// </summary>
+        /// <param name="exchange">Exchange</param>
+        /// <param name="assetId">Asset ID</param>
+        /// <returns></returns>
+        [HttpDelete("externalbalancewarning")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> RemoveExternalBalanceWarningAsync(string exchange, string assetId)
+        {
+            await _chatPublisherService.RemoveExternalBalanceWarningAsync(exchange, assetId);
             return NoContent();
         }
     }

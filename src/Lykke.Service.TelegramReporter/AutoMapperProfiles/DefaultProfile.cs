@@ -14,6 +14,9 @@ namespace Lykke.Service.TelegramReporter.AutoMapperProfiles
 
             CreateMap<IBalanceWarning, BalanceWarningDto>();
             CreateMap<BalanceWarningPost, BalanceWarning>();
+
+            CreateMap<IExternalBalanceWarning, ExternalBalanceWarningDto>();
+            CreateMap<ExternalBalanceWarningPost, ExternalBalanceWarning>();
         }
     }
 }

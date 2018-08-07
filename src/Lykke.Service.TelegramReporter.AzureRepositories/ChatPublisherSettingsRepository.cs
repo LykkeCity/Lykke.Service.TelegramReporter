@@ -30,6 +30,11 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
             return "BalanceChatPublisher";
         }
 
+        public static string GeneratePartitionKeyForExternalBalance()
+        {
+            return "ExternalBalanceChatPublisher";
+        }
+
         public static string GeneratePartitionKeyForNe()
         {
             return "NeChatPublisher";
@@ -77,7 +82,18 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
                 TimeSpan = chatPublisher.TimeSpan,
                 ChatId = chatPublisher.ChatId
             };
-        }        
+        }
+
+        public static ChatPublisherSettingsEntity CreateForExternalBalance(IChatPublisherSettings chatPublisher)
+        {
+            return new ChatPublisherSettingsEntity
+            {
+                PartitionKey = GeneratePartitionKeyForExternalBalance(),
+                RowKey = Guid.NewGuid().ToString(),
+                TimeSpan = chatPublisher.TimeSpan,
+                ChatId = chatPublisher.ChatId
+            };
+        }
     }
 
     public class ChatPublisherSettingsRepository : IChatPublisherSettingsRepository
@@ -109,6 +125,11 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
             return (await _storage.GetDataAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForBalance())).ToArray();
         }
 
+        public async Task<IReadOnlyList<IChatPublisherSettings>> GetExternalBalanceChatPublisherSettings()
+        {
+            return (await _storage.GetDataAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForExternalBalance())).ToArray();
+        }
+
         public Task AddCmlChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher)
         {
             var entity = ChatPublisherSettingsEntity.CreateForCml(chatPublisher);
@@ -133,6 +154,12 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
             return _storage.InsertAsync(entity);
         }
 
+        public Task AddExternalBalanceChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher)
+        {
+            var entity = ChatPublisherSettingsEntity.CreateForExternalBalance(chatPublisher);
+            return _storage.InsertAsync(entity);
+        }
+
         public async Task RemoveCmlChatPublisherSettingsAsync(string chatPublisherSettingsId)
         {
             await _storage.DeleteAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForCml(), chatPublisherSettingsId);
@@ -151,6 +178,11 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
         public async Task RemoveBalanceChatPublisherSettingsAsync(string chatPublisherId)
         {
             await _storage.DeleteAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForBalance(), chatPublisherId);
+        }
+
+        public async Task RemoveExternalBalanceChatPublisherSettingsAsync(string chatPublisherId)
+        {
+            await _storage.DeleteAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForExternalBalance(), chatPublisherId);
         }
     }
 }

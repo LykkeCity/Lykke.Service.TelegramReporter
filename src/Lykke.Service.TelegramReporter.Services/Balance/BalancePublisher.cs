@@ -55,7 +55,7 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
             var balanceWarnings = (await _balanceWarningRepository.GetBalancesWarnings())
                 .ToDictionary(x => GetBalanceDictionaryKey(x.ClientId, x.AssetId), x => x);
 
-            var balancesWallets = balanceWarnings.Values.Select(x => x.ClientId).Distinct()
+            var balancesWallets = balanceWarnings.Values.Select(x => x.ClientId.ToUpperInvariant()).Distinct()
                 .ToDictionary(x => x, x => _balancesClient.GetClientBalances(x));
 
             var tasks = balancesWallets.Values.Cast<Task>().ToList();
@@ -64,12 +64,11 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
             foreach (var balanceWallet in balancesWallets)
             {
                 var balances = balanceWallet.Value.Result
-                    .ToDictionary(x => GetBalanceDictionaryKey(balanceWallet.Key, x.AssetId.ToUpperInvariant()), x => x);
+                    .ToDictionary(x => GetBalanceDictionaryKey(balanceWallet.Key, x.AssetId), x => x);
 
                 foreach (var balance in balances)
                 {
-                    var isWarningFound = balanceWarnings.TryGetValue(
-                        GetBalanceDictionaryKey(balanceWallet.Key, balance.Value.AssetId), out var balanceWarning);
+                    var isWarningFound = balanceWarnings.TryGetValue(balance.Key, out var balanceWarning);
 
                     if (isWarningFound)
                     {
@@ -77,8 +76,8 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
                         {
                             balanceIssues.Add(new BalanceIssueDto
                             {
-                                ClientId = balanceWallet.Key,
-                                AssetId = balance.Value.AssetId.ToUpperInvariant(),
+                                ClientId = balanceWarning.ClientId,
+                                AssetId = balanceWarning.AssetId.ToUpperInvariant(),
                                 Name = balanceWarning.Name,
                                 Balance = balance.Value.Balance,
                                 MinBalance = balanceWarning.MinBalance
@@ -87,7 +86,8 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
                     }
                 }
 
-                var balanceWarningsInWallet = balanceWarnings.Where(x => x.Value.ClientId == balanceWallet.Key);
+                var balanceWarningsInWallet = balanceWarnings
+                    .Where(x => x.Value.ClientId.ToUpperInvariant() == balanceWallet.Key.ToUpperInvariant());
                 foreach (var balanceWarning in balanceWarningsInWallet)
                 {
                     if (!balances.ContainsKey(GetBalanceDictionaryKey(balanceWarning.Value.ClientId, balanceWarning.Value.AssetId))
@@ -110,7 +110,7 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
 
         private string GetBalanceDictionaryKey(string clientId, string assetId)
         {
-            return $"{clientId}_{assetId.ToUpperInvariant()}";
+            return $"{clientId.ToUpperInvariant()}_{assetId.ToUpperInvariant()}";
         }
     }    
 }
