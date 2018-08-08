@@ -102,7 +102,7 @@ namespace Lykke.Service.TelegramReporter.Services
 
         public async Task<IReadOnlyList<IChatPublisherSettings>> GetExternalBalanceChatPublishersAsync()
         {
-            return await _repo.GetBalanceChatPublisherSettings();
+            return await _repo.GetExternalBalanceChatPublisherSettings();
         }
 
         public async Task AddCmlChatPublisherAsync(IChatPublisherSettings chatPublisher)

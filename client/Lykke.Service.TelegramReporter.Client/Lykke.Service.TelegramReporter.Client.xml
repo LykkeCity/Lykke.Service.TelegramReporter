@@ -101,9 +101,9 @@
             The cancellation token.
             </param>
         </member>
-        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.IsAliveWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherNechatpublishersettingsGetWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
             <summary>
-            Checks service is alive
+            Gets NE chat publishers.
             </summary>
             <param name='customHeaders'>
             The headers that will be added to request.
@@ -112,12 +112,278 @@
             The cancellation token.
             </param>
         </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherNechatpublishersettingsPutWithHttpMessagesAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Adds NE chat publisher.
+            </summary>
+            <param name='chatPublisher'>
+            NE chat publisher to add.
+            </param>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherNechatpublishersettingsDeleteWithHttpMessagesAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Deletes NE chat publisher.
+            </summary>
+            <param name='chatPublisherSettingsId'>
+            NE chat publisher settings Id
+            </param>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherBalancechatpublishersettingsGetWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Gets balance chat publishers.
+            </summary>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherBalancechatpublishersettingsPutWithHttpMessagesAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Adds balance chat publisher.
+            </summary>
+            <param name='chatPublisher'>
+            Balance chat publisher to add.
+            </param>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherBalancechatpublishersettingsDeleteWithHttpMessagesAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Deletes balance chat publisher.
+            </summary>
+            <param name='chatPublisherSettingsId'>
+            Balance chat publisher settings Id
+            </param>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherExternalbalancechatpublishersettingsGetWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Gets external balance chat publishers.
+            </summary>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherExternalbalancechatpublishersettingsPutWithHttpMessagesAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Adds external balance chat publisher.
+            </summary>
+            <param name='chatPublisher'>
+            External balance chat publisher to add.
+            </param>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherExternalbalancechatpublishersettingsDeleteWithHttpMessagesAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Deletes external balance chat publisher.
+            </summary>
+            <param name='chatPublisherSettingsId'>
+            External balance chat publisher settings Id
+            </param>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherBalanceswarningsGetWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Gets balances warnings.
+            </summary>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherExternalbalanceswarningsGetWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Gets external balances warnings.
+            </summary>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherBalancewarningPutWithHttpMessagesAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningPost,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Adds balance warning.
+            </summary>
+            <param name='balanceWarning'>
+            Balance warning to add.
+            </param>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherBalancewarningDeleteWithHttpMessagesAsync(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Deletes balance warning.
+            </summary>
+            <param name='clientId'>
+            Wallet
+            </param>
+            <param name='assetId'>
+            Asset ID
+            </param>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherExternalbalancewarningPutWithHttpMessagesAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningPost,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Adds external balance warning.
+            </summary>
+            <param name='balanceWarning'>
+            External balance warning to add.
+            </param>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.ApiV1ChatPublisherExternalbalancewarningDeleteWithHttpMessagesAsync(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Deletes external balance warning.
+            </summary>
+            <param name='exchange'>
+            Exchange
+            </param>
+            <param name='assetId'>
+            Asset ID
+            </param>
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI.IsAliveWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <param name='customHeaders'>
+            The headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningDto.#ctor">
+            <summary>
+            Initializes a new instance of the BalanceWarningDto class.
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningDto.#ctor(System.String,System.String,System.String,System.Double)">
+            <summary>
+            Initializes a new instance of the BalanceWarningDto class.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningDto.ClientId">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningDto.AssetId">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningDto.Name">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningDto.MinBalance">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningDto.Validate">
+            <summary>
+            Validate the object.
+            </summary>
+            <exception cref="T:Microsoft.Rest.ValidationException">
+            Thrown if validation fails
+            </exception>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningPost.#ctor">
+            <summary>
+            Initializes a new instance of the BalanceWarningPost class.
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningPost.#ctor(System.String,System.String,System.String,System.Double)">
+            <summary>
+            Initializes a new instance of the BalanceWarningPost class.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningPost.ClientId">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningPost.AssetId">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningPost.Name">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningPost.MinBalance">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningPost.Validate">
+            <summary>
+            Validate the object.
+            </summary>
+            <exception cref="T:Microsoft.Rest.ValidationException">
+            Thrown if validation fails
+            </exception>
+        </member>
         <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsDto.#ctor">
             <summary>
             Initializes a new instance of the ChatPublisherSettingsDto class.
             </summary>
         </member>
-        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsDto.#ctor(System.String,System.Int64,System.String)">
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsDto.#ctor(System.String,System.String,System.Int64)">
             <summary>
             Initializes a new instance of the ChatPublisherSettingsDto class.
             </summary>
@@ -186,12 +452,88 @@
             <summary>
             </summary>
         </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ErrorResponse.Validate">
+            <summary>
+            Validate the object.
+            </summary>
+            <exception cref="T:Microsoft.Rest.ValidationException">
+            Thrown if validation fails
+            </exception>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningDto.#ctor">
+            <summary>
+            Initializes a new instance of the ExternalBalanceWarningDto class.
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningDto.#ctor(System.String,System.String,System.String,System.Double)">
+            <summary>
+            Initializes a new instance of the ExternalBalanceWarningDto class.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningDto.Exchange">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningDto.AssetId">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningDto.Name">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningDto.MinBalance">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningDto.Validate">
+            <summary>
+            Validate the object.
+            </summary>
+            <exception cref="T:Microsoft.Rest.ValidationException">
+            Thrown if validation fails
+            </exception>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningPost.#ctor">
+            <summary>
+            Initializes a new instance of the ExternalBalanceWarningPost class.
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningPost.#ctor(System.String,System.String,System.String,System.Double)">
+            <summary>
+            Initializes a new instance of the ExternalBalanceWarningPost class.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningPost.Exchange">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningPost.AssetId">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningPost.Name">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningPost.MinBalance">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningPost.Validate">
+            <summary>
+            Validate the object.
+            </summary>
+            <exception cref="T:Microsoft.Rest.ValidationException">
+            Thrown if validation fails
+            </exception>
+        </member>
         <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IsAliveResponse.#ctor">
             <summary>
             Initializes a new instance of the IsAliveResponse class.
             </summary>
         </member>
-        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IsAliveResponse.#ctor(System.Boolean,System.String,System.String,System.String,System.Collections.Generic.IList{Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IssueIndicator})">
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IsAliveResponse.#ctor(System.String,System.String,System.String,System.Boolean,System.Collections.Generic.IList{Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IssueIndicator})">
             <summary>
             Initializes a new instance of the IsAliveResponse class.
             </summary>
@@ -241,6 +583,14 @@
         <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IssueIndicator.Value">
             <summary>
             </summary>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.Models.IssueIndicator.Validate">
+            <summary>
+            Validate the object.
+            </summary>
+            <exception cref="T:Microsoft.Rest.ValidationException">
+            Thrown if validation fails
+            </exception>
         </member>
         <member name="P:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.BaseUri">
             <summary>
@@ -438,10 +788,328 @@
             A response object containing the response body and response headers.
             </return>
         </member>
-        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.IsAliveWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherNechatpublishersettingsGetWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
             <summary>
-            Checks service is alive
+            Gets NE chat publishers.
             </summary>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherNechatpublishersettingsPutWithHttpMessagesAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Adds NE chat publisher.
+            </summary>
+            <param name='chatPublisher'>
+            NE chat publisher to add.
+            </param>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherNechatpublishersettingsDeleteWithHttpMessagesAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Deletes NE chat publisher.
+            </summary>
+            <param name='chatPublisherSettingsId'>
+            NE chat publisher settings Id
+            </param>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherBalancechatpublishersettingsGetWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Gets balance chat publishers.
+            </summary>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherBalancechatpublishersettingsPutWithHttpMessagesAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Adds balance chat publisher.
+            </summary>
+            <param name='chatPublisher'>
+            Balance chat publisher to add.
+            </param>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherBalancechatpublishersettingsDeleteWithHttpMessagesAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Deletes balance chat publisher.
+            </summary>
+            <param name='chatPublisherSettingsId'>
+            Balance chat publisher settings Id
+            </param>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherExternalbalancechatpublishersettingsGetWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Gets external balance chat publishers.
+            </summary>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherExternalbalancechatpublishersettingsPutWithHttpMessagesAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Adds external balance chat publisher.
+            </summary>
+            <param name='chatPublisher'>
+            External balance chat publisher to add.
+            </param>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherExternalbalancechatpublishersettingsDeleteWithHttpMessagesAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Deletes external balance chat publisher.
+            </summary>
+            <param name='chatPublisherSettingsId'>
+            External balance chat publisher settings Id
+            </param>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherBalanceswarningsGetWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Gets balances warnings.
+            </summary>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherExternalbalanceswarningsGetWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Gets external balances warnings.
+            </summary>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherBalancewarningPutWithHttpMessagesAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningPost,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Adds balance warning.
+            </summary>
+            <param name='balanceWarning'>
+            Balance warning to add.
+            </param>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherBalancewarningDeleteWithHttpMessagesAsync(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Deletes balance warning.
+            </summary>
+            <param name='clientId'>
+            Wallet
+            </param>
+            <param name='assetId'>
+            Asset ID
+            </param>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherExternalbalancewarningPutWithHttpMessagesAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningPost,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Adds external balance warning.
+            </summary>
+            <param name='balanceWarning'>
+            External balance warning to add.
+            </param>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <exception cref="T:Microsoft.Rest.SerializationException">
+            Thrown when unable to deserialize the response
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.ApiV1ChatPublisherExternalbalancewarningDeleteWithHttpMessagesAsync(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
+            <summary>
+            Deletes external balance warning.
+            </summary>
+            <param name='exchange'>
+            Exchange
+            </param>
+            <param name='assetId'>
+            Asset ID
+            </param>
+            <param name='customHeaders'>
+            Headers that will be added to request.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+            <exception cref="T:Microsoft.Rest.HttpOperationException">
+            Thrown when the operation returned an invalid status code
+            </exception>
+            <return>
+            A response object containing the response body and response headers.
+            </return>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPI.IsAliveWithHttpMessagesAsync(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{System.String}},System.Threading.CancellationToken)">
             <param name='customHeaders'>
             Headers that will be added to request.
             </param>
@@ -601,18 +1269,369 @@
             The cancellation token.
             </param>
         </member>
-        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.IsAlive(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI)">
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherNechatpublishersettingsGet(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI)">
             <summary>
-            Checks service is alive
+            Gets NE chat publishers.
             </summary>
             <param name='operations'>
             The operations group for this extension method.
             </param>
         </member>
-        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.IsAliveAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.Threading.CancellationToken)">
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherNechatpublishersettingsGetAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.Threading.CancellationToken)">
             <summary>
-            Checks service is alive
+            Gets NE chat publishers.
             </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherNechatpublishersettingsPut(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost)">
+            <summary>
+            Adds NE chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisher'>
+            NE chat publisher to add.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherNechatpublishersettingsPutAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Threading.CancellationToken)">
+            <summary>
+            Adds NE chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisher'>
+            NE chat publisher to add.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherNechatpublishersettingsDelete(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.String)">
+            <summary>
+            Deletes NE chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisherSettingsId'>
+            NE chat publisher settings Id
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherNechatpublishersettingsDeleteAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Deletes NE chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisherSettingsId'>
+            NE chat publisher settings Id
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherBalancechatpublishersettingsGet(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI)">
+            <summary>
+            Gets balance chat publishers.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherBalancechatpublishersettingsGetAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.Threading.CancellationToken)">
+            <summary>
+            Gets balance chat publishers.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherBalancechatpublishersettingsPut(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost)">
+            <summary>
+            Adds balance chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisher'>
+            Balance chat publisher to add.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherBalancechatpublishersettingsPutAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Threading.CancellationToken)">
+            <summary>
+            Adds balance chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisher'>
+            Balance chat publisher to add.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherBalancechatpublishersettingsDelete(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.String)">
+            <summary>
+            Deletes balance chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisherSettingsId'>
+            Balance chat publisher settings Id
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherBalancechatpublishersettingsDeleteAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Deletes balance chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisherSettingsId'>
+            Balance chat publisher settings Id
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherExternalbalancechatpublishersettingsGet(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI)">
+            <summary>
+            Gets external balance chat publishers.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherExternalbalancechatpublishersettingsGetAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.Threading.CancellationToken)">
+            <summary>
+            Gets external balance chat publishers.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherExternalbalancechatpublishersettingsPut(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost)">
+            <summary>
+            Adds external balance chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisher'>
+            External balance chat publisher to add.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherExternalbalancechatpublishersettingsPutAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ChatPublisherSettingsPost,System.Threading.CancellationToken)">
+            <summary>
+            Adds external balance chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisher'>
+            External balance chat publisher to add.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherExternalbalancechatpublishersettingsDelete(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.String)">
+            <summary>
+            Deletes external balance chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisherSettingsId'>
+            External balance chat publisher settings Id
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherExternalbalancechatpublishersettingsDeleteAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Deletes external balance chat publisher.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='chatPublisherSettingsId'>
+            External balance chat publisher settings Id
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherBalanceswarningsGet(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI)">
+            <summary>
+            Gets balances warnings.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherBalanceswarningsGetAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.Threading.CancellationToken)">
+            <summary>
+            Gets balances warnings.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherExternalbalanceswarningsGet(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI)">
+            <summary>
+            Gets external balances warnings.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherExternalbalanceswarningsGetAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.Threading.CancellationToken)">
+            <summary>
+            Gets external balances warnings.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherBalancewarningPut(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningPost)">
+            <summary>
+            Adds balance warning.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='balanceWarning'>
+            Balance warning to add.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherBalancewarningPutAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,Lykke.Service.TelegramReporter.Client.AutorestClient.Models.BalanceWarningPost,System.Threading.CancellationToken)">
+            <summary>
+            Adds balance warning.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='balanceWarning'>
+            Balance warning to add.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherBalancewarningDelete(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.String,System.String)">
+            <summary>
+            Deletes balance warning.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='clientId'>
+            Wallet
+            </param>
+            <param name='assetId'>
+            Asset ID
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherBalancewarningDeleteAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Deletes balance warning.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='clientId'>
+            Wallet
+            </param>
+            <param name='assetId'>
+            Asset ID
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherExternalbalancewarningPut(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningPost)">
+            <summary>
+            Adds external balance warning.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='balanceWarning'>
+            External balance warning to add.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherExternalbalancewarningPutAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,Lykke.Service.TelegramReporter.Client.AutorestClient.Models.ExternalBalanceWarningPost,System.Threading.CancellationToken)">
+            <summary>
+            Adds external balance warning.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='balanceWarning'>
+            External balance warning to add.
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherExternalbalancewarningDelete(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.String,System.String)">
+            <summary>
+            Deletes external balance warning.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='exchange'>
+            Exchange
+            </param>
+            <param name='assetId'>
+            Asset ID
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.ApiV1ChatPublisherExternalbalancewarningDeleteAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Deletes external balance warning.
+            </summary>
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+            <param name='exchange'>
+            Exchange
+            </param>
+            <param name='assetId'>
+            Asset ID
+            </param>
+            <param name='cancellationToken'>
+            The cancellation token.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.IsAlive(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI)">
+            <param name='operations'>
+            The operations group for this extension method.
+            </param>
+        </member>
+        <member name="M:Lykke.Service.TelegramReporter.Client.AutorestClient.TelegramReporterAPIExtensions.IsAliveAsync(Lykke.Service.TelegramReporter.Client.AutorestClient.ITelegramReporterAPI,System.Threading.CancellationToken)">
             <param name='operations'>
             The operations group for this extension method.
             </param>
