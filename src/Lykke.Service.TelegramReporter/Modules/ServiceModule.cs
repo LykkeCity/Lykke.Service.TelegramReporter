@@ -26,6 +26,7 @@ using Lykke.Service.TelegramReporter.Services.NettingEngine;
 using Lykke.Service.TelegramReporter.Services.SpreadEngine;
 using Microsoft.Extensions.DependencyInjection;
 using Lykke.Service.RateCalculator.Client;
+using Lykke.Service.TelegramReporter.Services.NettingEngine.Rabbit;
 
 namespace Lykke.Service.TelegramReporter.Modules
 {    
@@ -120,6 +121,10 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<INettingEngineStateProvider>()
                 .SingleInstance();
 
+            builder.RegisterType<NettingEngineAuditProvider>()
+                .As<INettingEngineAuditProvider>()
+                .SingleInstance();
+
             builder.RegisterType<BalanceWarningProvider>()
                 .As<IBalanceWarningProvider>()
                 .SingleInstance();
@@ -136,6 +141,9 @@ namespace Lykke.Service.TelegramReporter.Modules
             builder.RegisterType<NettingEngineStateSubscriber>()
                 .As<ITelegramSubscriber>();
 
+            builder.RegisterType<NettingEngineAuditPublisher>()
+                .As<INettingEngineAuditPublisher>();
+
             builder.RegisterType<ChatPublisherService>()
                 .As<IChatPublisherService>()
                 .As<IStartable>()
@@ -144,6 +152,7 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .SingleInstance();
 
             RegisterRepositories(builder);
+            RegisterRabbitMqSubscribers(builder);
 
             builder.Populate(_services);
         }
@@ -160,6 +169,16 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<IBalanceWarningRepository>()
                 .WithParameter(TypedParameter.From(AzureTableStorage<BalanceWarningEntity>
                     .Create(_appSettings.ConnectionString(x => x.TelegramReporterService.Db.DataConnString), "BalancesWarnings", _log)))
+                .SingleInstance();
+        }
+
+        private void RegisterRabbitMqSubscribers(ContainerBuilder builder)
+        {
+            builder.RegisterType<NettingEngineAuditSubscriber>()
+                .As<IStartable>()
+                .As<IStopable>()
+                .WithParameter("settings", _appSettings.CurrentValue.TelegramReporterService.NettingEngineAuditExchange)
+                .AutoActivate()
                 .SingleInstance();
         }
     }
