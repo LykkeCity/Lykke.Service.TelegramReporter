@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Common;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Telegram.Bot.Types;
@@ -14,10 +15,10 @@ namespace Lykke.Service.TelegramReporter.Services
 
         protected readonly ILog Log;
 
-        protected ChatSubscriber(IChatPublisherSettingsRepository repo, ILog log)
+        protected ChatSubscriber(IChatPublisherSettingsRepository repo, ILogFactory logFactory)
         {
             Repo = repo;
-            Log = log;
+            Log = logFactory.CreateLog(this);
         }
 
         public abstract string Command { get; }

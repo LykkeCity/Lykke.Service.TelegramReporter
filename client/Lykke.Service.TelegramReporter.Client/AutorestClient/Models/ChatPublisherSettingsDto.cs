@@ -23,7 +23,7 @@ namespace Lykke.Service.TelegramReporter.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the ChatPublisherSettingsDto class.
         /// </summary>
-        public ChatPublisherSettingsDto(string timeSpan, long chatId, string chatPublisherSettingsId = default(string))
+        public ChatPublisherSettingsDto(string chatPublisherSettingsId, string timeSpan, long chatId)
         {
             ChatPublisherSettingsId = chatPublisherSettingsId;
             TimeSpan = timeSpan;
@@ -59,6 +59,10 @@ namespace Lykke.Service.TelegramReporter.Client.AutorestClient.Models
         /// </exception>
         public virtual void Validate()
         {
+            if (ChatPublisherSettingsId == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "ChatPublisherSettingsId");
+            }
             if (TimeSpan == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "TimeSpan");

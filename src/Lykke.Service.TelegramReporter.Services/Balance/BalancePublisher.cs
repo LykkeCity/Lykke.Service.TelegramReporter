@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.Balances.Client;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
@@ -22,8 +22,8 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
             IBalancesClient balancesClient,
             IBalanceWarningProvider balanceWarningProvider,
             IChatPublisherSettings publisherSettings,
-            ILog log)
-            : base(telegramSender, publisherSettings, log)
+            ILogFactory logFactory)
+            : base(telegramSender, publisherSettings, logFactory)
         {
             _balanceWarningRepository = balanceWarningRepository;
             _balancesClient = balancesClient;

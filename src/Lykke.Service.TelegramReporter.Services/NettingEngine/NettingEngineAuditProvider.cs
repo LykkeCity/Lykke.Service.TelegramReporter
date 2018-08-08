@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Common;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.NettingEngine.Client.RabbitMq;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
 
@@ -12,9 +13,9 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
     {
         private readonly ILog _log;
 
-        public NettingEngineAuditProvider(ILog log)
+        public NettingEngineAuditProvider(ILogFactory logFactory)
         {
-            _log = log;
+            _log = logFactory.CreateLog(this);
         }
 
         public async Task<string> GetAuditMessageAsync(AuditMessage auditMessage)

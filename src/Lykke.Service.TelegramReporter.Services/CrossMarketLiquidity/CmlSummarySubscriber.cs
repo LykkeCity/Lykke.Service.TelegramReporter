@@ -3,6 +3,7 @@ using System.Linq;
 using Lykke.Service.TelegramReporter.Core.Services;
 using System.Threading.Tasks;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Services.CrossMarketLiquidity;
 using Telegram.Bot.Types;
@@ -16,8 +17,8 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
         private readonly ICmlSummaryProvider _cmlSummaryProvider;
 
         public CmlSummarySubscriber(ICmlSummaryProvider cmlSummaryProvider,
-            IChatPublisherSettingsRepository repo, ILog log)
-            : base(repo, log)
+            IChatPublisherSettingsRepository repo, ILogFactory logFactory)
+            : base(repo, logFactory)
         {
             _cmlSummaryProvider = cmlSummaryProvider;
         }

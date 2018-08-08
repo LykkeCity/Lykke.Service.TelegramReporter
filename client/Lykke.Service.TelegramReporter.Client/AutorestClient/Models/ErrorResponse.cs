@@ -24,7 +24,7 @@ namespace Lykke.Service.TelegramReporter.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the ErrorResponse class.
         /// </summary>
-        public ErrorResponse(string errorMessage = default(string), IDictionary<string, IList<string>> modelErrors = default(IDictionary<string, IList<string>>))
+        public ErrorResponse(string errorMessage, IDictionary<string, IList<string>> modelErrors)
         {
             ErrorMessage = errorMessage;
             ModelErrors = modelErrors;
@@ -46,5 +46,14 @@ namespace Lykke.Service.TelegramReporter.Client.AutorestClient.Models
         [JsonProperty(PropertyName = "ModelErrors")]
         public IDictionary<string, IList<string>> ModelErrors { get; private set; }
 
+        /// <summary>
+        /// Validate the object.
+        /// </summary>
+        /// <exception cref="Microsoft.Rest.ValidationException">
+        /// Thrown if validation fails
+        /// </exception>
+        public virtual void Validate()
+        {
+        }
     }
 }

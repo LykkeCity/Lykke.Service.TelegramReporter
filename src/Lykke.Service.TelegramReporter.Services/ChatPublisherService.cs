@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Common;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.Balances.Client;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
@@ -30,6 +31,7 @@ namespace Lykke.Service.TelegramReporter.Services
         private readonly IBalancesClient _balancesClient;
         private readonly INettingEngineInstanceManager _nettingEngineInstanceManager;
         private readonly ILog _log;
+        private readonly ILogFactory _logFactory;
 
         private readonly ICmlSummaryProvider _cmlSummaryProvider;
         private readonly ICmlStateProvider _cmlStateProvider;
@@ -52,7 +54,7 @@ namespace Lykke.Service.TelegramReporter.Services
             IExternalBalanceWarningRepository externalBalanceWarningRepository,
             IBalancesClient balancesClient,
             INettingEngineInstanceManager nettingEngineInstanceManager,
-            ILog log,
+            ILogFactory logFactory,
             ITelegramSender telegramSender,
             ICmlSummaryProvider cmlSummaryProvider,
             ICmlStateProvider cmlStateProvider,
@@ -62,7 +64,8 @@ namespace Lykke.Service.TelegramReporter.Services
             IExternalBalanceWarningProvider externalBalanceWarningProvider)
         {
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
-            _log = log.CreateComponentScope(nameof(ChatPublisherService));
+            _log = logFactory.CreateLog(this);
+            _logFactory = logFactory;
 
             _balanceWarningRepository = balanceWarningRepository;
             _externalBalanceWarningRepository = externalBalanceWarningRepository;
@@ -323,7 +326,7 @@ namespace Lykke.Service.TelegramReporter.Services
             if (!exist)
             {
                 var newChatPublisher = new CmlPublisher(_telegramSender,
-                    _cmlSummaryProvider, _cmlStateProvider, publisherSettings, _log);
+                    _cmlSummaryProvider, _cmlStateProvider, publisherSettings, _logFactory);
 
                 newChatPublisher.Start();
                 _cmlPublishers[publisherSettings.ChatId] = newChatPublisher;
@@ -336,7 +339,7 @@ namespace Lykke.Service.TelegramReporter.Services
             if (!exist)
             {
                 var newChatPublisher = new SpreadEnginePublisher(_telegramSender,
-                    _seStateProvider, publisherSettings, _log);
+                    _seStateProvider, publisherSettings, _logFactory);
 
                 newChatPublisher.Start();
                 _sePublishers[publisherSettings.ChatId] = newChatPublisher;
@@ -349,7 +352,7 @@ namespace Lykke.Service.TelegramReporter.Services
             if (!exist)
             {
                 var newChatPublisher = new NettingEnginePublisher(_telegramSender,
-                    _neStateProvider, publisherSettings, _log);
+                    _neStateProvider, publisherSettings, _logFactory);
 
                 newChatPublisher.Start();
                 _nePublishers[publisherSettings.ChatId] = newChatPublisher;
@@ -362,7 +365,7 @@ namespace Lykke.Service.TelegramReporter.Services
             if (!exist)
             {
                 var newChatPublisher = new BalancePublisher(_telegramSender, _balanceWarningRepository, _balancesClient,
-                    _balanceWarningProvider, publisherSettings, _log);
+                    _balanceWarningProvider, publisherSettings, _logFactory);
 
                 newChatPublisher.Start();
                 _balancePublishers[publisherSettings.ChatId] = newChatPublisher;
@@ -375,7 +378,7 @@ namespace Lykke.Service.TelegramReporter.Services
             if (!exist)
             {
                 var newChatPublisher = new ExternalBalancePublisher(_telegramSender, _externalBalanceWarningRepository,
-                    _nettingEngineInstanceManager, _externalBalanceWarningProvider, publisherSettings, _log);
+                    _nettingEngineInstanceManager, _externalBalanceWarningProvider, publisherSettings, _logFactory);
 
                 newChatPublisher.Start();
                 _externalBalancePublishers[publisherSettings.ChatId] = newChatPublisher;
