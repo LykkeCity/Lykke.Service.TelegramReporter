@@ -108,7 +108,7 @@ namespace Lykke.Service.TelegramReporter.Modules
                     _appSettings.CurrentValue.TelegramReporterService.AssetsCacheExpirationPeriod), _log);
 
             // Register Balance client
-            builder.RegisterBalancesClient(_appSettings.CurrentValue.BalancesServiceClient.ServiceUrl, _log);
+            builder.RegisterBalancesClient(_appSettings.CurrentValue.BalancesServiceClient.ServiceUrl);
 
             builder.RegisterRateCalculatorClient(_appSettings.CurrentValue.RateCalculatorServiceClient.ServiceUrl, _log);
 
