@@ -10,6 +10,7 @@ using Common.Log;
 using Lykke.Service.Balances.Client;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
+using Lykke.Service.TelegramReporter.Core.Instances;
 using Lykke.Service.TelegramReporter.Core.Services.Balance;
 using Lykke.Service.TelegramReporter.Core.Services.CrossMarketLiquidity;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
@@ -25,7 +26,9 @@ namespace Lykke.Service.TelegramReporter.Services
     {
         private readonly IChatPublisherSettingsRepository _repo;
         private readonly IBalanceWarningRepository _balanceWarningRepository;
+        private readonly IExternalBalanceWarningRepository _externalBalanceWarningRepository;
         private readonly IBalancesClient _balancesClient;
+        private readonly INettingEngineInstanceManager _nettingEngineInstanceManager;
         private readonly ILog _log;
 
         private readonly ICmlSummaryProvider _cmlSummaryProvider;
@@ -33,6 +36,7 @@ namespace Lykke.Service.TelegramReporter.Services
         private readonly ISpreadEngineStateProvider _seStateProvider;
         private readonly INettingEngineStateProvider _neStateProvider;
         private readonly IBalanceWarningProvider _balanceWarningProvider;
+        private readonly IExternalBalanceWarningProvider _externalBalanceWarningProvider;
         private readonly ITelegramSender _telegramSender;
 
         private bool _initialized;
@@ -41,28 +45,35 @@ namespace Lykke.Service.TelegramReporter.Services
         private readonly ConcurrentDictionary<long, ChatPublisher> _sePublishers = new ConcurrentDictionary<long, ChatPublisher>();
         private readonly ConcurrentDictionary<long, ChatPublisher> _nePublishers = new ConcurrentDictionary<long, ChatPublisher>();
         private readonly ConcurrentDictionary<long, ChatPublisher> _balancePublishers = new ConcurrentDictionary<long, ChatPublisher>();
+        private readonly ConcurrentDictionary<long, ChatPublisher> _externalBalancePublishers = new ConcurrentDictionary<long, ChatPublisher>();
 
         public ChatPublisherService(IChatPublisherSettingsRepository repo,
             IBalanceWarningRepository balanceWarningRepository,
+            IExternalBalanceWarningRepository externalBalanceWarningRepository,
             IBalancesClient balancesClient,
+            INettingEngineInstanceManager nettingEngineInstanceManager,
             ILog log,
             ITelegramSender telegramSender,
             ICmlSummaryProvider cmlSummaryProvider,
             ICmlStateProvider cmlStateProvider,
             ISpreadEngineStateProvider seStateProvider,
             INettingEngineStateProvider neStateProvider,
-            IBalanceWarningProvider balanceWarningProvider)
+            IBalanceWarningProvider balanceWarningProvider,
+            IExternalBalanceWarningProvider externalBalanceWarningProvider)
         {
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
             _log = log.CreateComponentScope(nameof(ChatPublisherService));
 
             _balanceWarningRepository = balanceWarningRepository;
+            _externalBalanceWarningRepository = externalBalanceWarningRepository;
             _balancesClient = balancesClient;
+            _nettingEngineInstanceManager = nettingEngineInstanceManager;
             _cmlSummaryProvider = cmlSummaryProvider;
             _cmlStateProvider = cmlStateProvider;
             _seStateProvider = seStateProvider;
             _neStateProvider = neStateProvider;
             _balanceWarningProvider = balanceWarningProvider;
+            _externalBalanceWarningProvider = externalBalanceWarningProvider;
             _telegramSender = telegramSender;
         }
 
@@ -82,6 +93,11 @@ namespace Lykke.Service.TelegramReporter.Services
         }
 
         public async Task<IReadOnlyList<IChatPublisherSettings>> GetBalanceChatPublishersAsync()
+        {
+            return await _repo.GetBalanceChatPublisherSettings();
+        }
+
+        public async Task<IReadOnlyList<IChatPublisherSettings>> GetExternalBalanceChatPublishersAsync()
         {
             return await _repo.GetBalanceChatPublisherSettings();
         }
@@ -114,6 +130,13 @@ namespace Lykke.Service.TelegramReporter.Services
             await UpdateChatPublishers();
         }
 
+        public async Task AddExternalBalanceChatPublisherAsync(IChatPublisherSettings chatPublisher)
+        {
+            EnsureInitialized();
+            await _repo.AddExternalBalanceChatPublisherSettingsAsync(chatPublisher);
+            await UpdateChatPublishers();
+        }
+
         public async Task RemoveCmlChatPublisherAsync(string chatPublisherId)
         {
             EnsureInitialized();
@@ -142,9 +165,21 @@ namespace Lykke.Service.TelegramReporter.Services
             await UpdateChatPublishers();
         }
 
+        public async Task RemoveExternalBalanceChatPublisherAsync(string chatPublisherId)
+        {
+            EnsureInitialized();
+            await _repo.RemoveExternalBalanceChatPublisherSettingsAsync(chatPublisherId);
+            await UpdateChatPublishers();
+        }
+
         public async Task<IReadOnlyList<IBalanceWarning>> GetBalancesWarningsAsync()
         {
             return await _balanceWarningRepository.GetBalancesWarnings();
+        }
+
+        public async Task<IReadOnlyList<IExternalBalanceWarning>> GetExternalBalancesWarningsAsync()
+        {
+            return await _externalBalanceWarningRepository.GetExternalBalancesWarnings();
         }
 
         public async Task AddBalanceWarningAsync(IBalanceWarning balanceWarning)
@@ -152,9 +187,19 @@ namespace Lykke.Service.TelegramReporter.Services
             await _balanceWarningRepository.AddBalanceWarningAsync(balanceWarning);
         }
 
+        public async Task AddExternalBalanceWarningAsync(IExternalBalanceWarning balanceWarning)
+        {
+            await _externalBalanceWarningRepository.AddExternalBalanceWarningAsync(balanceWarning);
+        }
+
         public async Task RemoveBalanceWarningAsync(string clientId, string assetId)
         {
             await _balanceWarningRepository.RemoveBalanceWarningAsync(clientId, assetId);
+        }
+
+        public async Task RemoveExternalBalanceWarningAsync(string exchange, string assetId)
+        {
+            await _externalBalanceWarningRepository.RemoveExternalBalanceWarningAsync(exchange, assetId);
         }
 
         public void Start()
@@ -183,6 +228,11 @@ namespace Lykke.Service.TelegramReporter.Services
             {
                 chatPublisher.Stop();
             }
+
+            foreach (var chatPublisher in _externalBalancePublishers.Values)
+            {
+                chatPublisher.Stop();
+            }
         }
 
         public void Dispose()
@@ -206,6 +256,11 @@ namespace Lykke.Service.TelegramReporter.Services
             {
                 chatPublisher.Dispose();
             }
+
+            foreach (var chatPublisher in _externalBalancePublishers.Values)
+            {
+                chatPublisher.Dispose();
+            }
         }
 
         private void EnsureInitialized()
@@ -224,6 +279,7 @@ namespace Lykke.Service.TelegramReporter.Services
             var sePublisherSettings = await _repo.GetSeChatPublisherSettings();
             var nePublisherSettings = await _repo.GetNeChatPublisherSettings();
             var balancePublisherSettings = await _repo.GetBalanceChatPublisherSettings();
+            var externalBalancePublisherSettings = await _repo.GetExternalBalanceChatPublisherSettings();
 
             foreach (var publisherSettings in cmlPublisherSettings)
             {
@@ -252,6 +308,13 @@ namespace Lykke.Service.TelegramReporter.Services
             }
 
             CleanBalancePublishers(balancePublisherSettings);
+
+            foreach (var publisherSettings in externalBalancePublisherSettings)
+            {
+                AddExternalBalancePublisherIfNeeded(publisherSettings);
+            }
+
+            CleanExternalBalancePublishers(externalBalancePublisherSettings);
         }
 
         private void AddCmlPublisherIfNeeded(IChatPublisherSettings publisherSettings)
@@ -306,6 +369,19 @@ namespace Lykke.Service.TelegramReporter.Services
             }
         }
 
+        private void AddExternalBalancePublisherIfNeeded(IChatPublisherSettings publisherSettings)
+        {
+            var exist = _externalBalancePublishers.ContainsKey(publisherSettings.ChatId);
+            if (!exist)
+            {
+                var newChatPublisher = new ExternalBalancePublisher(_telegramSender, _externalBalanceWarningRepository,
+                    _nettingEngineInstanceManager, _externalBalanceWarningProvider, publisherSettings, _log);
+
+                newChatPublisher.Start();
+                _externalBalancePublishers[publisherSettings.ChatId] = newChatPublisher;
+            }
+        }
+
         private void CleanCmlPublishers(IReadOnlyList<IChatPublisherSettings> cmlPublisherSettings)
         {
             foreach (var chatId in _cmlPublishers.Keys)
@@ -354,6 +430,19 @@ namespace Lykke.Service.TelegramReporter.Services
                     _balancePublishers[chatId].Stop();
                     _balancePublishers[chatId].Dispose();
                     _balancePublishers.Remove(chatId, out _);
+                }
+            }
+        }
+
+        private void CleanExternalBalancePublishers(IReadOnlyList<IChatPublisherSettings> balancePublisherSettings)
+        {
+            foreach (var chatId in _externalBalancePublishers.Keys)
+            {
+                if (balancePublisherSettings.All(x => x.ChatId != chatId))
+                {
+                    _externalBalancePublishers[chatId].Stop();
+                    _externalBalancePublishers[chatId].Dispose();
+                    _externalBalancePublishers.Remove(chatId, out _);
                 }
             }
         }

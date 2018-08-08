@@ -12,5 +12,7 @@ namespace Lykke.Service.TelegramReporter.Settings
         public TelegramSettings Telegram { get; set; }
 
         public TimeSpan AssetsCacheExpirationPeriod { get; set; }
-    }
+
+        public NettingEngineAuditExchangeSettings NettingEngineAuditExchange { get; set; }
+    }    
 }
