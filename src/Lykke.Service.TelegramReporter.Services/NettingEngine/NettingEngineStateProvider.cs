@@ -209,7 +209,7 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
                 if (externalInventory != 0)
                 {
                     state.Append(
-                        $" External: {row.Exchanges.First().Inventory:0.000}"
+                        $" External: {externalInventory:0.000}"
                     );
                 }
 
