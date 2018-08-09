@@ -19,7 +19,7 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
         {
             return new BalanceWarningEntity
             {
-                PartitionKey = balanceWarning.ClientId,
+                PartitionKey = balanceWarning.ClientId.ToUpperInvariant(),
                 RowKey = balanceWarning.AssetId.ToUpperInvariant(),
                 Name = balanceWarning.Name,
                 MinBalance = balanceWarning.MinBalance,
