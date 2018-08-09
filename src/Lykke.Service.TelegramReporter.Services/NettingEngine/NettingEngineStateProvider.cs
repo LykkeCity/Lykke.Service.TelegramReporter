@@ -7,7 +7,6 @@ using Lykke.Service.Assets.Client;
 using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.TelegramReporter.Core.Instances;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
-using Lykke.Service.NettingEngine.Client.Extensions;
 using Lykke.Service.NettingEngine.Client.Models.Balances;
 using Lykke.Service.NettingEngine.Client.Models.HedgeLimitOrders;
 using Lykke.Service.NettingEngine.Client.Models.Inventories;
@@ -55,65 +54,9 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
         public async Task<string> GetStateMessageAsync(int serviceInstanceIndex)
         {
             var inventory = await GetInventory(serviceInstanceIndex);
-            var instruments = await GetInstruments(serviceInstanceIndex);
 
-            var message = GetStateMessage(inventory, instruments);
+            var message = GetStateMessage(inventory);
             return ChatMessageHelper.CheckSizeAndCutMessageIfNeeded(message);
-        }
-
-        private async Task<InstrumentsViewModel> GetInstruments(int serviceInstanceIndex)
-        {
-            var assetPairs = (await _assetsServiceWithCache.GetAllAssetPairsAsync())
-                .ToArray();
-
-            var exchangesTask = _nettingEngineInstanceManager[serviceInstanceIndex]
-                .Exchanges.GetAsync();
-            var defaultSettingsTask = _nettingEngineInstanceManager[serviceInstanceIndex]
-                .InstrumentSettings.GetDefaultSettingsAsync();
-            var instrumentsTask = _nettingEngineInstanceManager[serviceInstanceIndex]
-                .Instruments.GetAsync(Array.Empty<string>());
-            var assetSettingsTask = _nettingEngineInstanceManager[serviceInstanceIndex]
-                .InstrumentSettings.GetAssetSettingsAsync(Array.Empty<string>());
-            var assetPairSettingsTask = _nettingEngineInstanceManager[serviceInstanceIndex]
-                .InstrumentSettings.GetAssetPairSettingsAsync(Array.Empty<string>());
-            var balancesTask = _nettingEngineInstanceManager[serviceInstanceIndex]
-                .Balances.GetLykkeAsync();
-
-            var instrumentInventoryTask = _nettingEngineInstanceManager[serviceInstanceIndex]
-                .InstrumentInventory.GetAllAsync();
-
-            await Task.WhenAll(
-                exchangesTask,
-                defaultSettingsTask,
-                instrumentsTask,
-                assetSettingsTask,
-                assetPairSettingsTask,
-                balancesTask,
-
-                instrumentInventoryTask);
-
-            var exchanges = exchangesTask.Result;
-            var defaultSettings = defaultSettingsTask.Result;
-            var instruments = instrumentsTask.Result;
-            var assetSettings = assetSettingsTask.Result;
-            var assetPairSettings = assetPairSettingsTask.Result;
-            var balances = balancesTask.Result;
-
-            var instrumentInventory = instrumentInventoryTask.Result;
-
-            var vm = new InstrumentsViewModel(serviceInstanceIndex)
-            {
-                DefaultSettings = Data.Common.GetInstrumentSettingsViewModel(defaultSettings, false),
-                Assets = Data.Common.GetAssetViewModels(assetSettings, balances),
-                AssetPairs =
-                    Data.Common.GetAssetPairViewModels(instruments, assetPairs, assetPairSettings, balances),
-                Exchanges = exchanges
-                    .Select(o => new ItemViewModel(o.Name))
-                    .ToList(),
-                AssetInventory = GetAssetInventory(instrumentInventory, balances, assetPairs)
-            };
-
-            return vm;
         }
 
         private async Task<InventoryReportViewModel> GetInventory(int serviceInstanceIndex)
@@ -209,89 +152,85 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
                 });
             }
 
+            var total = new List<ExchangeTotalViewModel>();
+
+            foreach (KeyValuePair<string, List<ExchangeSummaryViewModel>> pair in summary)
+            {
+                var exchangeTotal = new ExchangeTotalViewModel
+                {
+                    BalanceUsd = pair.Value.Sum(o => o.BalanceUsd),
+                    InventoryUsd = pair.Value.Sum(o => o.InventoryUsd)
+                };
+
+                total.Add(exchangeTotal);
+
+                if (exchangeTotal.BalanceUsd == 0)
+                    continue;
+
+                foreach (ExchangeSummaryViewModel exchangeSummary in pair.Value)
+                    exchangeSummary.BalanceRatio = exchangeSummary.BalanceUsd / Math.Abs(exchangeTotal.BalanceUsd);
+            }
+
+            decimal totalBalanceUsd = Math.Abs(total.Sum(o => o.BalanceUsd));
+
+            if (totalBalanceUsd > 0)
+            {
+                foreach (RowViewModel row in rows)
+                    row.Summary.BalanceRatio = row.Summary.BalanceUsd / totalBalanceUsd;
+            }
+
             var vm = new InventoryReportViewModel
             {
                 Exchanges = exchanges,
-                Rows = rows
+                Rows = rows,
+                Total = new TotalRowViewModel
+                {
+                    Exchanges = total
+                }
             };
 
             return vm;
         }
 
-        private string GetStateMessage(InventoryReportViewModel inventoryReportViewModel, InstrumentsViewModel instrumentsViewModel)
+        private string GetStateMessage(InventoryReportViewModel inventoryReportViewModel)
         {
             var state = new StringBuilder();
 
-            state.Append($"======= {DateTime.UtcNow:yyyy/MM/dd HH:mm:ss} =======\r\n\r\n");
-            state.Append($"Netting Engine State:\r\n\r\n");
-
-            foreach (var assetPair in instrumentsViewModel.AssetPairs)
-            {
-                state.Append(
-                    $"{assetPair.Id} " +
-                    $"({assetPair.SellVolumeCoefficient:0.000}/{assetPair.BuyVolumeCoefficient:0.000}); " +
-                    //$"daily: <daily sell volume>/<daily buy volume>; " +
-                    $"PL: {assetPair.PnL:0.000}\r\n"
-                );
-            }
-
-            state.Append("\r\n");
-            state.Append("Balances:\r\n\r\n");
+            state.AppendLine($"======= {DateTime.UtcNow:yyyy/MM/dd HH:mm:ss} =======\r\n");
+            state.AppendLine("Netting Engine State:\r\n");
 
             foreach (var row in inventoryReportViewModel.Rows)
             {
                 state.Append(
-                    $"{row.Asset.Title} Balance: {row.Exchanges.First().Balance:0.000} " +
-                    $"Inventory: {row.Summary.Inventory:0.000}\r\n"
+                    $"{row.Asset.Title} Inventory: {row.Summary.Inventory:0.000}"
+                );
+
+                var externalInventory = row.Summary.Inventory - row.Exchanges.First().Inventory;
+                if (externalInventory != 0)
+                {
+                    state.Append(
+                        $" External: {externalInventory:0.000}"
+                    );
+                }
+
+                state.AppendLine();
+            }
+
+            state.AppendLine();
+            state.AppendLine($"Trading PnL: {inventoryReportViewModel.Total.Exchanges.Sum(o => o.InventoryUsd):0.000}\r\n");
+
+            state.AppendLine("Lykke Turnover:\r\n");
+
+            foreach (var row in inventoryReportViewModel.Rows)
+            {
+                state.AppendLine(
+                    $"{row.Asset.Title} Total: {(row.Exchanges.First().Sell + row.Exchanges.First().Buy):0.000} " +
+                    $"Buy: {row.Exchanges.First().Buy:0.000} " +
+                    $"Sell: {row.Exchanges.First().Sell:0.000} "
                 );
             }
 
             return state.ToString();
-        }
-
-        private IReadOnlyList<AssetInventoryModel> GetAssetInventory(
-            IReadOnlyList<InstrumentInventoryModel> instrumentInventory,
-            IReadOnlyList<BalanceModel> balances,
-            IReadOnlyCollection<AssetPair> assetPairs)
-        {
-            var map = new Dictionary<string, List<AssetInventoryModel>>();
-
-            foreach (InstrumentInventoryModel inventory in instrumentInventory)
-            {
-                AssetPair assetPair = assetPairs.First(o => o.Id == inventory.AssetPairId);
-
-                if (!map.ContainsKey(assetPair.BaseAssetId))
-                    map.Add(assetPair.BaseAssetId, new List<AssetInventoryModel>());
-
-                decimal balance = balances.FirstOrDefault(o => o.AssetId == assetPair.QuotingAssetId)?.Amount ?? 0m;
-
-                map[assetPair.BaseAssetId].Add(new AssetInventoryModel
-                {
-                    AssetId = assetPair.QuotingAssetId,
-                    Balance = balance,
-                    BaseVolume = inventory?.BaseAssetVolume ?? 0,
-                    Volume = inventory?.QuoteAssetVolume ?? 0
-                });
-            }
-
-            var assetInventory = new List<AssetInventoryModel>();
-
-            foreach (string baseAssetId in map.Keys.OrderBy(o => o))
-            {
-                decimal balance = balances.FirstOrDefault(o => o.AssetId == baseAssetId)?.Amount ?? 0m;
-
-                assetInventory.Add(new AssetInventoryModel
-                {
-                    AssetId = baseAssetId,
-                    Balance = balance,
-                    BaseVolume = 0,
-                    Volume = map[baseAssetId].Sum(o => o.BaseVolume)
-                });
-
-                assetInventory.AddRange(map[baseAssetId].OrderBy(o => o.AssetId));
-            }
-
-            return assetInventory;
         }
 
         private decimal UsdRate(string assetId, IReadOnlyCollection<AssetPair> assetPairts, MarketProfile marketProfile)

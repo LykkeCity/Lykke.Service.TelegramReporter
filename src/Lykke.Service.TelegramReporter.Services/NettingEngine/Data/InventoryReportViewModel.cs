@@ -7,5 +7,7 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine.Data
         public IReadOnlyList<string> Exchanges { get; set; }
 
         public IReadOnlyList<RowViewModel> Rows { get; set; }
+
+        public TotalRowViewModel Total { get; set; }
     }
 }
