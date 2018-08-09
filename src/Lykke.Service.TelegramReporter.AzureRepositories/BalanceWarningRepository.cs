@@ -44,7 +44,7 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
         public Task AddBalanceWarningAsync(IBalanceWarning balanceWarning)
         {
             var entity = BalanceWarningEntity.CreateForBalance(balanceWarning);
-            return _storage.InsertAsync(entity);
+            return _storage.InsertOrReplaceAsync(entity);
         }
 
         public async Task RemoveBalanceWarningAsync(string clientId, string assetId)

@@ -133,31 +133,31 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
         public Task AddCmlChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher)
         {
             var entity = ChatPublisherSettingsEntity.CreateForCml(chatPublisher);
-            return _storage.InsertAsync(entity);
+            return _storage.InsertOrReplaceAsync(entity);
         }
 
         public Task AddSeChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher)
         {
             var entity = ChatPublisherSettingsEntity.CreateForSe(chatPublisher);
-            return _storage.InsertAsync(entity);
+            return _storage.InsertOrReplaceAsync(entity);
         }
 
         public Task AddNeChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher)
         {
             var entity = ChatPublisherSettingsEntity.CreateForNe(chatPublisher);
-            return _storage.InsertAsync(entity);
+            return _storage.InsertOrReplaceAsync(entity);
         }
 
         public Task AddBalanceChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher)
         {
             var entity = ChatPublisherSettingsEntity.CreateForBalance(chatPublisher);
-            return _storage.InsertAsync(entity);
+            return _storage.InsertOrReplaceAsync(entity);
         }
 
         public Task AddExternalBalanceChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher)
         {
             var entity = ChatPublisherSettingsEntity.CreateForExternalBalance(chatPublisher);
-            return _storage.InsertAsync(entity);
+            return _storage.InsertOrReplaceAsync(entity);
         }
 
         public async Task RemoveCmlChatPublisherSettingsAsync(string chatPublisherSettingsId)

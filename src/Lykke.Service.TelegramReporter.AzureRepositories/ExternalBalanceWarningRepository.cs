@@ -44,7 +44,7 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
         public Task AddExternalBalanceWarningAsync(IExternalBalanceWarning balanceWarning)
         {
             var entity = ExternalBalanceWarningEntity.CreateForBalance(balanceWarning);
-            return _storage.InsertAsync(entity);
+            return _storage.InsertOrReplaceAsync(entity);
         }
 
         public async Task RemoveExternalBalanceWarningAsync(string exchange, string assetId)
