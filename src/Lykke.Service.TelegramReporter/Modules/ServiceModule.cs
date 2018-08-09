@@ -8,9 +8,7 @@ using Lykke.Service.TelegramReporter.Services.Instances;
 using Lykke.Service.TelegramReporter.Settings;
 using Lykke.SettingsReader;
 using System.Linq;
-using Autofac.Extensions.DependencyInjection;
 using AzureStorage.Tables;
-using Common.Log;
 using Lykke.Service.Assets.Client;
 using Lykke.Service.Balances.Client;
 using Lykke.Service.TelegramReporter.AzureRepositories;
@@ -24,47 +22,29 @@ using Lykke.Service.TelegramReporter.Services.Balance;
 using Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity;
 using Lykke.Service.TelegramReporter.Services.NettingEngine;
 using Lykke.Service.TelegramReporter.Services.SpreadEngine;
-using Microsoft.Extensions.DependencyInjection;
 using Lykke.Service.RateCalculator.Client;
 using Lykke.Service.TelegramReporter.Services.NettingEngine.Rabbit;
+using Lykke.Common.Log;
+using Lykke.Service.TelegramReporter.Infrastructure;
 
 namespace Lykke.Service.TelegramReporter.Modules
 {    
     public class ServiceModule : Module
     {
         private readonly IReloadingManager<AppSettings> _appSettings;
-        private readonly ILog _log;
 
-        private readonly IServiceCollection _services;
-
-        public ServiceModule(IReloadingManager<AppSettings> appSettings, ILog log)
+        public ServiceModule(IReloadingManager<AppSettings> appSettings)
         {
-            _appSettings = appSettings;
-            _log = log;
-
-            _services = new ServiceCollection();
+            _appSettings = appSettings;            
         }
 
         protected override void Load(ContainerBuilder builder)
         {
-            // Do not register entire settings in container, pass necessary settings to services which requires them
-            builder.RegisterInstance(_log)
-                .As<ILog>()
-                .SingleInstance();
-
-            builder.RegisterType<HealthService>()
-                .As<IHealthService>()
-                .SingleInstance();
-
-            builder.RegisterType<StartupManager>()
-                .As<IStartupManager>();
-
-            builder.RegisterType<ShutdownManager>()
-                .As<IShutdownManager>();
+            builder.RegisterAutoMapper();
 
             builder.RegisterInstance<ICrossMarketLiquidityClient[]>(
                 _appSettings.CurrentValue.CrossMarketLiquidityServiceClient.Instances
-                    .Select(i => new CrossMarketLiquidityClient(i.ServiceUrl, _log)).ToArray());
+                    .Select(i => new CrossMarketLiquidityClient(i.ServiceUrl, null)).ToArray());
 
             builder.RegisterType<CrossMarketLiquidityInstanceManager>()
                 .As<ICrossMarketLiquidityInstanceManager>()
@@ -104,14 +84,12 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<IAssetsService>()
                 .SingleInstance();
 
-            _services.RegisterAssetsClient(AssetServiceSettings
-                .Create(new Uri(_appSettings.CurrentValue.AssetsServiceClient.ServiceUrl),
-                    _appSettings.CurrentValue.TelegramReporterService.AssetsCacheExpirationPeriod), _log);
+            builder.RegisterAssetsClient(AssetServiceSettings.Create(
+                new Uri(_appSettings.CurrentValue.AssetsServiceClient.ServiceUrl),
+                _appSettings.CurrentValue.TelegramReporterService.AssetsCacheExpirationPeriod));
 
-            // Register Balance client
-            builder.RegisterBalancesClient(_appSettings.CurrentValue.BalancesServiceClient.ServiceUrl, _log);
-
-            builder.RegisterRateCalculatorClient(_appSettings.CurrentValue.RateCalculatorServiceClient.ServiceUrl, _log);
+            builder.RegisterBalancesClient(_appSettings.CurrentValue.BalancesServiceClient.ServiceUrl);
+            builder.RegisterRateCalculatorClient(_appSettings.CurrentValue.RateCalculatorServiceClient.ServiceUrl);
 
             builder.RegisterType<SpreadEngineStateProvider>()
                 .As<ISpreadEngineStateProvider>()
@@ -127,6 +105,10 @@ namespace Lykke.Service.TelegramReporter.Modules
 
             builder.RegisterType<BalanceWarningProvider>()
                 .As<IBalanceWarningProvider>()
+                .SingleInstance();
+
+            builder.RegisterType<ExternalBalanceWarningProvider>()
+                .As<IExternalBalanceWarningProvider>()
                 .SingleInstance();
 
             builder.RegisterType<CmlSummarySubscriber>()
@@ -153,22 +135,26 @@ namespace Lykke.Service.TelegramReporter.Modules
 
             RegisterRepositories(builder);
             RegisterRabbitMqSubscribers(builder);
-
-            builder.Populate(_services);
         }
 
         private void RegisterRepositories(ContainerBuilder builder)
         {
-            builder.RegisterType<ChatPublisherSettingsRepository>()
+            builder.Register(container => new ChatPublisherSettingsRepository(
+                AzureTableStorage<ChatPublisherSettingsEntity>
+                    .Create(_appSettings.ConnectionString(x => x.TelegramReporterService.Db.DataConnString), "ChatPublisherSettings", container.Resolve<ILogFactory>())))                
                 .As<IChatPublisherSettingsRepository>()
-                .WithParameter(TypedParameter.From(AzureTableStorage<ChatPublisherSettingsEntity>
-                    .Create(_appSettings.ConnectionString(x => x.TelegramReporterService.Db.DataConnString), "ChatPublisherSettings", _log)))
                 .SingleInstance();
 
-            builder.RegisterType<BalanceWarningRepository>()
+            builder.Register(container => new BalanceWarningRepository(
+                AzureTableStorage<BalanceWarningEntity>
+                    .Create(_appSettings.ConnectionString(x => x.TelegramReporterService.Db.DataConnString), "BalancesWarnings", container.Resolve<ILogFactory>())))
                 .As<IBalanceWarningRepository>()
-                .WithParameter(TypedParameter.From(AzureTableStorage<BalanceWarningEntity>
-                    .Create(_appSettings.ConnectionString(x => x.TelegramReporterService.Db.DataConnString), "BalancesWarnings", _log)))
+                .SingleInstance();
+
+            builder.Register(container => new ExternalBalanceWarningRepository(
+                AzureTableStorage<ExternalBalanceWarningEntity>
+                    .Create(_appSettings.ConnectionString(x => x.TelegramReporterService.Db.DataConnString), "ExternalBalancesWarnings", container.Resolve<ILogFactory>())))
+                .As<IExternalBalanceWarningRepository>()
                 .SingleInstance();
         }
 

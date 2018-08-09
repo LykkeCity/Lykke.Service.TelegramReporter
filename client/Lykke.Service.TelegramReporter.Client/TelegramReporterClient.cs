@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.TelegramReporter.Client.AutorestClient;
 using Lykke.Service.TelegramReporter.Client.AutorestClient.Models;
 using Lykke.Service.TelegramReporter.Client.Exceptions;
@@ -17,9 +18,9 @@ namespace Lykke.Service.TelegramReporter.Client
         private readonly ILog _log;
         private readonly TelegramReporterAPI _api;
 
-        public TelegramReporterClient(string serviceUrl, ILog log)
+        public TelegramReporterClient(string serviceUrl, ILogFactory logFactory)
         {
-            _log = log;
+            _log = logFactory.CreateLog(this);
             _api = new TelegramReporterAPI(new Uri(serviceUrl));
         }
 

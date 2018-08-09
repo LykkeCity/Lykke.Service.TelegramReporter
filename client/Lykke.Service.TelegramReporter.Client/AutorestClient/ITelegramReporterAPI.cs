@@ -113,8 +113,206 @@ namespace Lykke.Service.TelegramReporter.Client.AutorestClient
         Task<HttpOperationResponse> ApiV1ChatPublisherSechatpublishersettingsDeleteWithHttpMessagesAsync(string chatPublisherSettingsId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
-        /// Checks service is alive
+        /// Gets NE chat publishers.
         /// </summary>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<IList<ChatPublisherSettingsDto>>> ApiV1ChatPublisherNechatpublishersettingsGetWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Adds NE chat publisher.
+        /// </summary>
+        /// <param name='chatPublisher'>
+        /// NE chat publisher to add.
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<ErrorResponse>> ApiV1ChatPublisherNechatpublishersettingsPutWithHttpMessagesAsync(ChatPublisherSettingsPost chatPublisher = default(ChatPublisherSettingsPost), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Deletes NE chat publisher.
+        /// </summary>
+        /// <param name='chatPublisherSettingsId'>
+        /// NE chat publisher settings Id
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse> ApiV1ChatPublisherNechatpublishersettingsDeleteWithHttpMessagesAsync(string chatPublisherSettingsId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Gets balance chat publishers.
+        /// </summary>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<IList<ChatPublisherSettingsDto>>> ApiV1ChatPublisherBalancechatpublishersettingsGetWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Adds balance chat publisher.
+        /// </summary>
+        /// <param name='chatPublisher'>
+        /// Balance chat publisher to add.
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<ErrorResponse>> ApiV1ChatPublisherBalancechatpublishersettingsPutWithHttpMessagesAsync(ChatPublisherSettingsPost chatPublisher = default(ChatPublisherSettingsPost), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Deletes balance chat publisher.
+        /// </summary>
+        /// <param name='chatPublisherSettingsId'>
+        /// Balance chat publisher settings Id
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse> ApiV1ChatPublisherBalancechatpublishersettingsDeleteWithHttpMessagesAsync(string chatPublisherSettingsId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Gets external balance chat publishers.
+        /// </summary>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<IList<ChatPublisherSettingsDto>>> ApiV1ChatPublisherExternalbalancechatpublishersettingsGetWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Adds external balance chat publisher.
+        /// </summary>
+        /// <param name='chatPublisher'>
+        /// External balance chat publisher to add.
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<ErrorResponse>> ApiV1ChatPublisherExternalbalancechatpublishersettingsPutWithHttpMessagesAsync(ChatPublisherSettingsPost chatPublisher = default(ChatPublisherSettingsPost), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Deletes external balance chat publisher.
+        /// </summary>
+        /// <param name='chatPublisherSettingsId'>
+        /// External balance chat publisher settings Id
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse> ApiV1ChatPublisherExternalbalancechatpublishersettingsDeleteWithHttpMessagesAsync(string chatPublisherSettingsId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Gets balances warnings.
+        /// </summary>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<IList<BalanceWarningDto>>> ApiV1ChatPublisherBalanceswarningsGetWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Gets external balances warnings.
+        /// </summary>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<IList<ExternalBalanceWarningDto>>> ApiV1ChatPublisherExternalbalanceswarningsGetWithHttpMessagesAsync(Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Adds balance warning.
+        /// </summary>
+        /// <param name='balanceWarning'>
+        /// Balance warning to add.
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<ErrorResponse>> ApiV1ChatPublisherBalancewarningPutWithHttpMessagesAsync(BalanceWarningPost balanceWarning = default(BalanceWarningPost), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Deletes balance warning.
+        /// </summary>
+        /// <param name='clientId'>
+        /// Wallet
+        /// </param>
+        /// <param name='assetId'>
+        /// Asset ID
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse> ApiV1ChatPublisherBalancewarningDeleteWithHttpMessagesAsync(string clientId = default(string), string assetId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Adds external balance warning.
+        /// </summary>
+        /// <param name='balanceWarning'>
+        /// External balance warning to add.
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse<ErrorResponse>> ApiV1ChatPublisherExternalbalancewarningPutWithHttpMessagesAsync(ExternalBalanceWarningPost balanceWarning = default(ExternalBalanceWarningPost), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Deletes external balance warning.
+        /// </summary>
+        /// <param name='exchange'>
+        /// Exchange
+        /// </param>
+        /// <param name='assetId'>
+        /// Asset ID
+        /// </param>
+        /// <param name='customHeaders'>
+        /// The headers that will be added to request.
+        /// </param>
+        /// <param name='cancellationToken'>
+        /// The cancellation token.
+        /// </param>
+        Task<HttpOperationResponse> ApiV1ChatPublisherExternalbalancewarningDeleteWithHttpMessagesAsync(string exchange = default(string), string assetId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+
         /// <param name='customHeaders'>
         /// The headers that will be added to request.
         /// </param>

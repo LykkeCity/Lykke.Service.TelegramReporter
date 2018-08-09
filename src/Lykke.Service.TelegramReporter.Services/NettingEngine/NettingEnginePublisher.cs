@@ -1,5 +1,6 @@
 ﻿using System;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
@@ -12,8 +13,8 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
 
         public NettingEnginePublisher(ITelegramSender telegramSender,
             INettingEngineStateProvider nettingEngineStateProvider,
-            IChatPublisherSettings publisherSettings, ILog log)
-            : base(telegramSender, publisherSettings, log)
+            IChatPublisherSettings publisherSettings, ILogFactory logFactory)
+            : base(telegramSender, publisherSettings, logFactory)
         {
             _nettingEngineStateProvider = nettingEngineStateProvider;
         }

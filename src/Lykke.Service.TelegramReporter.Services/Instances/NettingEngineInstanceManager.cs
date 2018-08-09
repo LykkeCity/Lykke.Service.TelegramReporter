@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Common.Log;
 using Lykke.Service.TelegramReporter.Core.Instances;
 using JetBrains.Annotations;
+using Lykke.Common.Log;
 using Lykke.Service.NettingEngine.Client.Api;
 using Lykke.Service.NettingEngine.Client.Models.ServiceInfo;
 
@@ -16,10 +17,10 @@ namespace Lykke.Service.TelegramReporter.Services.Instances
         private readonly ILog _log;
         private List<NettingEngineInstance> _nettingEngineInstances;
 
-        public NettingEngineInstanceManager(string[] instances, ILog log)
+        public NettingEngineInstanceManager(string[] instances, ILogFactory logFactory)
         {
             _instances = instances;
-            _log = log.CreateComponentScope(nameof(NettingEngineInstanceManager));
+            _log = logFactory.CreateLog(this);
         }
 
         public IReadOnlyList<NettingEngineInstance> Instances

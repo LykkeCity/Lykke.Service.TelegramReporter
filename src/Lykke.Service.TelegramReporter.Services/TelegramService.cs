@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Lykke.Common.Log;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Exceptions;
@@ -27,12 +28,11 @@ namespace Lykke.Service.TelegramReporter.Services
         private TelegramBotClient _client;
 
         public TelegramService(TelegramSettings settings, 
-                                IEnumerable<ITelegramSubscriber> subscribers,
-                                ILog log)
+                                IEnumerable<ITelegramSubscriber> subscribers, ILogFactory logFactory)
         {
             _settings = settings;
             _subscribers = subscribers;
-            _log = log;
+            _log = logFactory.CreateLog(this);
         }
 
         public void Start()

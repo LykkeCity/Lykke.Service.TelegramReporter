@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.NettingEngine.Client.RabbitMq;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
@@ -18,12 +19,12 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
 
         public NettingEngineAuditPublisher(ITelegramSender telegramSender,
             INettingEngineAuditProvider nettingEngineAuditProvider,
-            IChatPublisherSettingsRepository repo, ILog log)
+            IChatPublisherSettingsRepository repo, ILogFactory logFactory)
         {
             _nettingEngineAuditProvider = nettingEngineAuditProvider;
             _telegramSender = telegramSender;
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
-            _log = log;
+            _log = logFactory.CreateLog(this);
         }
 
         public async Task Publish(AuditMessage auditMessage)

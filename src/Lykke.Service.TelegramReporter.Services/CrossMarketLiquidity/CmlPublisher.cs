@@ -1,5 +1,5 @@
 ﻿using System;
-using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.CrossMarketLiquidity;
@@ -15,8 +15,8 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
             ICmlSummaryProvider cmlSummaryProvider,
             ICmlStateProvider cmlStateProvider,
             IChatPublisherSettings publisherSettings,
-            ILog log)
-            : base(telegramSender, publisherSettings, log)
+            ILogFactory logFactory)
+            : base(telegramSender, publisherSettings, logFactory)
         {
             _cmlSummaryProvider = cmlSummaryProvider;
             _cmlStateProvider = cmlStateProvider;

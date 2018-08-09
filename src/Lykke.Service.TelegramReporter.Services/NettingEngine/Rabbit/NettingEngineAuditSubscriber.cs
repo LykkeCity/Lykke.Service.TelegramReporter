@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Common;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.RabbitMqBroker;
 using Lykke.RabbitMqBroker.Subscriber;
 using Lykke.Service.NettingEngine.Client.RabbitMq;
@@ -21,11 +22,11 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine.Rabbit
         public NettingEngineAuditSubscriber(
             NettingEngineAuditExchangeSettings settings,
             INettingEngineAuditPublisher handler,
-            ILog log)
+            ILogFactory logFactory)
         {
             _settings = settings;
             _handler = handler;
-            _log = log;
+            _log = logFactory.CreateLog(this);
         }
 
         public void Start()

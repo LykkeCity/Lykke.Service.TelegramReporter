@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Instances;
 using Lykke.Service.TelegramReporter.Core.Services;
@@ -24,8 +25,8 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
 
         public NettingEngineStateSubscriber(INettingEngineStateProvider nettingEngineStateProvider,
             INettingEngineInstanceManager nettingEngineInstanceManager,
-            IChatPublisherSettingsRepository repo, ILog log)
-            : base(repo, log)
+            IChatPublisherSettingsRepository repo, ILogFactory logFactory)
+            : base(repo, logFactory)
         {
             _nettingEngineStateProvider = nettingEngineStateProvider;
             _nettingEngineInstanceManager = nettingEngineInstanceManager;
@@ -82,7 +83,7 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
 
         protected override async Task<long[]> GetAllowedChatIds()
         {
-            return (await Repo.GetSeChatPublisherSettings()).Select(x => x.ChatId).ToArray();
+            return (await Repo.GetNeChatPublisherSettings()).Select(x => x.ChatId).ToArray();
         }
 
         private string ExtractInstanceId(string data)

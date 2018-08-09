@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Instances;
 using Lykke.Service.TelegramReporter.Core.Services;
@@ -24,8 +25,8 @@ namespace Lykke.Service.TelegramReporter.Services.SpreadEngine
 
         public SpreadEngineStateSubscriber(ISpreadEngineStateProvider spreadEngineStateProvider,
             ISpreadEngineInstanceManager spreadEngineInstanceManager,
-            IChatPublisherSettingsRepository repo, ILog log)
-            : base(repo, log)
+            IChatPublisherSettingsRepository repo, ILogFactory logFactory)
+            : base(repo, logFactory)
         {
             _spreadEngineStateProvider = spreadEngineStateProvider;
             _spreadEngineInstanceManager = spreadEngineInstanceManager;

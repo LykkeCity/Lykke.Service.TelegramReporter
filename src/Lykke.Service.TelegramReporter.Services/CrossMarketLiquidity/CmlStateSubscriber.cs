@@ -5,7 +5,7 @@ using Lykke.Service.TelegramReporter.Core.Services.CrossMarketLiquidity;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -24,8 +24,8 @@ namespace Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity
 
         public CmlStateSubscriber(ICmlStateProvider cmlStateProvider,
             ICrossMarketLiquidityInstanceManager crossMarketLiquidityInstanceManager,
-            IChatPublisherSettingsRepository repo, ILog log)
-            : base (repo, log)
+            IChatPublisherSettingsRepository repo, ILogFactory logFactory)
+            : base (repo, logFactory)
         {
             _cmlStateProvider = cmlStateProvider;
             _crossMarketLiquidityInstanceManager = crossMarketLiquidityInstanceManager;

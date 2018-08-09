@@ -2,6 +2,7 @@
 using Autofac;
 using Common;
 using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services;
 
@@ -17,11 +18,11 @@ namespace Lykke.Service.TelegramReporter.Services
         private Timer _timer;
 
         protected ChatPublisher(ITelegramSender telegramSender,
-            IChatPublisherSettings publisherSettings, ILog log)
+            IChatPublisherSettings publisherSettings, ILogFactory logFactory)
         {
             TelegramSender = telegramSender;
             PublisherSettings = publisherSettings;
-            Log = log;
+            Log = logFactory.CreateLog(this);
         }
 
         public void Start()
