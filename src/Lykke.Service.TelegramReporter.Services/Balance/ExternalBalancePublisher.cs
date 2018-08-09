@@ -52,35 +52,37 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
         {
             var balanceIssues = new List<ExternalBalanceIssueDto>();
 
+            var neInstance = _nettingEngineInstanceManager.Instances.First();
+            if (neInstance == null)
+            {
+                return balanceIssues;
+            }
+
             var balanceWarnings = await _externalBalanceWarningRepository.GetExternalBalancesWarnings();
 
-            var neInstance = _nettingEngineInstanceManager.Instances.First();
-            if (neInstance != null)
+            var task = neInstance.Balances.GetExternalAsync();
+            await Task.WhenAll(task);
+
+            var balances = task.Result
+                .ToDictionary(x => GetBalanceDictionaryKey(x.Exchange, x.AssetId), x => x);
+
+            foreach (var balanceWarning in balanceWarnings)
             {
-                var task = neInstance.Balances.GetExternalAsync();
-                await Task.WhenAll(task);
+                var key = GetBalanceDictionaryKey(balanceWarning.Exchange, balanceWarning.AssetId);
 
-                var balances = task.Result
-                    .ToDictionary(x => GetBalanceDictionaryKey(x.Exchange, x.AssetId), x => x);
+                var isBalanceFound = balances.TryGetValue(key, out var balance);
 
-                foreach (var balanceWarning in balanceWarnings)
+                if (isBalanceFound && balance.Amount < balanceWarning.MinBalance ||
+                    !isBalanceFound && balanceWarning.MinBalance > 0)
                 {
-                    var key = GetBalanceDictionaryKey(balanceWarning.Exchange, balanceWarning.AssetId);
-
-                    var isBalanceFound = balances.TryGetValue(key, out var balance);
-
-                    if (isBalanceFound && balance.Amount < balanceWarning.MinBalance ||
-                        !isBalanceFound && balanceWarning.MinBalance > 0)
+                    balanceIssues.Add(new ExternalBalanceIssueDto
                     {
-                        balanceIssues.Add(new ExternalBalanceIssueDto
-                        {
-                            Exchange = balanceWarning.Exchange.ToUpperInvariant(),
-                            AssetId = balanceWarning.AssetId.ToUpperInvariant(),
-                            Name = balanceWarning.Name,
-                            Balance = balance?.Amount ?? 0,
-                            MinBalance = balanceWarning.MinBalance
-                        });
-                    }
+                        Exchange = balanceWarning.Exchange.ToUpperInvariant(),
+                        AssetId = balanceWarning.AssetId.ToUpperInvariant(),
+                        Name = balanceWarning.Name,
+                        Balance = balance?.Amount ?? 0,
+                        MinBalance = balanceWarning.MinBalance
+                    });
                 }
             }
 
