@@ -52,9 +52,7 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
         {
             var balanceIssues = new List<ExternalBalanceIssueDto>();
 
-            var balanceWarnings = (await _externalBalanceWarningRepository.GetExternalBalancesWarnings())
-                .GroupBy(x => GetBalanceDictionaryKey(x.Exchange, x.AssetId)).Select(g => g.First())
-                .ToDictionary(x => GetBalanceDictionaryKey(x.Exchange, x.AssetId), x => x);
+            var balanceWarnings = await _externalBalanceWarningRepository.GetExternalBalancesWarnings();
 
             var neInstance = _nettingEngineInstanceManager.Instances.First();
             if (neInstance != null)
@@ -67,18 +65,20 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
 
                 foreach (var balanceWarning in balanceWarnings)
                 {
-                    var isBalanceFound = balances.TryGetValue(balanceWarning.Key, out var balance);
+                    var key = GetBalanceDictionaryKey(balanceWarning.Exchange, balanceWarning.AssetId);
 
-                    if (isBalanceFound && balance.Amount < balanceWarning.Value.MinBalance ||
-                        !isBalanceFound && balanceWarning.Value.MinBalance > 0)
+                    var isBalanceFound = balances.TryGetValue(key, out var balance);
+
+                    if (isBalanceFound && balance.Amount < balanceWarning.MinBalance ||
+                        !isBalanceFound && balanceWarning.MinBalance > 0)
                     {
                         balanceIssues.Add(new ExternalBalanceIssueDto
                         {
-                            Exchange = balanceWarning.Value.Exchange.ToUpperInvariant(),
-                            AssetId = balanceWarning.Value.AssetId.ToUpperInvariant(),
-                            Name = balanceWarning.Value.Name,
+                            Exchange = balanceWarning.Exchange.ToUpperInvariant(),
+                            AssetId = balanceWarning.AssetId.ToUpperInvariant(),
+                            Name = balanceWarning.Name,
                             Balance = balance?.Amount ?? 0,
-                            MinBalance = balanceWarning.Value.MinBalance
+                            MinBalance = balanceWarning.MinBalance
                         });
                     }
                 }
