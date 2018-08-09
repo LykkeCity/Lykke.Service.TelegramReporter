@@ -53,6 +53,7 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
             var balanceIssues = new List<BalanceIssueDto>();
 
             var balanceWarnings = (await _balanceWarningRepository.GetBalancesWarnings())
+                .GroupBy(x => GetBalanceDictionaryKey(x.ClientId, x.AssetId)).Select(g => g.First())
                 .ToDictionary(x => GetBalanceDictionaryKey(x.ClientId, x.AssetId), x => x);
 
             var balancesWallets = balanceWarnings.Values.Select(x => x.ClientId.ToUpperInvariant()).Distinct()

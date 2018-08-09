@@ -53,6 +53,7 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
             var balanceIssues = new List<ExternalBalanceIssueDto>();
 
             var balanceWarnings = (await _externalBalanceWarningRepository.GetExternalBalancesWarnings())
+                .GroupBy(x => GetBalanceDictionaryKey(x.Exchange, x.AssetId)).Select(g => g.First())
                 .ToDictionary(x => GetBalanceDictionaryKey(x.Exchange, x.AssetId), x => x);
 
             var neInstance = _nettingEngineInstanceManager.Instances.First();
