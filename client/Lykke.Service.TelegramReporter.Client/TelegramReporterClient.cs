@@ -52,6 +52,30 @@ namespace Lykke.Service.TelegramReporter.Client
             return response.Body;
         }
 
+        public async Task<IList<ChatPublisherSettingsDto>> GetNeChatPublisherSettings(
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _api.ApiV1ChatPublisherNechatpublishersettingsGetWithHttpMessagesAsync(cancellationToken: cancellationToken);
+            ValidateResponse(response);
+            return response.Body;
+        }
+
+        public async Task<IList<ChatPublisherSettingsDto>> GetBalanceChatPublisherSettings(
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _api.ApiV1ChatPublisherBalancechatpublishersettingsGetWithHttpMessagesAsync(cancellationToken: cancellationToken);
+            ValidateResponse(response);
+            return response.Body;
+        }
+
+        public async Task<IList<ChatPublisherSettingsDto>> GetExternalBalanceChatPublisherSettings(
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _api.ApiV1ChatPublisherExternalbalancechatpublishersettingsGetWithHttpMessagesAsync(cancellationToken: cancellationToken);
+            ValidateResponse(response);
+            return response.Body;
+        }
+
         public async Task AddCmlChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher, CancellationToken cancellationToken = default(CancellationToken))
         {
             var response = await _api.ApiV1ChatPublisherCmlchatpublishersettingsPutWithHttpMessagesAsync(chatPublisher, cancellationToken: cancellationToken);
@@ -64,6 +88,24 @@ namespace Lykke.Service.TelegramReporter.Client
             ValidateResponse(response);
         }
 
+        public async Task AddNeChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _api.ApiV1ChatPublisherNechatpublishersettingsPutWithHttpMessagesAsync(chatPublisher, cancellationToken: cancellationToken);
+            ValidateResponse(response);
+        }
+
+        public async Task AddBalanceChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _api.ApiV1ChatPublisherBalancechatpublishersettingsPutWithHttpMessagesAsync(chatPublisher, cancellationToken: cancellationToken);
+            ValidateResponse(response);
+        }
+
+        public async Task AddExternalBalanceChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _api.ApiV1ChatPublisherExternalbalancechatpublishersettingsPutWithHttpMessagesAsync(chatPublisher, cancellationToken: cancellationToken);
+            ValidateResponse(response);
+        }
+
         public async Task RemoveCmlChatPublisherSettingsAsync(string chatPublisherSettingsId, CancellationToken cancellationToken = default(CancellationToken))
         {
             var response = await _api.ApiV1ChatPublisherCmlchatpublishersettingsDeleteWithHttpMessagesAsync(chatPublisherSettingsId, cancellationToken: cancellationToken);
@@ -73,6 +115,62 @@ namespace Lykke.Service.TelegramReporter.Client
         public async Task RemoveSeChatPublisherSettingsAsync(string chatPublisherSettingsId, CancellationToken cancellationToken = default(CancellationToken))
         {
             var response = await _api.ApiV1ChatPublisherSechatpublishersettingsDeleteWithHttpMessagesAsync(chatPublisherSettingsId, cancellationToken: cancellationToken);
+            ValidateResponse(response);
+        }
+
+        public async Task RemoveNeChatPublisherSettingsAsync(string chatPublisherSettingsId, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _api.ApiV1ChatPublisherNechatpublishersettingsDeleteWithHttpMessagesAsync(chatPublisherSettingsId, cancellationToken: cancellationToken);
+            ValidateResponse(response);
+        }
+
+        public async Task RemoveBalanceChatPublisherSettingsAsync(string chatPublisherSettingsId, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _api.ApiV1ChatPublisherBalancechatpublishersettingsDeleteWithHttpMessagesAsync(chatPublisherSettingsId, cancellationToken: cancellationToken);
+            ValidateResponse(response);
+        }
+
+        public async Task RemoveExternalBalanceChatPublisherSettingsAsync(string chatPublisherSettingsId, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _api.ApiV1ChatPublisherExternalbalancechatpublishersettingsDeleteWithHttpMessagesAsync(chatPublisherSettingsId, cancellationToken: cancellationToken);
+            ValidateResponse(response);
+        }
+
+        public async Task<IList<BalanceWarningDto>> GetBalancesWarningsAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _api.ApiV1ChatPublisherBalanceswarningsGetWithHttpMessagesAsync(cancellationToken: cancellationToken);
+            ValidateResponse(response);
+            return response.Body;
+        }
+
+        public async Task<IList<ExternalBalanceWarningDto>> GetExternalBalancesWarningsAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _api.ApiV1ChatPublisherExternalbalanceswarningsGetWithHttpMessagesAsync(cancellationToken: cancellationToken);
+            ValidateResponse(response);
+            return response.Body;
+        }
+
+        public async Task AddBalanceWarningAsync(BalanceWarningPost balanceWarning, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _api.ApiV1ChatPublisherBalancewarningPutWithHttpMessagesAsync(balanceWarning, cancellationToken: cancellationToken);
+            ValidateResponse(response);
+        }
+
+        public async Task AddExternalBalanceWarningAsync(ExternalBalanceWarningPost balanceWarning, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _api.ApiV1ChatPublisherExternalbalancewarningPutWithHttpMessagesAsync(balanceWarning, cancellationToken: cancellationToken);
+            ValidateResponse(response);
+        }
+
+        public async Task RemoveBalanceWarningAsync(string clientId, string assetId, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _api.ApiV1ChatPublisherBalancewarningDeleteWithHttpMessagesAsync(clientId, assetId, cancellationToken: cancellationToken);
+            ValidateResponse(response);
+        }
+
+        public async Task RemoveExternalBalanceWarningAsync(string exchange, string assetId, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var response = await _api.ApiV1ChatPublisherExternalbalancewarningDeleteWithHttpMessagesAsync(exchange, assetId, cancellationToken: cancellationToken);
             ValidateResponse(response);
         }
 
