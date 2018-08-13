@@ -82,26 +82,31 @@ namespace Lykke.Service.TelegramReporter.Services
 
         public async Task<IReadOnlyList<IChatPublisherSettings>> GetCmlChatPublishersAsync()
         {
+            EnsureInitialized();
             return await _repo.GetCmlChatPublisherSettings();
         }
 
         public async Task<IReadOnlyList<IChatPublisherSettings>> GetSeChatPublishersAsync()
         {
+            EnsureInitialized();
             return await _repo.GetSeChatPublisherSettings();
         }
 
         public async Task<IReadOnlyList<IChatPublisherSettings>> GetNeChatPublishersAsync()
         {
+            EnsureInitialized();
             return await _repo.GetNeChatPublisherSettings();
         }
 
         public async Task<IReadOnlyList<IChatPublisherSettings>> GetBalanceChatPublishersAsync()
         {
+            EnsureInitialized();
             return await _repo.GetBalanceChatPublisherSettings();
         }
 
         public async Task<IReadOnlyList<IChatPublisherSettings>> GetExternalBalanceChatPublishersAsync()
         {
+            EnsureInitialized();
             return await _repo.GetExternalBalanceChatPublisherSettings();
         }
 
@@ -284,168 +289,109 @@ namespace Lykke.Service.TelegramReporter.Services
             var balancePublisherSettings = await _repo.GetBalanceChatPublisherSettings();
             var externalBalancePublisherSettings = await _repo.GetExternalBalanceChatPublisherSettings();
 
+            CleanPublishers(cmlPublisherSettings, _cmlPublishers);
             foreach (var publisherSettings in cmlPublisherSettings)
             {
                 AddCmlPublisherIfNeeded(publisherSettings);                
             }
-            
-            CleanCmlPublishers(cmlPublisherSettings);
 
+            CleanPublishers(sePublisherSettings, _sePublishers);
             foreach (var publisherSettings in sePublisherSettings)
             {
                 AddSePublisherIfNeeded(publisherSettings);
             }
 
-            CleanSePublishers(sePublisherSettings);
-
+            CleanPublishers(nePublisherSettings, _nePublishers);
             foreach (var publisherSettings in nePublisherSettings)
             {
                 AddNePublisherIfNeeded(publisherSettings);
             }
 
-            CleanNePublishers(nePublisherSettings);
-
+            CleanPublishers(balancePublisherSettings, _balancePublishers);
             foreach (var publisherSettings in balancePublisherSettings)
             {
                 AddBalancePublisherIfNeeded(publisherSettings);
             }
 
-            CleanBalancePublishers(balancePublisherSettings);
-
+            CleanPublishers(externalBalancePublisherSettings, _externalBalancePublishers);
             foreach (var publisherSettings in externalBalancePublisherSettings)
             {
                 AddExternalBalancePublisherIfNeeded(publisherSettings);
-            }
-
-            CleanExternalBalancePublishers(externalBalancePublisherSettings);
+            }            
         }
 
         private void AddCmlPublisherIfNeeded(IChatPublisherSettings publisherSettings)
         {
-            var exist = _cmlPublishers.ContainsKey(publisherSettings.ChatId);
-            if (!exist)
-            {
-                var newChatPublisher = new CmlPublisher(_telegramSender,
-                    _cmlSummaryProvider, _cmlStateProvider, publisherSettings, _logFactory);
+            var newChatPublisher = new CmlPublisher(_telegramSender,
+                _cmlSummaryProvider, _cmlStateProvider, publisherSettings, _logFactory);
 
-                newChatPublisher.Start();
-                _cmlPublishers[publisherSettings.ChatId] = newChatPublisher;
-            }
+            AddPublisherIfNeeded(publisherSettings, _cmlPublishers, newChatPublisher);
         }
 
         private void AddSePublisherIfNeeded(IChatPublisherSettings publisherSettings)
         {
-            var exist = _sePublishers.ContainsKey(publisherSettings.ChatId);
-            if (!exist)
-            {
-                var newChatPublisher = new SpreadEnginePublisher(_telegramSender,
-                    _seStateProvider, publisherSettings, _logFactory);
+            var newChatPublisher = new SpreadEnginePublisher(_telegramSender,
+                _seStateProvider, publisherSettings, _logFactory);
 
-                newChatPublisher.Start();
-                _sePublishers[publisherSettings.ChatId] = newChatPublisher;
-            }
+            AddPublisherIfNeeded(publisherSettings, _sePublishers, newChatPublisher);
         }
 
         private void AddNePublisherIfNeeded(IChatPublisherSettings publisherSettings)
         {
-            var exist = _nePublishers.ContainsKey(publisherSettings.ChatId);
-            if (!exist)
-            {
-                var newChatPublisher = new NettingEnginePublisher(_telegramSender,
-                    _neStateProvider, publisherSettings, _logFactory);
+            var newChatPublisher = new NettingEnginePublisher(_telegramSender,
+                _neStateProvider, publisherSettings, _logFactory);
 
-                newChatPublisher.Start();
-                _nePublishers[publisherSettings.ChatId] = newChatPublisher;
-            }
+            AddPublisherIfNeeded(publisherSettings, _nePublishers, newChatPublisher);
         }
 
         private void AddBalancePublisherIfNeeded(IChatPublisherSettings publisherSettings)
         {
-            var exist = _balancePublishers.ContainsKey(publisherSettings.ChatId);
-            if (!exist)
-            {
-                var newChatPublisher = new BalancePublisher(_telegramSender, _balanceWarningRepository, _balancesClient,
-                    _balanceWarningProvider, publisherSettings, _logFactory);
+            var newChatPublisher = new BalancePublisher(_telegramSender, _balanceWarningRepository, _balancesClient,
+                _balanceWarningProvider, publisherSettings, _logFactory);
 
-                newChatPublisher.Start();
-                _balancePublishers[publisherSettings.ChatId] = newChatPublisher;
-            }
+            AddPublisherIfNeeded(publisherSettings, _nePublishers, newChatPublisher);
         }
 
         private void AddExternalBalancePublisherIfNeeded(IChatPublisherSettings publisherSettings)
         {
-            var exist = _externalBalancePublishers.ContainsKey(publisherSettings.ChatId);
+            var newChatPublisher = new ExternalBalancePublisher(_telegramSender, _externalBalanceWarningRepository,
+                _nettingEngineInstanceManager, _externalBalanceWarningProvider, publisherSettings, _logFactory);
+
+            AddPublisherIfNeeded(publisherSettings, _externalBalancePublishers, newChatPublisher);
+        }
+
+        private static void AddPublisherIfNeeded(IChatPublisherSettings publisherSettings, IDictionary<long, ChatPublisher> publishers, ChatPublisher newChatPublisher)
+        {
+            var exist = publishers.ContainsKey(publisherSettings.ChatId);
             if (!exist)
             {
-                var newChatPublisher = new ExternalBalancePublisher(_telegramSender, _externalBalanceWarningRepository,
-                    _nettingEngineInstanceManager, _externalBalanceWarningProvider, publisherSettings, _logFactory);
-
                 newChatPublisher.Start();
-                _externalBalancePublishers[publisherSettings.ChatId] = newChatPublisher;
+                publishers[publisherSettings.ChatId] = newChatPublisher;
             }
-        }
-
-        private void CleanCmlPublishers(IReadOnlyList<IChatPublisherSettings> cmlPublisherSettings)
-        {
-            foreach (var chatId in _cmlPublishers.Keys)
+            else
             {
-                if (cmlPublisherSettings.All(x => x.ChatId != chatId))
+                if (publisherSettings.TimeSpan < publishers[publisherSettings.ChatId].PublisherSettings.TimeSpan)
                 {
-                    _cmlPublishers[chatId].Stop();
-                    _cmlPublishers[chatId].Dispose();
-                    _cmlPublishers.Remove(chatId, out _);
+                    publishers[publisherSettings.ChatId].Stop();
+                    publishers[publisherSettings.ChatId].Dispose();
+                    publishers.Remove(publisherSettings.ChatId, out _);
+
+                    newChatPublisher.Start();
+                    publishers[publisherSettings.ChatId] = newChatPublisher;
                 }
             }
         }
 
-        private void CleanSePublishers(IReadOnlyList<IChatPublisherSettings> sePublisherSettings)
+        private void CleanPublishers(IReadOnlyList<IChatPublisherSettings> publisherSettings, IDictionary<long, ChatPublisher> publishers)
         {
-            foreach (var chatId in _sePublishers.Keys)
+            foreach (var publisher in publishers)
             {
-                if (sePublisherSettings.All(x => x.ChatId != chatId))
+                var chatId = publisher.Key;
+                if (!publisherSettings.Any(x => x.ChatId == chatId && x.TimeSpan == publisher.Value.PublisherSettings.TimeSpan))
                 {
-                    _sePublishers[chatId].Stop();
-                    _sePublishers[chatId].Dispose();
-                    _sePublishers.Remove(chatId, out _);
-                }
-            }
-        }
-
-        private void CleanNePublishers(IReadOnlyList<IChatPublisherSettings> nePublisherSettings)
-        {
-            foreach (var chatId in _nePublishers.Keys)
-            {
-                if (nePublisherSettings.All(x => x.ChatId != chatId))
-                {
-                    _nePublishers[chatId].Stop();
-                    _nePublishers[chatId].Dispose();
-                    _nePublishers.Remove(chatId, out _);
-                }
-            }
-        }
-
-        private void CleanBalancePublishers(IReadOnlyList<IChatPublisherSettings> balancePublisherSettings)
-        {
-            foreach (var chatId in _balancePublishers.Keys)
-            {
-                if (balancePublisherSettings.All(x => x.ChatId != chatId))
-                {
-                    _balancePublishers[chatId].Stop();
-                    _balancePublishers[chatId].Dispose();
-                    _balancePublishers.Remove(chatId, out _);
-                }
-            }
-        }
-
-        private void CleanExternalBalancePublishers(IReadOnlyList<IChatPublisherSettings> balancePublisherSettings)
-        {
-            foreach (var chatId in _externalBalancePublishers.Keys)
-            {
-                if (balancePublisherSettings.All(x => x.ChatId != chatId))
-                {
-                    _externalBalancePublishers[chatId].Stop();
-                    _externalBalancePublishers[chatId].Dispose();
-                    _externalBalancePublishers.Remove(chatId, out _);
+                    publishers[chatId].Stop();
+                    publishers[chatId].Dispose();
+                    publishers.Remove(chatId, out _);
                 }
             }
         }

@@ -63,3 +63,5 @@ node_modules
 
 #developing settings
 src/Lykke.Service.TelegramReporter/TelegramReporter.json
+
+/client/**/*.xml
