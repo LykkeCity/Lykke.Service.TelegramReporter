@@ -36,7 +36,7 @@ namespace Lykke.Service.TelegramReporter.Client
             return JsonConvert.DeserializeObject<IsAliveResponse>(JsonConvert.SerializeObject(response.Body));
         }
 
-        public async Task<IList<ChatPublisherSettingsDto>> GetCmlChatPublisherSettings(
+        public async Task<IList<ChatPublisherSettingsDto>> GetCmlChatPublisherSettingsAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
             var response = await _api.ApiV1ChatPublisherCmlchatpublishersettingsGetWithHttpMessagesAsync(cancellationToken: cancellationToken);
@@ -44,7 +44,7 @@ namespace Lykke.Service.TelegramReporter.Client
             return response.Body;
         }
 
-        public async Task<IList<ChatPublisherSettingsDto>> GetSeChatPublisherSettings(
+        public async Task<IList<ChatPublisherSettingsDto>> GetSeChatPublisherSettingsAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
             var response = await _api.ApiV1ChatPublisherSechatpublishersettingsGetWithHttpMessagesAsync(cancellationToken: cancellationToken);
@@ -52,7 +52,7 @@ namespace Lykke.Service.TelegramReporter.Client
             return response.Body;
         }
 
-        public async Task<IList<ChatPublisherSettingsDto>> GetNeChatPublisherSettings(
+        public async Task<IList<ChatPublisherSettingsDto>> GetNeChatPublisherSettingsAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
             var response = await _api.ApiV1ChatPublisherNechatpublishersettingsGetWithHttpMessagesAsync(cancellationToken: cancellationToken);
@@ -60,7 +60,7 @@ namespace Lykke.Service.TelegramReporter.Client
             return response.Body;
         }
 
-        public async Task<IList<ChatPublisherSettingsDto>> GetBalanceChatPublisherSettings(
+        public async Task<IList<ChatPublisherSettingsDto>> GetBalanceChatPublisherSettingsAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
             var response = await _api.ApiV1ChatPublisherBalancechatpublishersettingsGetWithHttpMessagesAsync(cancellationToken: cancellationToken);
@@ -68,7 +68,7 @@ namespace Lykke.Service.TelegramReporter.Client
             return response.Body;
         }
 
-        public async Task<IList<ChatPublisherSettingsDto>> GetExternalBalanceChatPublisherSettings(
+        public async Task<IList<ChatPublisherSettingsDto>> GetExternalBalanceChatPublisherSettingsAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
             var response = await _api.ApiV1ChatPublisherExternalbalancechatpublishersettingsGetWithHttpMessagesAsync(cancellationToken: cancellationToken);

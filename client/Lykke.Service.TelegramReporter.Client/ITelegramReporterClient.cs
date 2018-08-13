@@ -24,35 +24,35 @@ namespace Lykke.Service.TelegramReporter.Client
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns>CML chat publishers</returns>
-        Task<IList<ChatPublisherSettingsDto>> GetCmlChatPublisherSettings(CancellationToken cancellationToken = default(CancellationToken));
+        Task<IList<ChatPublisherSettingsDto>> GetCmlChatPublisherSettingsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Gets SE chat publishers.
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns>SE chat publishers</returns>
-        Task<IList<ChatPublisherSettingsDto>> GetSeChatPublisherSettings(CancellationToken cancellationToken = default(CancellationToken));
+        Task<IList<ChatPublisherSettingsDto>> GetSeChatPublisherSettingsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Gets NE chat publishers.
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns>NE chat publishers</returns>
-        Task<IList<ChatPublisherSettingsDto>> GetNeChatPublisherSettings(CancellationToken cancellationToken = default(CancellationToken));
+        Task<IList<ChatPublisherSettingsDto>> GetNeChatPublisherSettingsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Gets Balance chat publishers.
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns>Balance chat publishers</returns>
-        Task<IList<ChatPublisherSettingsDto>> GetBalanceChatPublisherSettings(CancellationToken cancellationToken = default(CancellationToken));
+        Task<IList<ChatPublisherSettingsDto>> GetBalanceChatPublisherSettingsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Gets External Balance chat publishers.
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns>External Balance chat publishers</returns>
-        Task<IList<ChatPublisherSettingsDto>> GetExternalBalanceChatPublisherSettings(CancellationToken cancellationToken = default(CancellationToken));
+        Task<IList<ChatPublisherSettingsDto>> GetExternalBalanceChatPublisherSettingsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Adds CML chat publisher.
