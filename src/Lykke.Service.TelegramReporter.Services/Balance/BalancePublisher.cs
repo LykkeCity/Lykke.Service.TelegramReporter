@@ -84,6 +84,7 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
                         ClientId = balanceWarning.ClientId,
                         AssetId = balanceWarning.AssetId.ToUpperInvariant(),
                         Name = balanceWarning.Name,
+                        AssetName = balanceWarning.AssetName,
                         Balance = balance?.Balance ?? 0,
                         MinBalance = balanceWarning.MinBalance
                     });

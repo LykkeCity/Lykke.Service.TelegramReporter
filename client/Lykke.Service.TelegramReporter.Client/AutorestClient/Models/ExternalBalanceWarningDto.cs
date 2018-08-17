@@ -23,11 +23,12 @@ namespace Lykke.Service.TelegramReporter.Client.AutorestClient.Models
         /// <summary>
         /// Initializes a new instance of the ExternalBalanceWarningDto class.
         /// </summary>
-        public ExternalBalanceWarningDto(string exchange, string assetId, string name, double minBalance)
+        public ExternalBalanceWarningDto(string exchange, string assetId, string name, string assetName, double minBalance)
         {
             Exchange = exchange;
             AssetId = assetId;
             Name = name;
+            AssetName = assetName;
             MinBalance = minBalance;
             CustomInit();
         }
@@ -54,6 +55,11 @@ namespace Lykke.Service.TelegramReporter.Client.AutorestClient.Models
 
         /// <summary>
         /// </summary>
+        [JsonProperty(PropertyName = "AssetName")]
+        public string AssetName { get; set; }
+
+        /// <summary>
+        /// </summary>
         [JsonProperty(PropertyName = "MinBalance")]
         public double MinBalance { get; set; }
 
@@ -76,6 +82,10 @@ namespace Lykke.Service.TelegramReporter.Client.AutorestClient.Models
             if (Name == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "Name");
+            }
+            if (AssetName == null)
+            {
+                throw new ValidationException(ValidationRules.CannotBeNull, "AssetName");
             }
         }
     }

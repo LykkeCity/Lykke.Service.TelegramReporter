@@ -13,6 +13,7 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
         public string Exchange => PartitionKey;
         public string AssetId => RowKey;
         public string Name { get; set; }
+        public string AssetName { get; set; }
         public decimal MinBalance { get; set; }
 
         public static ExternalBalanceWarningEntity CreateForBalance(IExternalBalanceWarning balanceWarning)
@@ -22,6 +23,7 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
                 PartitionKey = balanceWarning.Exchange.ToUpperInvariant(),
                 RowKey = balanceWarning.AssetId.ToUpperInvariant(),
                 Name = balanceWarning.Name,
+                AssetName = balanceWarning.AssetName,
                 MinBalance = balanceWarning.MinBalance,
             };
         }

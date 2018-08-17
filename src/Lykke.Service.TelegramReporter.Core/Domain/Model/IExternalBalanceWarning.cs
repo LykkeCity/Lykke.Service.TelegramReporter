@@ -5,6 +5,7 @@
         string Exchange { get; }
         string AssetId { get; }
         string Name { get; }
+        string AssetName { get; }
         decimal MinBalance { get; }        
     }
 
@@ -13,6 +14,7 @@
         public string Exchange { get; set; }
         public string AssetId { get; set; }
         public string Name { get; set; }
+        public string AssetName { get; set; }
         public decimal MinBalance { get; set; }        
     }
 }
