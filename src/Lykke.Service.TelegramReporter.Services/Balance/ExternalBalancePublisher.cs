@@ -77,8 +77,8 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
                 {
                     balanceIssues.Add(new ExternalBalanceIssueDto
                     {
-                        Exchange = balanceWarning.Exchange.ToUpperInvariant(),
-                        AssetId = balanceWarning.AssetId.ToUpperInvariant(),
+                        Exchange = balanceWarning.Exchange,
+                        AssetId = balanceWarning.AssetId,
                         Name = balanceWarning.Name,
                         AssetName = balanceWarning.AssetName,
                         Balance = balance?.Amount ?? 0,
@@ -92,7 +92,7 @@ namespace Lykke.Service.TelegramReporter.Services.Balance
 
         private string GetBalanceDictionaryKey(string exchange, string assetId)
         {
-            return $"{exchange.ToUpperInvariant()}_{assetId.ToUpperInvariant()}";
+            return $"{exchange}_{assetId}";
         }
     }    
 }
