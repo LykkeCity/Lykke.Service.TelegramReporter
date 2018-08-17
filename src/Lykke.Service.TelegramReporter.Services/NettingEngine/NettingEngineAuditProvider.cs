@@ -39,26 +39,18 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
             }
             state.AppendLine(":");
             state.AppendLine();
-
-            var instrument = auditMessage.CurrentValues.ContainsKey("InstrumentId")
-                ? $"{auditMessage.CurrentValues["InstrumentId"]}"
-                : "UNKNOWN_INSTRUMENT";
-
-            var asset = auditMessage.CurrentValues.ContainsKey("Asset")
-                ? $"{auditMessage.CurrentValues["Asset"]}"
-                : "UNKNOWN_ASSET";
-
+                       
             switch (auditMessage.EventType)
             {
                 case AuditEventType.InstrumentStarted:
                 case AuditEventType.InstrumentStopped:
-                    state.AppendLine($"{instrument}");
+                    state.AppendLine($"{GetInstrument(auditMessage)}");
                     break;
                 case AuditEventType.InstrumentSettingsChanged:
-                    await HandleInstrumentSettingsChanged(state, instrument, auditMessage);
+                    await HandleInstrumentSettingsChanged(state, GetInstrument(auditMessage), auditMessage);
                     break;
                 case AuditEventType.HedgeSettingsChanged:
-                    await HandleInstrumentSettingsChanged(state, asset, auditMessage);
+                    await HandleInstrumentSettingsChanged(state, GetAsset(auditMessage), auditMessage);
                     break;
                 default:
                     await _log.WriteWarningAsync(nameof(NettingEngineAuditProvider), nameof(GetAuditMessage), $"auditMessage: {auditMessage.ToJson()}",
@@ -93,6 +85,28 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
                     $"auditMessage: {auditMessage.ToJson()}",
                     "Unrecognized SettingsChangeType in audit message.");
             }
+        }
+
+        private string GetInstrument(AuditMessage auditMessage)
+        {
+            var instrument = auditMessage.CurrentValues?.ContainsKey("InstrumentId") ?? false
+                ? $"{auditMessage.CurrentValues["InstrumentId"]}"
+                : (auditMessage.PreviousValues?.ContainsKey("InstrumentId") ?? false
+                    ? $"{auditMessage.PreviousValues["InstrumentId"]}"
+                    : "UNKNOWN_INSTRUMENT");
+
+            return instrument;
+        }
+
+        private string GetAsset(AuditMessage auditMessage)
+        {
+            var asset = auditMessage.CurrentValues?.ContainsKey("Asset") ?? false
+                ? $"{auditMessage.CurrentValues["Asset"]}"
+                : (auditMessage.PreviousValues?.ContainsKey("Asset") ?? false
+                    ? $"{auditMessage.PreviousValues["Asset"]}"
+                    : "UNKNOWN_ASSET");
+
+            return asset;
         }
     }
 }
