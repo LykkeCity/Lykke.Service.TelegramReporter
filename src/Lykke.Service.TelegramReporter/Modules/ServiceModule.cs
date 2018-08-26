@@ -6,7 +6,6 @@ using Lykke.Service.TelegramReporter.Services;
 using Lykke.Service.TelegramReporter.Services.Instances;
 using Lykke.Service.TelegramReporter.Settings;
 using Lykke.SettingsReader;
-using System.Linq;
 using AzureStorage.Tables;
 using Lykke.Service.Assets.Client;
 using Lykke.Service.Balances.Client;
@@ -20,7 +19,6 @@ using Lykke.Service.TelegramReporter.Services.NettingEngine;
 using Lykke.Service.RateCalculator.Client;
 using Lykke.Service.TelegramReporter.Services.NettingEngine.Rabbit;
 using Lykke.Common.Log;
-using Lykke.Service.TelegramReporter.Infrastructure;
 
 namespace Lykke.Service.TelegramReporter.Modules
 {    
@@ -35,8 +33,6 @@ namespace Lykke.Service.TelegramReporter.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterAutoMapper();
-
             builder.RegisterType<NettingEngineInstanceManager>()
                 .WithParameter(TypedParameter.From(_appSettings.CurrentValue.NettingEngineServiceClient.Instances))
                 .As<INettingEngineInstanceManager>()

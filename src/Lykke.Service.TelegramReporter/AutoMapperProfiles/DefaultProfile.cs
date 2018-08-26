@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using Lykke.Service.TelegramReporter.Client.Models;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
-using Lykke.Service.TelegramReporter.Models;
 
 namespace Lykke.Service.TelegramReporter.AutoMapperProfiles
 {

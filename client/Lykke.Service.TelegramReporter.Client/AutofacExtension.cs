@@ -1,25 +1,43 @@
 ﻿using System;
 using Autofac;
+using JetBrains.Annotations;
+using Lykke.HttpClientGenerator;
+using Lykke.HttpClientGenerator.Infrastructure;
 
 namespace Lykke.Service.TelegramReporter.Client
 {
+    /// <summary>
+    /// Autofac extension for service client.
+    /// </summary>
+    [PublicAPI]
     public static class AutofacExtension
     {
-        public static void RegisterTelegramReporterClient(this ContainerBuilder builder, string serviceUrl)
+        /// <summary>
+        /// Registers <see cref="ITelegramReporterClient"/> in Autofac container using <see cref="TelegramReporterServiceClientSettings"/>.
+        /// </summary>
+        /// <param name="builder">Autofac container builder.</param>
+        /// <param name="settings">TelegramReporter client settings.</param>
+        /// <param name="builderConfigure">Optional <see cref="HttpClientGeneratorBuilder"/> configure handler.</param>
+        public static void RegisterTelegramReporterClient(
+            [NotNull] this ContainerBuilder builder,
+            [NotNull] TelegramReporterServiceClientSettings settings,
+            [CanBeNull] Func<HttpClientGeneratorBuilder, HttpClientGeneratorBuilder> builderConfigure)
         {
-            if (builder == null) throw new ArgumentNullException(nameof(builder));
-            if (string.IsNullOrWhiteSpace(serviceUrl))
-                throw new ArgumentException("Value cannot be null or whitespace.", nameof(serviceUrl));
+            if (builder == null)
+                throw new ArgumentNullException(nameof(builder));
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings));
+            if (string.IsNullOrWhiteSpace(settings.ServiceUrl))
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(TelegramReporterServiceClientSettings.ServiceUrl));
 
-            builder.RegisterType<TelegramReporterClient>()
-                .WithParameter("serviceUrl", serviceUrl)
+            var clientBuilder = HttpClientGenerator.HttpClientGenerator.BuildForUrl(settings.ServiceUrl)
+                .WithAdditionalCallsWrapper(new ExceptionHandlerCallsWrapper());
+
+            clientBuilder = builderConfigure?.Invoke(clientBuilder) ?? clientBuilder.WithoutRetries();
+
+            builder.RegisterInstance(new TelegramReporterClient(clientBuilder.Create()))
                 .As<ITelegramReporterClient>()
                 .SingleInstance();
-        }
-
-        public static void RegisterTelegramReporterClient(this ContainerBuilder builder, TelegramReporterServiceClientSettings settings)
-        {
-            builder.RegisterTelegramReporterClient(settings?.ServiceUrl);
         }
     }
 }

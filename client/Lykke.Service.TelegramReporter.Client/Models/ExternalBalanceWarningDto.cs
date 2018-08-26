@@ -1,4 +1,4 @@
-﻿namespace Lykke.Service.TelegramReporter.Models
+﻿namespace Lykke.Service.TelegramReporter.Client.Models
 {
     public class ExternalBalanceWarningDto
     {
