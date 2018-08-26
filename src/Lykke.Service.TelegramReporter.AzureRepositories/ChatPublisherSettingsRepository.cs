@@ -15,16 +15,6 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
         public TimeSpan TimeSpan { get; set; }
         public long ChatId { get; set; }
 
-        public static string GeneratePartitionKeyForCml()
-        {
-            return "CmlChatPublisher";
-        }
-
-        public static string GeneratePartitionKeyForSe()
-        {
-            return "SeChatPublisher";
-        }
-
         public static string GeneratePartitionKeyForBalance()
         {
             return "BalanceChatPublisher";
@@ -38,28 +28,6 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
         public static string GeneratePartitionKeyForNe()
         {
             return "NeChatPublisher";
-        }
-
-        public static ChatPublisherSettingsEntity CreateForCml(IChatPublisherSettings chatPublisher)
-        {
-            return new ChatPublisherSettingsEntity
-            {
-                PartitionKey = GeneratePartitionKeyForCml(),
-                RowKey = Guid.NewGuid().ToString(),
-                TimeSpan = chatPublisher.TimeSpan,
-                ChatId = chatPublisher.ChatId
-            };
-        }
-
-        public static ChatPublisherSettingsEntity CreateForSe(IChatPublisherSettings chatPublisher)
-        {
-            return new ChatPublisherSettingsEntity
-            {
-                PartitionKey = GeneratePartitionKeyForSe(),
-                RowKey = Guid.NewGuid().ToString(),
-                TimeSpan = chatPublisher.TimeSpan,
-                ChatId = chatPublisher.ChatId
-            };
         }
 
         public static ChatPublisherSettingsEntity CreateForNe(IChatPublisherSettings chatPublisher)
@@ -105,16 +73,6 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
             _storage = storage;
         }
 
-        public async Task<IReadOnlyList<IChatPublisherSettings>> GetCmlChatPublisherSettings()
-        {
-            return (await _storage.GetDataAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForCml())).ToArray();
-        }
-
-        public async Task<IReadOnlyList<IChatPublisherSettings>> GetSeChatPublisherSettings()
-        {
-            return (await _storage.GetDataAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForSe())).ToArray();
-        }
-
         public async Task<IReadOnlyList<IChatPublisherSettings>> GetNeChatPublisherSettings()
         {
             return (await _storage.GetDataAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForNe())).ToArray();
@@ -128,18 +86,6 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
         public async Task<IReadOnlyList<IChatPublisherSettings>> GetExternalBalanceChatPublisherSettings()
         {
             return (await _storage.GetDataAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForExternalBalance())).ToArray();
-        }
-
-        public Task AddCmlChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher)
-        {
-            var entity = ChatPublisherSettingsEntity.CreateForCml(chatPublisher);
-            return _storage.InsertOrReplaceAsync(entity);
-        }
-
-        public Task AddSeChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher)
-        {
-            var entity = ChatPublisherSettingsEntity.CreateForSe(chatPublisher);
-            return _storage.InsertOrReplaceAsync(entity);
         }
 
         public Task AddNeChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher)
@@ -158,16 +104,6 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
         {
             var entity = ChatPublisherSettingsEntity.CreateForExternalBalance(chatPublisher);
             return _storage.InsertOrReplaceAsync(entity);
-        }
-
-        public async Task RemoveCmlChatPublisherSettingsAsync(string chatPublisherSettingsId)
-        {
-            await _storage.DeleteAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForCml(), chatPublisherSettingsId);
-        }
-
-        public async Task RemoveSeChatPublisherSettingsAsync(string chatPublisherId)
-        {
-            await _storage.DeleteAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForSe(), chatPublisherId);
         }
 
         public async Task RemoveNeChatPublisherSettingsAsync(string chatPublisherId)

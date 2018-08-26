@@ -20,20 +20,6 @@ namespace Lykke.Service.TelegramReporter.Client
         Task<IsAliveResponse> IsAliveAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
-        /// Gets CML chat publishers.
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns>CML chat publishers</returns>
-        Task<IList<ChatPublisherSettingsDto>> GetCmlChatPublisherSettingsAsync(CancellationToken cancellationToken = default(CancellationToken));
-
-        /// <summary>
-        /// Gets SE chat publishers.
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns>SE chat publishers</returns>
-        Task<IList<ChatPublisherSettingsDto>> GetSeChatPublisherSettingsAsync(CancellationToken cancellationToken = default(CancellationToken));
-
-        /// <summary>
         /// Gets NE chat publishers.
         /// </summary>
         /// <param name="cancellationToken"></param>
@@ -55,20 +41,6 @@ namespace Lykke.Service.TelegramReporter.Client
         Task<IList<ChatPublisherSettingsDto>> GetExternalBalanceChatPublisherSettingsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
-        /// Adds CML chat publisher.
-        /// </summary>
-        /// <param name="chatPublisher">CML chat publisher to add.</param>
-        /// <param name="cancellationToken"></param>
-        Task AddCmlChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher, CancellationToken cancellationToken = default(CancellationToken));
-
-        /// <summary>
-        /// Adds SE chat publisher.
-        /// </summary>
-        /// <param name="chatPublisher">SE chat publisher to add.</param>
-        /// <param name="cancellationToken"></param>
-        Task AddSeChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher, CancellationToken cancellationToken = default(CancellationToken));
-
-        /// <summary>
         /// Adds NE chat publisher.
         /// </summary>
         /// <param name="chatPublisher">NE chat publisher to add.</param>
@@ -88,22 +60,6 @@ namespace Lykke.Service.TelegramReporter.Client
         /// <param name="chatPublisher">External Balance chat publisher to add.</param>
         /// <param name="cancellationToken"></param>
         Task AddExternalBalanceChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher, CancellationToken cancellationToken = default(CancellationToken));
-
-        /// <summary>
-        /// Deletes CML chat publisher.
-        /// </summary>
-        /// <param name="chatPublisherSettingsId">CML chat publisher Id</param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        Task RemoveCmlChatPublisherSettingsAsync(string chatPublisherSettingsId, CancellationToken cancellationToken = default(CancellationToken));
-
-        /// <summary>
-        /// Deletes SE chat publisher.
-        /// </summary>
-        /// <param name="chatPublisherSettingsId">SE chat publisher Id</param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        Task RemoveSeChatPublisherSettingsAsync(string chatPublisherSettingsId, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Deletes NE chat publisher.
