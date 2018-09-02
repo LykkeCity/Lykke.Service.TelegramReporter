@@ -13,13 +13,9 @@ using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Instances;
 using Lykke.Service.TelegramReporter.Core.Services.Balance;
-using Lykke.Service.TelegramReporter.Core.Services.CrossMarketLiquidity;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
-using Lykke.Service.TelegramReporter.Core.Services.SpreadEngine;
 using Lykke.Service.TelegramReporter.Services.Balance;
-using Lykke.Service.TelegramReporter.Services.CrossMarketLiquidity;
 using Lykke.Service.TelegramReporter.Services.NettingEngine;
-using Lykke.Service.TelegramReporter.Services.SpreadEngine;
 
 namespace Lykke.Service.TelegramReporter.Services
 {
@@ -33,9 +29,6 @@ namespace Lykke.Service.TelegramReporter.Services
         private readonly ILog _log;
         private readonly ILogFactory _logFactory;
 
-        private readonly ICmlSummaryProvider _cmlSummaryProvider;
-        private readonly ICmlStateProvider _cmlStateProvider;
-        private readonly ISpreadEngineStateProvider _seStateProvider;
         private readonly INettingEngineStateProvider _neStateProvider;
         private readonly IBalanceWarningProvider _balanceWarningProvider;
         private readonly IExternalBalanceWarningProvider _externalBalanceWarningProvider;
@@ -43,8 +36,6 @@ namespace Lykke.Service.TelegramReporter.Services
 
         private bool _initialized;
 
-        private readonly ConcurrentDictionary<long, ChatPublisher> _cmlPublishers = new ConcurrentDictionary<long, ChatPublisher>();
-        private readonly ConcurrentDictionary<long, ChatPublisher> _sePublishers = new ConcurrentDictionary<long, ChatPublisher>();
         private readonly ConcurrentDictionary<long, ChatPublisher> _nePublishers = new ConcurrentDictionary<long, ChatPublisher>();
         private readonly ConcurrentDictionary<long, ChatPublisher> _balancePublishers = new ConcurrentDictionary<long, ChatPublisher>();
         private readonly ConcurrentDictionary<long, ChatPublisher> _externalBalancePublishers = new ConcurrentDictionary<long, ChatPublisher>();
@@ -56,9 +47,6 @@ namespace Lykke.Service.TelegramReporter.Services
             INettingEngineInstanceManager nettingEngineInstanceManager,
             ILogFactory logFactory,
             ITelegramSender telegramSender,
-            ICmlSummaryProvider cmlSummaryProvider,
-            ICmlStateProvider cmlStateProvider,
-            ISpreadEngineStateProvider seStateProvider,
             INettingEngineStateProvider neStateProvider,
             IBalanceWarningProvider balanceWarningProvider,
             IExternalBalanceWarningProvider externalBalanceWarningProvider)
@@ -71,25 +59,10 @@ namespace Lykke.Service.TelegramReporter.Services
             _externalBalanceWarningRepository = externalBalanceWarningRepository;
             _balancesClient = balancesClient;
             _nettingEngineInstanceManager = nettingEngineInstanceManager;
-            _cmlSummaryProvider = cmlSummaryProvider;
-            _cmlStateProvider = cmlStateProvider;
-            _seStateProvider = seStateProvider;
             _neStateProvider = neStateProvider;
             _balanceWarningProvider = balanceWarningProvider;
             _externalBalanceWarningProvider = externalBalanceWarningProvider;
             _telegramSender = telegramSender;
-        }
-
-        public async Task<IReadOnlyList<IChatPublisherSettings>> GetCmlChatPublishersAsync()
-        {
-            EnsureInitialized();
-            return await _repo.GetCmlChatPublisherSettings();
-        }
-
-        public async Task<IReadOnlyList<IChatPublisherSettings>> GetSeChatPublishersAsync()
-        {
-            EnsureInitialized();
-            return await _repo.GetSeChatPublisherSettings();
         }
 
         public async Task<IReadOnlyList<IChatPublisherSettings>> GetNeChatPublishersAsync()
@@ -110,20 +83,6 @@ namespace Lykke.Service.TelegramReporter.Services
             return await _repo.GetExternalBalanceChatPublisherSettings();
         }
 
-        public async Task AddCmlChatPublisherAsync(IChatPublisherSettings chatPublisher)
-        {
-            EnsureInitialized();
-            await _repo.AddCmlChatPublisherSettingsAsync(chatPublisher);
-            await UpdateChatPublishers();
-        }
-
-        public async Task AddSeChatPublisherAsync(IChatPublisherSettings chatPublisher)
-        {
-            EnsureInitialized();
-            await _repo.AddSeChatPublisherSettingsAsync(chatPublisher);
-            await UpdateChatPublishers();
-        }
-
         public async Task AddNeChatPublisherAsync(IChatPublisherSettings chatPublisher)
         {
             EnsureInitialized();
@@ -142,20 +101,6 @@ namespace Lykke.Service.TelegramReporter.Services
         {
             EnsureInitialized();
             await _repo.AddExternalBalanceChatPublisherSettingsAsync(chatPublisher);
-            await UpdateChatPublishers();
-        }
-
-        public async Task RemoveCmlChatPublisherAsync(string chatPublisherId)
-        {
-            EnsureInitialized();
-            await _repo.RemoveCmlChatPublisherSettingsAsync(chatPublisherId);
-            await UpdateChatPublishers();
-        }
-
-        public async Task RemoveSeChatPublisherAsync(string chatPublisherId)
-        {
-            EnsureInitialized();
-            await _repo.RemoveSeChatPublisherSettingsAsync(chatPublisherId);
             await UpdateChatPublishers();
         }
 
@@ -217,16 +162,6 @@ namespace Lykke.Service.TelegramReporter.Services
 
         public void Stop()
         {
-            foreach (var chatPublisher in _cmlPublishers.Values)
-            {
-                chatPublisher.Stop();
-            }
-
-            foreach (var chatPublisher in _sePublishers.Values)
-            {
-                chatPublisher.Stop();
-            }
-
             foreach (var chatPublisher in _nePublishers.Values)
             {
                 chatPublisher.Stop();
@@ -245,16 +180,6 @@ namespace Lykke.Service.TelegramReporter.Services
 
         public void Dispose()
         {
-            foreach (var chatPublisher in _cmlPublishers.Values)
-            {
-                chatPublisher.Dispose();
-            }
-
-            foreach (var chatPublisher in _sePublishers.Values)
-            {
-                chatPublisher.Dispose();
-            }
-
             foreach (var chatPublisher in _nePublishers.Values)
             {
                 chatPublisher.Dispose();
@@ -283,23 +208,9 @@ namespace Lykke.Service.TelegramReporter.Services
 
         private async Task UpdateChatPublishers()
         {
-            var cmlPublisherSettings = await _repo.GetCmlChatPublisherSettings();
-            var sePublisherSettings = await _repo.GetSeChatPublisherSettings();
             var nePublisherSettings = await _repo.GetNeChatPublisherSettings();
             var balancePublisherSettings = await _repo.GetBalanceChatPublisherSettings();
             var externalBalancePublisherSettings = await _repo.GetExternalBalanceChatPublisherSettings();
-
-            CleanPublishers(cmlPublisherSettings, _cmlPublishers);
-            foreach (var publisherSettings in cmlPublisherSettings)
-            {
-                AddCmlPublisherIfNeeded(publisherSettings);                
-            }
-
-            CleanPublishers(sePublisherSettings, _sePublishers);
-            foreach (var publisherSettings in sePublisherSettings)
-            {
-                AddSePublisherIfNeeded(publisherSettings);
-            }
 
             CleanPublishers(nePublisherSettings, _nePublishers);
             foreach (var publisherSettings in nePublisherSettings)
@@ -318,22 +229,6 @@ namespace Lykke.Service.TelegramReporter.Services
             {
                 AddExternalBalancePublisherIfNeeded(publisherSettings);
             }            
-        }
-
-        private void AddCmlPublisherIfNeeded(IChatPublisherSettings publisherSettings)
-        {
-            var newChatPublisher = new CmlPublisher(_telegramSender,
-                _cmlSummaryProvider, _cmlStateProvider, publisherSettings, _logFactory);
-
-            AddPublisherIfNeeded(publisherSettings, _cmlPublishers, newChatPublisher);
-        }
-
-        private void AddSePublisherIfNeeded(IChatPublisherSettings publisherSettings)
-        {
-            var newChatPublisher = new SpreadEnginePublisher(_telegramSender,
-                _seStateProvider, publisherSettings, _logFactory);
-
-            AddPublisherIfNeeded(publisherSettings, _sePublishers, newChatPublisher);
         }
 
         private void AddNePublisherIfNeeded(IChatPublisherSettings publisherSettings)

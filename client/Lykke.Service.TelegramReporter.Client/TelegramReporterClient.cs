@@ -36,22 +36,6 @@ namespace Lykke.Service.TelegramReporter.Client
             return JsonConvert.DeserializeObject<IsAliveResponse>(JsonConvert.SerializeObject(response.Body));
         }
 
-        public async Task<IList<ChatPublisherSettingsDto>> GetCmlChatPublisherSettingsAsync(
-            CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var response = await _api.ApiV1ChatPublisherCmlchatpublishersettingsGetWithHttpMessagesAsync(cancellationToken: cancellationToken);
-            ValidateResponse(response);
-            return response.Body;
-        }
-
-        public async Task<IList<ChatPublisherSettingsDto>> GetSeChatPublisherSettingsAsync(
-            CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var response = await _api.ApiV1ChatPublisherSechatpublishersettingsGetWithHttpMessagesAsync(cancellationToken: cancellationToken);
-            ValidateResponse(response);
-            return response.Body;
-        }
-
         public async Task<IList<ChatPublisherSettingsDto>> GetNeChatPublisherSettingsAsync(
             CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -76,18 +60,6 @@ namespace Lykke.Service.TelegramReporter.Client
             return response.Body;
         }
 
-        public async Task AddCmlChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var response = await _api.ApiV1ChatPublisherCmlchatpublishersettingsPutWithHttpMessagesAsync(chatPublisher, cancellationToken: cancellationToken);
-            ValidateResponse(response);
-        }
-
-        public async Task AddSeChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var response = await _api.ApiV1ChatPublisherSechatpublishersettingsPutWithHttpMessagesAsync(chatPublisher, cancellationToken: cancellationToken);
-            ValidateResponse(response);
-        }
-
         public async Task AddNeChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher, CancellationToken cancellationToken = default(CancellationToken))
         {
             var response = await _api.ApiV1ChatPublisherNechatpublishersettingsPutWithHttpMessagesAsync(chatPublisher, cancellationToken: cancellationToken);
@@ -103,18 +75,6 @@ namespace Lykke.Service.TelegramReporter.Client
         public async Task AddExternalBalanceChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher, CancellationToken cancellationToken = default(CancellationToken))
         {
             var response = await _api.ApiV1ChatPublisherExternalbalancechatpublishersettingsPutWithHttpMessagesAsync(chatPublisher, cancellationToken: cancellationToken);
-            ValidateResponse(response);
-        }
-
-        public async Task RemoveCmlChatPublisherSettingsAsync(string chatPublisherSettingsId, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var response = await _api.ApiV1ChatPublisherCmlchatpublishersettingsDeleteWithHttpMessagesAsync(chatPublisherSettingsId, cancellationToken: cancellationToken);
-            ValidateResponse(response);
-        }
-
-        public async Task RemoveSeChatPublisherSettingsAsync(string chatPublisherSettingsId, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var response = await _api.ApiV1ChatPublisherSechatpublishersettingsDeleteWithHttpMessagesAsync(chatPublisherSettingsId, cancellationToken: cancellationToken);
             ValidateResponse(response);
         }
 

@@ -14,10 +14,8 @@
     <PackageReference Include="Lykke.RabbitMqBroker" Version="7.2.0" />
     <PackageReference Include="Lykke.Service.Assets.Client" Version="4.4.0" />
     <PackageReference Include="Lykke.Service.Balances.Client" Version="2.0.0" />
-    <PackageReference Include="Lykke.Service.CrossMarketLiquidity.Client" Version="1.0.3" />
     <PackageReference Include="Lykke.Service.NettingEngine.Client" Version="1.0.7" />
     <PackageReference Include="Lykke.Service.RateCalculator.Client" Version="1.2.0" />
-    <PackageReference Include="Lykke.Service.SpreadEngine.Client" Version="1.1.5" />
     <PackageReference Include="Telegram.Bot" Version="14.9.0" />
   </ItemGroup>
 

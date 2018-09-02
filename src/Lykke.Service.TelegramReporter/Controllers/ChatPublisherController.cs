@@ -23,36 +23,6 @@ namespace Lykke.Service.TelegramReporter.Controllers
         }
 
         /// <summary>
-        /// Gets CML chat publishers.
-        /// </summary>
-        /// <returns>CML chat publishers</returns>
-        [HttpGet("cmlchatpublishersettings", Name = "GetCmlChatPublisherSettingsAsync")]
-        [Produces("application/json")]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(IReadOnlyList<ChatPublisherSettingsDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetCmlChatPublisherSettingsAsync()
-        {
-            var chatPublishers = await _chatPublisherService.GetCmlChatPublishersAsync();
-            var vm = _mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
-            return Ok(vm);
-        }
-
-        /// <summary>
-        /// Gets SE chat publishers.
-        /// </summary>
-        /// <returns>SE chat publishers</returns>
-        [HttpGet("sechatpublishersettings", Name = "GetSeChatPublisherSettingsAsync")]
-        [Produces("application/json")]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(IReadOnlyList<ChatPublisherSettingsDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetSeChatPublisherSettingsAsync()
-        {
-            var chatPublishers = await _chatPublisherService.GetSeChatPublishersAsync();
-            var vm = _mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
-            return Ok(vm);
-        }
-
-        /// <summary>
         /// Gets NE chat publishers.
         /// </summary>
         /// <returns>NE chat publishers</returns>
@@ -95,64 +65,6 @@ namespace Lykke.Service.TelegramReporter.Controllers
             var chatPublishers = await _chatPublisherService.GetExternalBalanceChatPublishersAsync();
             var vm = _mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
             return Ok(vm);
-        }
-
-        /// <summary>
-        /// Adds CML chat publisher.
-        /// </summary>
-        /// <param name="chatPublisher">CML chat publisher to add.</param>
-        [HttpPut("cmlchatpublishersettings")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddCmlChatPublisherSettingsAsync([FromBody] ChatPublisherSettingsPost chatPublisher)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ErrorResponse.Create(ModelState));
-            }
-
-            var model = _mapper
-                .Map<ChatPublisherSettings>(chatPublisher);
-
-            try
-            {
-                await _chatPublisherService.AddCmlChatPublisherAsync(model);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ErrorResponse.Create(ex.Message));
-            }
-
-            return StatusCode((int)HttpStatusCode.OK);
-        }
-
-        /// <summary>
-        /// Adds SE chat publisher.
-        /// </summary>
-        /// <param name="chatPublisher">SE chat publisher to add.</param>
-        [HttpPut("sechatpublishersettings")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddSeChatPublisherSettingsAsync([FromBody] ChatPublisherSettingsPost chatPublisher)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ErrorResponse.Create(ModelState));
-            }
-
-            var model = _mapper
-                .Map<ChatPublisherSettings>(chatPublisher);
-
-            try
-            {
-                await _chatPublisherService.AddSeChatPublisherAsync(model);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ErrorResponse.Create(ex.Message));
-            }
-
-            return StatusCode((int)HttpStatusCode.OK);
         }
 
         /// <summary>
@@ -240,32 +152,6 @@ namespace Lykke.Service.TelegramReporter.Controllers
             }
 
             return StatusCode((int)HttpStatusCode.OK);
-        }
-
-        /// <summary>
-        /// Deletes CML chat publisher.
-        /// </summary>
-        /// <param name="chatPublisherSettingsId">CML chat publisher settings Id</param>
-        /// <returns></returns>
-        [HttpDelete("cmlchatpublishersettings")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> RemoveCmlChatPublisherSettingsAsync(string chatPublisherSettingsId)
-        {
-            await _chatPublisherService.RemoveCmlChatPublisherAsync(chatPublisherSettingsId);
-            return NoContent();
-        }
-
-        /// <summary>
-        /// Deletes SE chat publisher.
-        /// </summary>
-        /// <param name="chatPublisherSettingsId">SE chat publisher settings Id</param>
-        /// <returns></returns>
-        [HttpDelete("sechatpublishersettings")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> RemoveSeChatPublisherSettingsAsync(string chatPublisherSettingsId)
-        {
-            await _chatPublisherService.RemoveSeChatPublisherAsync(chatPublisherSettingsId);
-            return NoContent();
         }
 
         /// <summary>
