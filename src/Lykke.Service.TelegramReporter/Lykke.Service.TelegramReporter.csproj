@@ -38,6 +38,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\client\Lykke.Service.TelegramReporter.Client\Lykke.Service.TelegramReporter.Client.csproj" />
     <ProjectReference Include="..\Lykke.Service.TelegramReporter.AzureRepositories\Lykke.Service.TelegramReporter.AzureRepositories.csproj" />
     <ProjectReference Include="..\Lykke.Service.TelegramReporter.Core\Lykke.Service.TelegramReporter.Core.csproj" />
     <ProjectReference Include="..\Lykke.Service.TelegramReporter.Services\Lykke.Service.TelegramReporter.Services.csproj" />

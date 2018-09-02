@@ -24,18 +24,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\**" />
-    <EmbeddedResource Remove="Models\**" />
-    <None Remove="Models\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Lykke.Common" Version="7.0.3" />
+    <PackageReference Include="Lykke.HttpClientGenerator" Version="2.1.1" />
     <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.12" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="AutorestClient\" />
+    <PackageReference Include="Refit" Version="4.6.30" />
   </ItemGroup>
 
 </Project>

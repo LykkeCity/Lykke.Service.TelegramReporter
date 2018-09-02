@@ -1,24 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
+using Lykke.Common.Api.Contract.Responses;
+using Lykke.Common.ApiLibrary.Exceptions;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services;
-using Lykke.Service.TelegramReporter.Models;
+using Lykke.Service.TelegramReporter.Client.Api;
+using Lykke.Service.TelegramReporter.Client.Models;
 
 namespace Lykke.Service.TelegramReporter.Controllers
 {
     [Route("api/v1/[controller]")]
-    public class ChatPublisherController : Controller
+    public class ChatPublisherController : Controller, ITelegramReporterApi
     {
-        private readonly IMapper _mapper;
         private readonly IChatPublisherService _chatPublisherService;
 
-        public ChatPublisherController(IMapper mapper, IChatPublisherService chatPublisherService)
+        public ChatPublisherController(IChatPublisherService chatPublisherService)
         {
-            _mapper = mapper;
             _chatPublisherService = chatPublisherService;
         }
 
@@ -26,132 +26,81 @@ namespace Lykke.Service.TelegramReporter.Controllers
         /// Gets NE chat publishers.
         /// </summary>
         /// <returns>NE chat publishers</returns>
-        [HttpGet("nechatpublishersettings", Name = "GetNeChatPublisherSettingsAsync")]
-        [Produces("application/json")]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [HttpGet("nechatpublishersettings")]
         [ProducesResponseType(typeof(IReadOnlyList<ChatPublisherSettingsDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetNeChatPublisherSettingsAsync()
+        public async Task<IReadOnlyList<ChatPublisherSettingsDto>> GetNeChatPublisherSettingsAsync()
         {
             var chatPublishers = await _chatPublisherService.GetNeChatPublishersAsync();
-            var vm = _mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
-            return Ok(vm);
+            var vm = Mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
+            return vm;
         }
 
         /// <summary>
         /// Gets balance chat publishers.
         /// </summary>
         /// <returns>Balance chat publishers</returns>
-        [HttpGet("balancechatpublishersettings", Name = "GetBalanceChatPublisherSettingsAsync")]
-        [Produces("application/json")]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [HttpGet("balancechatpublishersettings")]
         [ProducesResponseType(typeof(IReadOnlyList<ChatPublisherSettingsDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetBalanceChatPublisherSettingsAsync()
+        public async Task<IReadOnlyList<ChatPublisherSettingsDto>> GetBalanceChatPublisherSettingsAsync()
         {
             var chatPublishers = await _chatPublisherService.GetBalanceChatPublishersAsync();
-            var vm = _mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
-            return Ok(vm);
+            var vm = Mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
+            return vm;
         }
 
         /// <summary>
         /// Gets external balance chat publishers.
         /// </summary>
         /// <returns>External balance chat publishers</returns>
-        [HttpGet("externalbalancechatpublishersettings", Name = "GetExternalBalanceChatPublisherSettingsAsync")]
-        [Produces("application/json")]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [HttpGet("externalbalancechatpublishersettings")]
         [ProducesResponseType(typeof(IReadOnlyList<ChatPublisherSettingsDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetExternalBalanceChatPublisherSettingsAsync()
+        public async Task<IReadOnlyList<ChatPublisherSettingsDto>> GetExternalBalanceChatPublisherSettingsAsync()
         {
             var chatPublishers = await _chatPublisherService.GetExternalBalanceChatPublishersAsync();
-            var vm = _mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
-            return Ok(vm);
+            var vm = Mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
+            return vm;
         }
 
         /// <summary>
         /// Adds NE chat publisher.
         /// </summary>
         /// <param name="chatPublisher">NE chat publisher to add.</param>
-        [HttpPut("nechatpublishersettings")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [HttpPost("nechatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddNeChatPublisherSettingsAsync([FromBody] ChatPublisherSettingsPost chatPublisher)
+        public async Task AddNeChatPublisherSettingsAsync([FromBody] ChatPublisherSettingsPost chatPublisher)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ErrorResponse.Create(ModelState));
-            }
+            var model = Mapper.Map<ChatPublisherSettings>(chatPublisher);
 
-            var model = _mapper
-                .Map<ChatPublisherSettings>(chatPublisher);
-
-            try
-            {
-                await _chatPublisherService.AddNeChatPublisherAsync(model);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ErrorResponse.Create(ex.Message));
-            }
-
-            return StatusCode((int)HttpStatusCode.OK);
+            await _chatPublisherService.AddNeChatPublisherAsync(model);
         }
 
         /// <summary>
         /// Adds balance chat publisher.
         /// </summary>
         /// <param name="chatPublisher">Balance chat publisher to add.</param>
-        [HttpPut("balancechatpublishersettings")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [HttpPost("balancechatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddBalanceChatPublisherSettingsAsync([FromBody] ChatPublisherSettingsPost chatPublisher)
+        public async Task AddBalanceChatPublisherSettingsAsync([FromBody] ChatPublisherSettingsPost chatPublisher)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ErrorResponse.Create(ModelState));
-            }
+            var model = Mapper.Map<ChatPublisherSettings>(chatPublisher);
 
-            var model = _mapper
-                .Map<ChatPublisherSettings>(chatPublisher);
-
-            try
-            {
-                await _chatPublisherService.AddBalanceChatPublisherAsync(model);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ErrorResponse.Create(ex.Message));
-            }
-
-            return StatusCode((int)HttpStatusCode.OK);
+            await _chatPublisherService.AddBalanceChatPublisherAsync(model);
         }
 
         /// <summary>
         /// Adds external balance chat publisher.
         /// </summary>
         /// <param name="chatPublisher">External balance chat publisher to add.</param>
-        [HttpPut("externalbalancechatpublishersettings")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [HttpPost("externalbalancechatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddExternalBalanceChatPublisherSettingsAsync([FromBody] ChatPublisherSettingsPost chatPublisher)
+        public async Task AddExternalBalanceChatPublisherSettingsAsync([FromBody] ChatPublisherSettingsPost chatPublisher)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ErrorResponse.Create(ModelState));
-            }
+            var model = Mapper.Map<ChatPublisherSettings>(chatPublisher);
 
-            var model = _mapper
-                .Map<ChatPublisherSettings>(chatPublisher);
-
-            try
-            {
-                await _chatPublisherService.AddExternalBalanceChatPublisherAsync(model);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ErrorResponse.Create(ex.Message));
-            }
-
-            return StatusCode((int)HttpStatusCode.OK);
+            await _chatPublisherService.AddExternalBalanceChatPublisherAsync(model);
         }
 
         /// <summary>
@@ -161,10 +110,15 @@ namespace Lykke.Service.TelegramReporter.Controllers
         /// <returns></returns>
         [HttpDelete("nechatpublishersettings")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> RemoveNeChatPublisherSettingsAsync(string chatPublisherSettingsId)
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task RemoveNeChatPublisherSettingsAsync(string chatPublisherSettingsId)
         {
+            if (string.IsNullOrEmpty(chatPublisherSettingsId))
+            {
+                throw new ValidationApiException($"{nameof(chatPublisherSettingsId)} required");
+            }
+
             await _chatPublisherService.RemoveNeChatPublisherAsync(chatPublisherSettingsId);
-            return NoContent();
         }
 
         /// <summary>
@@ -174,10 +128,15 @@ namespace Lykke.Service.TelegramReporter.Controllers
         /// <returns></returns>
         [HttpDelete("balancechatpublishersettings")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> RemoveBalanceChatPublisherSettingsAsync(string chatPublisherSettingsId)
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task RemoveBalanceChatPublisherSettingsAsync(string chatPublisherSettingsId)
         {
+            if (string.IsNullOrEmpty(chatPublisherSettingsId))
+            {
+                throw new ValidationApiException($"{nameof(chatPublisherSettingsId)} required");
+            }
+
             await _chatPublisherService.RemoveBalanceChatPublisherAsync(chatPublisherSettingsId);
-            return NoContent();
         }
 
         /// <summary>
@@ -187,98 +146,69 @@ namespace Lykke.Service.TelegramReporter.Controllers
         /// <returns></returns>
         [HttpDelete("externalbalancechatpublishersettings")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> RemoveExternalBalanceChatPublisherSettingsAsync(string chatPublisherSettingsId)
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task RemoveExternalBalanceChatPublisherSettingsAsync(string chatPublisherSettingsId)
         {
+            if (string.IsNullOrEmpty(chatPublisherSettingsId))
+            {
+                throw new ValidationApiException($"{nameof(chatPublisherSettingsId)} required");
+            }
+
             await _chatPublisherService.RemoveExternalBalanceChatPublisherAsync(chatPublisherSettingsId);
-            return NoContent();
         }
 
         /// <summary>
         /// Gets balances warnings.
         /// </summary>
         /// <returns>Balances warnings</returns>
-        [HttpGet("balanceswarnings", Name = "GetBalancesWarningsAsync")]
-        [Produces("application/json")]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [HttpGet("balanceswarnings")]
         [ProducesResponseType(typeof(IReadOnlyList<BalanceWarningDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetBalancesWarningsAsync()
+        public async Task<IReadOnlyList<BalanceWarningDto>> GetBalancesWarningsAsync()
         {
             var balancesWarnings = await _chatPublisherService.GetBalancesWarningsAsync();
-            var vm = _mapper.Map<IReadOnlyList<IBalanceWarning>, IReadOnlyList<BalanceWarningDto>>(balancesWarnings);
-            return Ok(vm);
+            var vm = Mapper.Map<IReadOnlyList<IBalanceWarning>, IReadOnlyList<BalanceWarningDto>>(balancesWarnings);
+            return vm;
         }
 
         /// <summary>
         /// Gets external balances warnings.
         /// </summary>
         /// <returns>External balances warnings</returns>
-        [HttpGet("externalbalanceswarnings", Name = "GetExternalBalancesWarningsAsync")]
-        [Produces("application/json")]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [HttpGet("externalbalanceswarnings")]
         [ProducesResponseType(typeof(IReadOnlyList<ExternalBalanceWarningDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetExternalBalancesWarningsAsync()
+        public async Task<IReadOnlyList<ExternalBalanceWarningDto>> GetExternalBalancesWarningsAsync()
         {
             var balancesWarnings = await _chatPublisherService.GetExternalBalancesWarningsAsync();
-            var vm = _mapper.Map<IReadOnlyList<IExternalBalanceWarning>, IReadOnlyList<ExternalBalanceWarningDto>>(balancesWarnings);
-            return Ok(vm);
+            var vm = Mapper.Map<IReadOnlyList<IExternalBalanceWarning>, IReadOnlyList<ExternalBalanceWarningDto>>(balancesWarnings);
+            return vm;
         }
 
         /// <summary>
         /// Adds balance warning.
         /// </summary>
         /// <param name="balanceWarning">Balance warning to add.</param>
-        [HttpPut("balancewarning")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [HttpPost("balancewarning")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddBalanceWarningAsync([FromBody] BalanceWarningPost balanceWarning)
+        public async Task AddBalanceWarningAsync([FromBody] BalanceWarningPost balanceWarning)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ErrorResponse.Create(ModelState));
-            }
+            var model = Mapper.Map<BalanceWarning>(balanceWarning);
 
-            var model = _mapper
-                .Map<BalanceWarning>(balanceWarning);
-
-            try
-            {
-                await _chatPublisherService.AddBalanceWarningAsync(model);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ErrorResponse.Create(ex.Message));
-            }
-
-            return StatusCode((int)HttpStatusCode.OK);
+            await _chatPublisherService.AddBalanceWarningAsync(model);
         }
 
         /// <summary>
         /// Adds external balance warning.
         /// </summary>
         /// <param name="balanceWarning">External balance warning to add.</param>
-        [HttpPut("externalbalancewarning")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [HttpPost("externalbalancewarning")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddExternalBalanceWarningAsync([FromBody] ExternalBalanceWarningPost balanceWarning)
+        public async Task AddExternalBalanceWarningAsync([FromBody] ExternalBalanceWarningPost balanceWarning)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ErrorResponse.Create(ModelState));
-            }
+            var model = Mapper.Map<ExternalBalanceWarning>(balanceWarning);
 
-            var model = _mapper
-                .Map<ExternalBalanceWarning>(balanceWarning);
-
-            try
-            {
-                await _chatPublisherService.AddExternalBalanceWarningAsync(model);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ErrorResponse.Create(ex.Message));
-            }
-
-            return StatusCode((int)HttpStatusCode.OK);
+            await _chatPublisherService.AddExternalBalanceWarningAsync(model);
         }
 
         /// <summary>
@@ -289,10 +219,20 @@ namespace Lykke.Service.TelegramReporter.Controllers
         /// <returns></returns>
         [HttpDelete("balancewarning")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> RemoveBalanceWarningAsync(string clientId, string assetId)
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task RemoveBalanceWarningAsync(string clientId, string assetId)
         {
+            if (string.IsNullOrEmpty(clientId))
+            {
+                throw new ValidationApiException($"{nameof(clientId)} required");
+            }
+
+            if (string.IsNullOrEmpty(assetId))
+            {
+                throw new ValidationApiException($"{nameof(assetId)} required");
+            }
+
             await _chatPublisherService.RemoveBalanceWarningAsync(clientId, assetId);
-            return NoContent();
         }
 
         /// <summary>
@@ -303,10 +243,20 @@ namespace Lykke.Service.TelegramReporter.Controllers
         /// <returns></returns>
         [HttpDelete("externalbalancewarning")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> RemoveExternalBalanceWarningAsync(string exchange, string assetId)
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task RemoveExternalBalanceWarningAsync(string exchange, string assetId)
         {
+            if (string.IsNullOrEmpty(exchange))
+            {
+                throw new ValidationApiException($"{nameof(exchange)} required");
+            }
+
+            if (string.IsNullOrEmpty(assetId))
+            {
+                throw new ValidationApiException($"{nameof(assetId)} required");
+            }
+
             await _chatPublisherService.RemoveExternalBalanceWarningAsync(exchange, assetId);
-            return NoContent();
         }
     }
 }

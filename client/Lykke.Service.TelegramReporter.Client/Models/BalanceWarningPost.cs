@@ -1,6 +1,6 @@
-﻿namespace Lykke.Service.TelegramReporter.Models
+﻿namespace Lykke.Service.TelegramReporter.Client.Models
 {
-    public class BalanceWarningDto
+    public class BalanceWarningPost
     {
         public string ClientId { get; set; }
         public string AssetId { get; set; }
