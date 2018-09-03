@@ -63,20 +63,20 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
 
         private async Task HandleInstrumentSettingsChanged(StringBuilder state, string name, AuditMessage auditMessage)
         {
+            var assetDisplayId = GetAssetDisplayId(auditMessage);
+            if (!string.IsNullOrWhiteSpace(assetDisplayId))
+            {
+                state.AppendLine($"Asset DisplayId: {assetDisplayId}");
+            }
+
+            var assetPairName = GetAssetPairName(auditMessage);
+            if (!string.IsNullOrWhiteSpace(assetPairName))
+            {
+                state.AppendLine($"AssetPair Name: {assetPairName}");
+            }
+
             if (auditMessage.SettingsChangeType == SettingsChangeType.Modified)
             {
-                var assetDisplayId = GetAssetDisplayId(auditMessage);
-                if (!string.IsNullOrWhiteSpace(assetDisplayId))
-                {
-                    state.AppendLine($"Asset DisplayId: {assetDisplayId}");
-                }
-
-                var assetPairName = GetAssetPairName(auditMessage);
-                if (!string.IsNullOrWhiteSpace(assetPairName))
-                {
-                    state.AppendLine($"AssetPair Name: {assetPairName}");
-                }
-
                 foreach (var key in auditMessage.PreviousValues.Keys)
                 {
                     if (auditMessage.CurrentValues[key] != auditMessage.PreviousValues[key])
