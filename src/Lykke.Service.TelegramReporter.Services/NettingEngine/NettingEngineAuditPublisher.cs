@@ -4,7 +4,6 @@ using Common.Log;
 using Lykke.Common.Log;
 using Lykke.Service.NettingEngine.Client.RabbitMq;
 using Lykke.Service.TelegramReporter.Core.Domain;
-using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
 

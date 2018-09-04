@@ -29,7 +29,7 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
             var state = new StringBuilder();
 
             state.AppendLine($"======= {DateTime.UtcNow:yyyy/MM/dd HH:mm:ss} =======\r\n");
-            state.AppendLine($"NettingsEngine audit event:\r\n");
+            state.AppendLine("Netting Engine audit event:\r\n");
 
             state.AppendLine($"User: {auditMessage.ClientId}");
             state.Append($"{auditMessage.EventType}");
@@ -63,6 +63,18 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
 
         private async Task HandleInstrumentSettingsChanged(StringBuilder state, string name, AuditMessage auditMessage)
         {
+            var assetDisplayId = GetAssetDisplayId(auditMessage);
+            if (!string.IsNullOrWhiteSpace(assetDisplayId))
+            {
+                state.AppendLine($"Asset DisplayId: {assetDisplayId}");
+            }
+
+            var assetPairName = GetAssetPairName(auditMessage);
+            if (!string.IsNullOrWhiteSpace(assetPairName))
+            {
+                state.AppendLine($"AssetPair Name: {assetPairName}");
+            }
+
             if (auditMessage.SettingsChangeType == SettingsChangeType.Modified)
             {
                 foreach (var key in auditMessage.PreviousValues.Keys)
@@ -105,6 +117,28 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
                 : (auditMessage.PreviousValues?.ContainsKey("Asset") ?? false
                     ? $"{auditMessage.PreviousValues["Asset"]}"
                     : "UNKNOWN_ASSET");
+
+            return asset;
+        }
+
+        private string GetAssetDisplayId(AuditMessage auditMessage)
+        {
+            var asset = auditMessage.CurrentValues?.ContainsKey("DisplayId") ?? false
+                ? $"{auditMessage.CurrentValues["DisplayId"]}"
+                : (auditMessage.PreviousValues?.ContainsKey("DisplayId") ?? false
+                    ? $"{auditMessage.PreviousValues["DisplayId"]}"
+                    : null);
+
+            return asset;
+        }
+
+        private string GetAssetPairName(AuditMessage auditMessage)
+        {
+            var asset = auditMessage.CurrentValues?.ContainsKey("Name") ?? false
+                ? $"{auditMessage.CurrentValues["Name"]}"
+                : (auditMessage.PreviousValues?.ContainsKey("Name") ?? false
+                    ? $"{auditMessage.PreviousValues["Name"]}"
+                    : null);
 
             return asset;
         }
