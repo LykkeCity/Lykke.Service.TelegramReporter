@@ -30,7 +30,7 @@ namespace Lykke.Service.TelegramReporter.Services.WalletsRebalancer
             state.AppendLine($"======= {DateTime.UtcNow:yyyy/MM/dd HH:mm:ss} =======\r\n");
             state.AppendLine("Wallets Rebalancer event:\r\n");
 
-            
+            state.AppendLine("TODO:\r\n");
 
             return state.ToString();
         }
