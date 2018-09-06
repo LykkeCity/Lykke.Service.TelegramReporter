@@ -62,6 +62,19 @@ namespace Lykke.Service.TelegramReporter.Controllers
         }
 
         /// <summary>
+        /// Gets WalletsRebalancer chat publishers.
+        /// </summary>
+        /// <returns>WalletsRebalancer chat publishers</returns>
+        [HttpGet("walletsrebalancerchatpublishersettings")]
+        [ProducesResponseType(typeof(IReadOnlyList<ChatPublisherSettingsDto>), (int)HttpStatusCode.OK)]
+        public async Task<IReadOnlyList<ChatPublisherSettingsDto>> GetWalletsRebalancerChatPublisherSettingsAsync()
+        {
+            var chatPublishers = await _chatPublisherService.GetWalletsRebalancerChatPublishersAsync();
+            var vm = Mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
+            return vm;
+        }
+
+        /// <summary>
         /// Adds NE chat publisher.
         /// </summary>
         /// <param name="chatPublisher">NE chat publisher to add.</param>
@@ -101,6 +114,20 @@ namespace Lykke.Service.TelegramReporter.Controllers
             var model = Mapper.Map<ChatPublisherSettings>(chatPublisher);
 
             await _chatPublisherService.AddExternalBalanceChatPublisherAsync(model);
+        }
+
+        /// <summary>
+        /// Adds WalletsRebalancer chat publisher.
+        /// </summary>
+        /// <param name="chatPublisher">WalletsRebalancer chat publisher to add.</param>
+        [HttpPost("walletsrebalancerchatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task AddWalletsRebalancerChatPublisherSettingsAsync([FromBody] ChatPublisherSettingsPost chatPublisher)
+        {
+            var model = Mapper.Map<ChatPublisherSettings>(chatPublisher);
+
+            await _chatPublisherService.AddWalletsRebalancerChatPublisherAsync(model);
         }
 
         /// <summary>
@@ -155,6 +182,24 @@ namespace Lykke.Service.TelegramReporter.Controllers
             }
 
             await _chatPublisherService.RemoveExternalBalanceChatPublisherAsync(chatPublisherSettingsId);
+        }
+
+        /// <summary>
+        /// Deletes WalletsRebalancer chat publisher.
+        /// </summary>
+        /// <param name="chatPublisherSettingsId">WalletsRebalancer chat publisher settings Id</param>
+        /// <returns></returns>
+        [HttpDelete("walletsrebalancerchatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task RemoveWalletsRebalancerChatPublisherSettingsAsync(string chatPublisherSettingsId)
+        {
+            if (string.IsNullOrEmpty(chatPublisherSettingsId))
+            {
+                throw new ValidationApiException($"{nameof(chatPublisherSettingsId)} required");
+            }
+
+            await _chatPublisherService.RemoveWalletsRebalancerChatPublisherAsync(chatPublisherSettingsId);
         }
 
         /// <summary>
