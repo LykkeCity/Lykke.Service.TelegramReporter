@@ -83,6 +83,12 @@ namespace Lykke.Service.TelegramReporter.Services
             return await _repo.GetExternalBalanceChatPublisherSettings();
         }
 
+        public async Task<IReadOnlyList<IChatPublisherSettings>> GetWalletsRebalancerChatPublishersAsync()
+        {
+            EnsureInitialized();
+            return await _repo.GetWalletsRebalancerChatPublisherSettings();
+        }
+
         public async Task AddNeChatPublisherAsync(IChatPublisherSettings chatPublisher)
         {
             EnsureInitialized();
@@ -104,6 +110,13 @@ namespace Lykke.Service.TelegramReporter.Services
             await UpdateChatPublishers();
         }
 
+        public async Task AddWalletsRebalancerChatPublisherAsync(IChatPublisherSettings chatPublisher)
+        {
+            EnsureInitialized();
+            await _repo.AddWalletsRebalancerChatPublisherSettingsAsync(chatPublisher);
+            await UpdateChatPublishers();
+        }
+
         public async Task RemoveNeChatPublisherAsync(string chatPublisherId)
         {
             EnsureInitialized();
@@ -122,6 +135,13 @@ namespace Lykke.Service.TelegramReporter.Services
         {
             EnsureInitialized();
             await _repo.RemoveExternalBalanceChatPublisherSettingsAsync(chatPublisherId);
+            await UpdateChatPublishers();
+        }
+
+        public async Task RemoveWalletsRebalancerChatPublisherAsync(string chatPublisherId)
+        {
+            EnsureInitialized();
+            await _repo.RemoveWalletsRebalancerChatPublisherSettingsAsync(chatPublisherId);
             await UpdateChatPublishers();
         }
 
@@ -162,17 +182,14 @@ namespace Lykke.Service.TelegramReporter.Services
 
         public void Stop()
         {
-            foreach (var chatPublisher in _nePublishers.Values)
-            {
-                chatPublisher.Stop();
-            }
+            StopPublishers(_nePublishers);
+            StopPublishers(_balancePublishers);
+            StopPublishers(_externalBalancePublishers);
+        }
 
-            foreach (var chatPublisher in _balancePublishers.Values)
-            {
-                chatPublisher.Stop();
-            }
-
-            foreach (var chatPublisher in _externalBalancePublishers.Values)
+        private static void StopPublishers(IDictionary<long, ChatPublisher> publishers)
+        {
+            foreach (var chatPublisher in publishers.Values)
             {
                 chatPublisher.Stop();
             }
@@ -180,17 +197,14 @@ namespace Lykke.Service.TelegramReporter.Services
 
         public void Dispose()
         {
-            foreach (var chatPublisher in _nePublishers.Values)
-            {
-                chatPublisher.Dispose();
-            }
+            DisposePublishers(_nePublishers);
+            DisposePublishers(_balancePublishers);
+            DisposePublishers(_externalBalancePublishers);
+        }
 
-            foreach (var chatPublisher in _balancePublishers.Values)
-            {
-                chatPublisher.Dispose();
-            }
-
-            foreach (var chatPublisher in _externalBalancePublishers.Values)
+        private static void DisposePublishers(IDictionary<long, ChatPublisher> publishers)
+        {
+            foreach (var chatPublisher in publishers.Values)
             {
                 chatPublisher.Dispose();
             }
@@ -228,7 +242,7 @@ namespace Lykke.Service.TelegramReporter.Services
             foreach (var publisherSettings in externalBalancePublisherSettings)
             {
                 AddExternalBalancePublisherIfNeeded(publisherSettings);
-            }            
+            }
         }
 
         private void AddNePublisherIfNeeded(IChatPublisherSettings publisherSettings)
