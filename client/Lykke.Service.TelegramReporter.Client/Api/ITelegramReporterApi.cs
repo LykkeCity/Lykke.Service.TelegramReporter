@@ -15,6 +15,8 @@ namespace Lykke.Service.TelegramReporter.Client.Api
         Task<IReadOnlyList<ChatPublisherSettingsDto>> GetBalanceChatPublisherSettingsAsync();
         [Get("/api/v1/chatpublisher/externalbalancechatpublishersettings")]
         Task<IReadOnlyList<ChatPublisherSettingsDto>> GetExternalBalanceChatPublisherSettingsAsync();
+        [Get("/api/v1/chatpublisher/walletsrebalancerchatpublishersettings")]
+        Task<IReadOnlyList<ChatPublisherSettingsDto>> GetWalletsRebalancerChatPublisherSettingsAsync();
 
         [Post("/api/v1/chatpublisher/nechatpublishersettings")]
         Task AddNeChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher);
@@ -22,6 +24,8 @@ namespace Lykke.Service.TelegramReporter.Client.Api
         Task AddBalanceChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher);
         [Post("/api/v1/chatpublisher/externalbalancechatpublishersettings")]
         Task AddExternalBalanceChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher);
+        [Post("/api/v1/chatpublisher/walletsrebalancerchatpublishersettings")]
+        Task AddWalletsRebalancerChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher);
 
         [Delete("/api/v1/chatpublisher/nechatpublishersettings")]
         Task RemoveNeChatPublisherSettingsAsync(string chatPublisherSettingsId);
@@ -29,6 +33,8 @@ namespace Lykke.Service.TelegramReporter.Client.Api
         Task RemoveBalanceChatPublisherSettingsAsync(string chatPublisherSettingsId);
         [Delete("/api/v1/chatpublisher/externalbalancechatpublishersettings")]
         Task RemoveExternalBalanceChatPublisherSettingsAsync(string chatPublisherSettingsId);
+        [Delete("/api/v1/chatpublisher/walletsrebalancerchatpublishersettings")]
+        Task RemoveWalletsRebalancerChatPublisherSettingsAsync(string chatPublisherSettingsId);
 
         [Get("/api/v1/chatpublisher/balanceswarnings")]
         Task<IReadOnlyList<BalanceWarningDto>> GetBalancesWarningsAsync();

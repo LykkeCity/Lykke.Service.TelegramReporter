@@ -19,6 +19,9 @@ using Lykke.Service.TelegramReporter.Services.NettingEngine;
 using Lykke.Service.RateCalculator.Client;
 using Lykke.Service.TelegramReporter.Services.NettingEngine.Rabbit;
 using Lykke.Common.Log;
+using Lykke.Service.TelegramReporter.Core.Services.WalletsRebalancer;
+using Lykke.Service.TelegramReporter.Services.WalletsRebalancer;
+using Lykke.Service.TelegramReporter.Services.WalletsRebalancer.Rabbit;
 
 namespace Lykke.Service.TelegramReporter.Modules
 {    
@@ -65,6 +68,10 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<INettingEngineAuditProvider>()
                 .SingleInstance();
 
+            builder.RegisterType<WalletsRebalancerProvider>()
+                .As<IWalletsRebalancerProvider>()
+                .SingleInstance();
+
             builder.RegisterType<BalanceWarningProvider>()
                 .As<IBalanceWarningProvider>()
                 .SingleInstance();
@@ -78,6 +85,9 @@ namespace Lykke.Service.TelegramReporter.Modules
 
             builder.RegisterType<NettingEngineAuditPublisher>()
                 .As<INettingEngineAuditPublisher>();
+
+            builder.RegisterType<WalletsRebalancerPublisher>()
+                .As<IWalletsRebalancerPublisher>();
 
             builder.RegisterType<ChatPublisherService>()
                 .As<IChatPublisherService>()
@@ -117,6 +127,13 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<IStartable>()
                 .As<IStopable>()
                 .WithParameter("settings", _appSettings.CurrentValue.TelegramReporterService.NettingEngineAuditExchange)
+                .AutoActivate()
+                .SingleInstance();
+
+            builder.RegisterType<WalletsRebalancerSubscriber>()
+                .As<IStartable>()
+                .As<IStopable>()
+                .WithParameter("settings", _appSettings.CurrentValue.TelegramReporterService.WalletsRebalancerExchange)
                 .AutoActivate()
                 .SingleInstance();
         }

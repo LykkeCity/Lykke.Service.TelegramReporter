@@ -14,5 +14,6 @@ namespace Lykke.Service.TelegramReporter.Settings
         public TimeSpan AssetsCacheExpirationPeriod { get; set; }
 
         public NettingEngineAuditExchangeSettings NettingEngineAuditExchange { get; set; }
+        public WalletsRebalancerExchangeSettings WalletsRebalancerExchange { get; set; }
     }    
 }
