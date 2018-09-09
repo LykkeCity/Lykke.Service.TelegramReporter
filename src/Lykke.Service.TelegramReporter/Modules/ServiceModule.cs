@@ -21,6 +21,7 @@ using Lykke.Common.Log;
 using Lykke.Service.TelegramReporter.Core.Services.WalletsRebalancer;
 using Lykke.Service.TelegramReporter.Services.WalletsRebalancer;
 using Lykke.Service.TelegramReporter.Services.WalletsRebalancer.Rabbit;
+using Lykke.Service.MarketMakerReports.Client;
 
 namespace Lykke.Service.TelegramReporter.Modules
 {    
@@ -57,6 +58,7 @@ namespace Lykke.Service.TelegramReporter.Modules
                 _appSettings.CurrentValue.TelegramReporterService.AssetsCacheExpirationPeriod));
 
             builder.RegisterBalancesClient(_appSettings.CurrentValue.BalancesServiceClient.ServiceUrl);
+            builder.RegisterMarketMakerReportsClient(_appSettings.CurrentValue.MarketMakerReportsServiceClient, null);
 
             builder.RegisterType<NettingEngineStateProvider>()
                 .As<INettingEngineStateProvider>()
