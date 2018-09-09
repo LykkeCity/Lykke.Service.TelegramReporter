@@ -57,7 +57,7 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
                 var assetPrice1 = assetBalance1 != 0 ? prevRow.Summary.BalanceUsd / assetBalance1 : 0;
                 var assetPrice2 = assetBalance2 != 0 ? row.Summary.BalanceUsd / assetBalance2 : 0;
 
-                var price = (assetPrice2 - assetPrice1) / assetPrice1 * 100;
+                var price = assetPrice1 != 0 ? (assetPrice2 - assetPrice1) / assetPrice1 * 100 : 0;
 
                 messageText.AppendLine(
                     $"{row.Asset.Title}; " +
