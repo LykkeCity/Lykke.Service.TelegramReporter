@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 
@@ -26,7 +25,5 @@ namespace Lykke.Service.TelegramReporter.Core.Services
         Task AddExternalBalanceWarningAsync(IExternalBalanceWarning balanceWarning);
         Task RemoveBalanceWarningAsync(string clientId, string assetId);
         Task RemoveExternalBalanceWarningAsync(string exchange, string assetId);
-
-        ConcurrentDictionary<long, ChatPublisher> NePublishers { get; }
     }
 }
