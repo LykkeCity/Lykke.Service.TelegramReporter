@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Common.Log;
+using Lykke.Service.TelegramReporter.Core;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Instances;
