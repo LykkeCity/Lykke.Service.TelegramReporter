@@ -16,16 +16,16 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
 
         private readonly INettingEngineStateProvider _nettingEngineStateProvider;
         private readonly IMarketMakerReportsClient _marketMakerReportsClient;
-        private readonly IChatPublisherService _chatPublisherService;
+        private readonly IChatPublisherStateService _chatPublisherStateService;
 
         public NettingEngineStateSubscriber(INettingEngineStateProvider nettingEngineStateProvider,
-            IMarketMakerReportsClient marketMakerReportsClient, IChatPublisherService chatPublisherService,
+            IMarketMakerReportsClient marketMakerReportsClient, IChatPublisherStateService chatPublisherStateService,
             IChatPublisherSettingsRepository repo, ILogFactory logFactory)
             : base(repo, logFactory)
         {
             _nettingEngineStateProvider = nettingEngineStateProvider;
             _marketMakerReportsClient = marketMakerReportsClient;
-            _chatPublisherService = chatPublisherService;
+            _chatPublisherStateService = chatPublisherStateService;
         }
 
         public override string Command => NettingEngineStateCommand;
@@ -37,7 +37,7 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
                 var allowedChatIds = await GetAllowedChatIds();
                 if (allowedChatIds.Contains(message.Chat.Id))
                 {
-                    var chatPublisher = (NettingEnginePublisher)_chatPublisherService.NePublishers.Single(x => x.Key == message.Chat.Id).Value;
+                    var chatPublisher = (NettingEnginePublisher)_chatPublisherStateService.NePublishers.Single(x => x.Key == message.Chat.Id).Value;
 
                     var snapshot = await _marketMakerReportsClient.InventorySnapshotsApi.GetLastAsync();
 

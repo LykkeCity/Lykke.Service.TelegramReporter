@@ -96,6 +96,10 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .AutoActivate()
                 .SingleInstance();
 
+            builder.RegisterType<ChatPublisherStateService>()
+                .As<IChatPublisherStateService>()                
+                .SingleInstance();
+
             RegisterRepositories(builder);
             RegisterRabbitMqSubscribers(builder);
         }
