@@ -9,6 +9,8 @@ using Common;
 using Common.Log;
 using Lykke.Common.Log;
 using Lykke.Service.Balances.Client;
+using Lykke.Service.MarketMakerReports.Client;
+using Lykke.Service.TelegramReporter.Core;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Instances;
@@ -30,6 +32,7 @@ namespace Lykke.Service.TelegramReporter.Services
         private readonly ILogFactory _logFactory;
 
         private readonly INettingEngineStateProvider _neStateProvider;
+        private readonly IMarketMakerReportsClient _marketMakerReportsClient;
         private readonly IBalanceWarningProvider _balanceWarningProvider;
         private readonly IExternalBalanceWarningProvider _externalBalanceWarningProvider;
         private readonly ITelegramSender _telegramSender;
@@ -45,6 +48,7 @@ namespace Lykke.Service.TelegramReporter.Services
             IExternalBalanceWarningRepository externalBalanceWarningRepository,
             IBalancesClient balancesClient,
             INettingEngineInstanceManager nettingEngineInstanceManager,
+            IMarketMakerReportsClient marketMakerReportsClient,
             ILogFactory logFactory,
             ITelegramSender telegramSender,
             INettingEngineStateProvider neStateProvider,
@@ -59,11 +63,14 @@ namespace Lykke.Service.TelegramReporter.Services
             _externalBalanceWarningRepository = externalBalanceWarningRepository;
             _balancesClient = balancesClient;
             _nettingEngineInstanceManager = nettingEngineInstanceManager;
+            _marketMakerReportsClient = marketMakerReportsClient;
             _neStateProvider = neStateProvider;
             _balanceWarningProvider = balanceWarningProvider;
             _externalBalanceWarningProvider = externalBalanceWarningProvider;
             _telegramSender = telegramSender;
         }
+
+        public ConcurrentDictionary<long, ChatPublisher> NePublishers => _nePublishers;
 
         public async Task<IReadOnlyList<IChatPublisherSettings>> GetNeChatPublishersAsync()
         {
@@ -248,7 +255,7 @@ namespace Lykke.Service.TelegramReporter.Services
         private void AddNePublisherIfNeeded(IChatPublisherSettings publisherSettings)
         {
             var newChatPublisher = new NettingEnginePublisher(_telegramSender,
-                _neStateProvider, publisherSettings, _logFactory);
+                _neStateProvider, _marketMakerReportsClient, publisherSettings, _logFactory);
 
             AddPublisherIfNeeded(publisherSettings, _nePublishers, newChatPublisher);
         }

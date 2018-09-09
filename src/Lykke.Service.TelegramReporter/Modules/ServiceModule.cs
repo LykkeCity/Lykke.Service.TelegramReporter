@@ -16,7 +16,6 @@ using Lykke.Service.TelegramReporter.Core.Services.Balance;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
 using Lykke.Service.TelegramReporter.Services.Balance;
 using Lykke.Service.TelegramReporter.Services.NettingEngine;
-using Lykke.Service.RateCalculator.Client;
 using Lykke.Service.TelegramReporter.Services.NettingEngine.Rabbit;
 using Lykke.Common.Log;
 using Lykke.Service.TelegramReporter.Core.Services.WalletsRebalancer;
@@ -58,7 +57,6 @@ namespace Lykke.Service.TelegramReporter.Modules
                 _appSettings.CurrentValue.TelegramReporterService.AssetsCacheExpirationPeriod));
 
             builder.RegisterBalancesClient(_appSettings.CurrentValue.BalancesServiceClient.ServiceUrl);
-            builder.RegisterRateCalculatorClient(_appSettings.CurrentValue.RateCalculatorServiceClient.ServiceUrl);
 
             builder.RegisterType<NettingEngineStateProvider>()
                 .As<INettingEngineStateProvider>()
