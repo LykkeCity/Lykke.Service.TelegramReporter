@@ -258,7 +258,7 @@ namespace Lykke.Service.TelegramReporter.Services
             var newChatPublisher = new BalancePublisher(_telegramSender, _balanceWarningRepository, _balancesClient,
                 _balanceWarningProvider, publisherSettings, _logFactory);
 
-            AddPublisherIfNeeded(publisherSettings, _nePublishers, newChatPublisher);
+            AddPublisherIfNeeded(publisherSettings, _balancePublishers, newChatPublisher);
         }
 
         private void AddExternalBalancePublisherIfNeeded(IChatPublisherSettings publisherSettings)
