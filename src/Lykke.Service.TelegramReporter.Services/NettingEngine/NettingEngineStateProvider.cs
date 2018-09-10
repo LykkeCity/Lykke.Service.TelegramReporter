@@ -38,29 +38,28 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
             var capitalPnL = 0m;
             var oldInventoryPnL = 0m;
 
-            foreach (var row in inventory.Rows)
-            {
-                var prevRow = prevInventory.Rows.SingleOrDefault(x => x.Asset.Id == row.Asset.Id);
-                if (prevRow == null)
-                {
-                    continue;
-                }
+            var assetIds = prevInventory.Rows.Select(x => x.Asset.Id).Union(inventory.Rows.Select(x => x.Asset.Id)).Distinct();
 
-                var assetBalance1 = prevRow.Summary.Balance;
-                var assetBalance2 = row.Summary.Balance;
-                var assetTurnover1 = prevRow.Summary.Sell + prevRow.Summary.Buy;
-                var assetTurnover2 = row.Summary.Sell + row.Summary.Buy;
+            foreach (var assetId in assetIds)
+            {
+                var prevRow = prevInventory.Rows.SingleOrDefault(x => x.Asset.Id == assetId);
+                var row = inventory.Rows.SingleOrDefault(x => x.Asset.Id == assetId);
+
+                var assetBalance1 = prevRow?.Summary?.Balance ?? 0;
+                var assetBalance2 = row?.Summary?.Balance ?? 0;
+                var assetTurnover1 = prevRow?.Summary?.Sell ?? 0 + prevRow?.Summary?.Buy ?? 0;
+                var assetTurnover2 = row?.Summary?.Sell ?? 0 + row?.Summary?.Buy ?? 0;
 
                 var assetInventory = assetBalance2 - assetBalance1;
                 var assetTurnover = assetTurnover2 - assetTurnover1;
 
-                var assetPrice1 = assetBalance1 != 0 ? prevRow.Summary.BalanceUsd / assetBalance1 : 0;
-                var assetPrice2 = assetBalance2 != 0 ? row.Summary.BalanceUsd / assetBalance2 : 0;
+                var assetPrice1 = assetBalance1 != 0 ? prevRow?.Summary?.BalanceUsd ?? 0 / assetBalance1 : 0;
+                var assetPrice2 = assetBalance2 != 0 ? row?.Summary?.BalanceUsd ?? 0 / assetBalance2 : 0;
 
                 var price = assetPrice1 != 0 ? (assetPrice2 - assetPrice1) / assetPrice1 * 100 : 0;
 
                 messageText.AppendLine(
-                    $"{row.Asset.Title}; " +
+                    $"{row?.Asset?.Title ?? prevRow?.Asset?.Title}; " +
                     $"Inv: {assetInventory:+0.00;-0.00;0.00}; " +
                     $"Tur: {assetTurnover:+0.00;-0.00;0.00}; " +
                     $"Price $: {price:+0.00;-0.00;0.00}%"
@@ -68,7 +67,7 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
 
                 inventoryPnL += assetInventory * assetPrice2;
                 capitalPnL += assetBalance2 * assetPrice2 - assetBalance1 * assetPrice1;
-                oldInventoryPnL += row.Summary.Inventory * assetPrice2;
+                oldInventoryPnL += row?.Summary?.Inventory ?? 0 * assetPrice2;
             }
 
             messageText.AppendLine();
