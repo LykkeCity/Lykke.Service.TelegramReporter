@@ -6,7 +6,7 @@ using Lykke.Common.Log;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services;
 
-namespace Lykke.Service.TelegramReporter.Services
+namespace Lykke.Service.TelegramReporter.Core
 {
     public abstract class ChatPublisher : IStartable, IStopable
     {

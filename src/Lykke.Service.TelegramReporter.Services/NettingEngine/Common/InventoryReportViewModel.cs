@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Lykke.Service.TelegramReporter.Services.NettingEngine.Data
+namespace Lykke.Service.TelegramReporter.Services.NettingEngine.Common
 {
     public class InventoryReportViewModel
     {
@@ -9,5 +9,7 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine.Data
         public IReadOnlyList<RowViewModel> Rows { get; set; }
 
         public TotalRowViewModel Total { get; set; }
+
+        public bool Extended { get; set; }
     }
 }

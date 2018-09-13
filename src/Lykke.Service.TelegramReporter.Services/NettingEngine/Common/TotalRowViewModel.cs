@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Lykke.Service.TelegramReporter.Services.NettingEngine.Data
+namespace Lykke.Service.TelegramReporter.Services.NettingEngine.Common
 {
     public class TotalRowViewModel
     {

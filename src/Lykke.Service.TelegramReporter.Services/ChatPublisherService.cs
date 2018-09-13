@@ -1,6 +1,5 @@
 ﻿using Lykke.Service.TelegramReporter.Core.Services;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +8,8 @@ using Common;
 using Common.Log;
 using Lykke.Common.Log;
 using Lykke.Service.Balances.Client;
+using Lykke.Service.MarketMakerReports.Client;
+using Lykke.Service.TelegramReporter.Core;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Instances;
@@ -26,25 +27,25 @@ namespace Lykke.Service.TelegramReporter.Services
         private readonly IExternalBalanceWarningRepository _externalBalanceWarningRepository;
         private readonly IBalancesClient _balancesClient;
         private readonly INettingEngineInstanceManager _nettingEngineInstanceManager;
+        private readonly IChatPublisherStateService _chatPublisherStateService;
         private readonly ILog _log;
         private readonly ILogFactory _logFactory;
 
         private readonly INettingEngineStateProvider _neStateProvider;
+        private readonly IMarketMakerReportsClient _marketMakerReportsClient;
         private readonly IBalanceWarningProvider _balanceWarningProvider;
         private readonly IExternalBalanceWarningProvider _externalBalanceWarningProvider;
         private readonly ITelegramSender _telegramSender;
 
         private bool _initialized;
 
-        private readonly ConcurrentDictionary<long, ChatPublisher> _nePublishers = new ConcurrentDictionary<long, ChatPublisher>();
-        private readonly ConcurrentDictionary<long, ChatPublisher> _balancePublishers = new ConcurrentDictionary<long, ChatPublisher>();
-        private readonly ConcurrentDictionary<long, ChatPublisher> _externalBalancePublishers = new ConcurrentDictionary<long, ChatPublisher>();
-
         public ChatPublisherService(IChatPublisherSettingsRepository repo,
             IBalanceWarningRepository balanceWarningRepository,
             IExternalBalanceWarningRepository externalBalanceWarningRepository,
             IBalancesClient balancesClient,
             INettingEngineInstanceManager nettingEngineInstanceManager,
+            IMarketMakerReportsClient marketMakerReportsClient,
+            IChatPublisherStateService chatPublisherStateService,
             ILogFactory logFactory,
             ITelegramSender telegramSender,
             INettingEngineStateProvider neStateProvider,
@@ -55,10 +56,12 @@ namespace Lykke.Service.TelegramReporter.Services
             _log = logFactory.CreateLog(this);
             _logFactory = logFactory;
 
+            _chatPublisherStateService = chatPublisherStateService;
             _balanceWarningRepository = balanceWarningRepository;
             _externalBalanceWarningRepository = externalBalanceWarningRepository;
             _balancesClient = balancesClient;
             _nettingEngineInstanceManager = nettingEngineInstanceManager;
+            _marketMakerReportsClient = marketMakerReportsClient;
             _neStateProvider = neStateProvider;
             _balanceWarningProvider = balanceWarningProvider;
             _externalBalanceWarningProvider = externalBalanceWarningProvider;
@@ -182,9 +185,9 @@ namespace Lykke.Service.TelegramReporter.Services
 
         public void Stop()
         {
-            StopPublishers(_nePublishers);
-            StopPublishers(_balancePublishers);
-            StopPublishers(_externalBalancePublishers);
+            StopPublishers(_chatPublisherStateService.NePublishers);
+            StopPublishers(_chatPublisherStateService.BalancePublishers);
+            StopPublishers(_chatPublisherStateService.ExternalBalancePublishers);
         }
 
         private static void StopPublishers(IDictionary<long, ChatPublisher> publishers)
@@ -197,9 +200,9 @@ namespace Lykke.Service.TelegramReporter.Services
 
         public void Dispose()
         {
-            DisposePublishers(_nePublishers);
-            DisposePublishers(_balancePublishers);
-            DisposePublishers(_externalBalancePublishers);
+            DisposePublishers(_chatPublisherStateService.NePublishers);
+            DisposePublishers(_chatPublisherStateService.BalancePublishers);
+            DisposePublishers(_chatPublisherStateService.ExternalBalancePublishers);
         }
 
         private static void DisposePublishers(IDictionary<long, ChatPublisher> publishers)
@@ -226,19 +229,19 @@ namespace Lykke.Service.TelegramReporter.Services
             var balancePublisherSettings = await _repo.GetBalanceChatPublisherSettings();
             var externalBalancePublisherSettings = await _repo.GetExternalBalanceChatPublisherSettings();
 
-            CleanPublishers(nePublisherSettings, _nePublishers);
+            CleanPublishers(nePublisherSettings, _chatPublisherStateService.NePublishers);
             foreach (var publisherSettings in nePublisherSettings)
             {
                 AddNePublisherIfNeeded(publisherSettings);
             }
 
-            CleanPublishers(balancePublisherSettings, _balancePublishers);
+            CleanPublishers(balancePublisherSettings, _chatPublisherStateService.BalancePublishers);
             foreach (var publisherSettings in balancePublisherSettings)
             {
                 AddBalancePublisherIfNeeded(publisherSettings);
             }
 
-            CleanPublishers(externalBalancePublisherSettings, _externalBalancePublishers);
+            CleanPublishers(externalBalancePublisherSettings, _chatPublisherStateService.ExternalBalancePublishers);
             foreach (var publisherSettings in externalBalancePublisherSettings)
             {
                 AddExternalBalancePublisherIfNeeded(publisherSettings);
@@ -248,9 +251,9 @@ namespace Lykke.Service.TelegramReporter.Services
         private void AddNePublisherIfNeeded(IChatPublisherSettings publisherSettings)
         {
             var newChatPublisher = new NettingEnginePublisher(_telegramSender,
-                _neStateProvider, publisherSettings, _logFactory);
+                _neStateProvider, _marketMakerReportsClient, publisherSettings, _logFactory);
 
-            AddPublisherIfNeeded(publisherSettings, _nePublishers, newChatPublisher);
+            AddPublisherIfNeeded(publisherSettings, _chatPublisherStateService.NePublishers, newChatPublisher);
         }
 
         private void AddBalancePublisherIfNeeded(IChatPublisherSettings publisherSettings)
@@ -258,7 +261,7 @@ namespace Lykke.Service.TelegramReporter.Services
             var newChatPublisher = new BalancePublisher(_telegramSender, _balanceWarningRepository, _balancesClient,
                 _balanceWarningProvider, publisherSettings, _logFactory);
 
-            AddPublisherIfNeeded(publisherSettings, _balancePublishers, newChatPublisher);
+            AddPublisherIfNeeded(publisherSettings, _chatPublisherStateService.BalancePublishers, newChatPublisher);
         }
 
         private void AddExternalBalancePublisherIfNeeded(IChatPublisherSettings publisherSettings)
@@ -266,7 +269,7 @@ namespace Lykke.Service.TelegramReporter.Services
             var newChatPublisher = new ExternalBalancePublisher(_telegramSender, _externalBalanceWarningRepository,
                 _nettingEngineInstanceManager, _externalBalanceWarningProvider, publisherSettings, _logFactory);
 
-            AddPublisherIfNeeded(publisherSettings, _externalBalancePublishers, newChatPublisher);
+            AddPublisherIfNeeded(publisherSettings, _chatPublisherStateService.ExternalBalancePublishers, newChatPublisher);
         }
 
         private static void AddPublisherIfNeeded(IChatPublisherSettings publisherSettings, IDictionary<long, ChatPublisher> publishers, ChatPublisher newChatPublisher)

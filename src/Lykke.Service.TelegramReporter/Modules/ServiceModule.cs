@@ -16,12 +16,12 @@ using Lykke.Service.TelegramReporter.Core.Services.Balance;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
 using Lykke.Service.TelegramReporter.Services.Balance;
 using Lykke.Service.TelegramReporter.Services.NettingEngine;
-using Lykke.Service.RateCalculator.Client;
 using Lykke.Service.TelegramReporter.Services.NettingEngine.Rabbit;
 using Lykke.Common.Log;
 using Lykke.Service.TelegramReporter.Core.Services.WalletsRebalancer;
 using Lykke.Service.TelegramReporter.Services.WalletsRebalancer;
 using Lykke.Service.TelegramReporter.Services.WalletsRebalancer.Rabbit;
+using Lykke.Service.MarketMakerReports.Client;
 
 namespace Lykke.Service.TelegramReporter.Modules
 {    
@@ -58,7 +58,7 @@ namespace Lykke.Service.TelegramReporter.Modules
                 _appSettings.CurrentValue.TelegramReporterService.AssetsCacheExpirationPeriod));
 
             builder.RegisterBalancesClient(_appSettings.CurrentValue.BalancesServiceClient.ServiceUrl);
-            builder.RegisterRateCalculatorClient(_appSettings.CurrentValue.RateCalculatorServiceClient.ServiceUrl);
+            builder.RegisterMarketMakerReportsClient(_appSettings.CurrentValue.MarketMakerReportsServiceClient, null);
 
             builder.RegisterType<NettingEngineStateProvider>()
                 .As<INettingEngineStateProvider>()
@@ -94,6 +94,10 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<IStartable>()
                 .As<IStopable>()
                 .AutoActivate()
+                .SingleInstance();
+
+            builder.RegisterType<ChatPublisherStateService>()
+                .As<IChatPublisherStateService>()                
                 .SingleInstance();
 
             RegisterRepositories(builder);

@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Common.Log;
 using Lykke.Common.Log;
+using Lykke.Service.MarketMakerReports.Client;
 using Lykke.Service.TelegramReporter.Core.Domain;
-using Lykke.Service.TelegramReporter.Core.Instances;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Lykke.Service.TelegramReporter.Services.NettingEngine
 {
@@ -17,19 +14,18 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
     {
         private const string NettingEngineStateCommand = "/nettingenginestate";
 
-        private static readonly Regex InstanceIdRegex =
-            new Regex($"{NettingEngineStateCommand}\\s+(?<instanceId>\\S+)", RegexOptions.Multiline);
-
         private readonly INettingEngineStateProvider _nettingEngineStateProvider;
-        private readonly INettingEngineInstanceManager _nettingEngineInstanceManager;
+        private readonly IMarketMakerReportsClient _marketMakerReportsClient;
+        private readonly IChatPublisherStateService _chatPublisherStateService;
 
         public NettingEngineStateSubscriber(INettingEngineStateProvider nettingEngineStateProvider,
-            INettingEngineInstanceManager nettingEngineInstanceManager,
+            IMarketMakerReportsClient marketMakerReportsClient, IChatPublisherStateService chatPublisherStateService,
             IChatPublisherSettingsRepository repo, ILogFactory logFactory)
             : base(repo, logFactory)
         {
             _nettingEngineStateProvider = nettingEngineStateProvider;
-            _nettingEngineInstanceManager = nettingEngineInstanceManager;
+            _marketMakerReportsClient = marketMakerReportsClient;
+            _chatPublisherStateService = chatPublisherStateService;
         }
 
         public override string Command => NettingEngineStateCommand;
@@ -41,16 +37,13 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
                 var allowedChatIds = await GetAllowedChatIds();
                 if (allowedChatIds.Contains(message.Chat.Id))
                 {
-                    var keyboard =
-                        new InlineKeyboardMarkup(
-                            _nettingEngineInstanceManager.Instances.Select(k =>
-                                InlineKeyboardButton.WithCallbackData(k.DisplayName,
-                                    $"{NettingEngineStateCommand} {k.Index}")));
+                    var chatPublisher = (NettingEnginePublisher)_chatPublisherStateService.NePublishers.Single(x => x.Key == message.Chat.Id).Value;
+
+                    var snapshot = await _marketMakerReportsClient.InventorySnapshotsApi.GetLastAsync();
 
                     await telegramSender.SendTextMessageAsync(message.Chat.Id,
-                        "Select an instance",
-                        replyToMessageId: message.MessageId,
-                        replyMarkup: keyboard);
+                        await _nettingEngineStateProvider.GetStateMessageAsync(chatPublisher.PrevSnapshot, snapshot),
+                        replyToMessageId: message.MessageId);
                 }
             }
             catch (Exception ex)
@@ -59,44 +52,15 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
             }
         }
 
-        public override async Task ProcessCallbackQueryInternal(ITelegramSender telegramSender,
+        public override Task ProcessCallbackQueryInternal(ITelegramSender telegramSender,
             CallbackQuery callbackQuery)
         {
-            try
-            {
-                var allowedChatIds = await GetAllowedChatIds();
-                if (allowedChatIds.Contains(callbackQuery.Message.Chat.Id))
-                {
-                    var instanceId = ExtractInstanceId(callbackQuery.Data);
-                    var result = await _nettingEngineStateProvider.GetStateMessageAsync(int.Parse(instanceId));
-
-                    await telegramSender.SendTextMessageAsync(callbackQuery.Message.Chat.Id,
-                        result,
-                        replyToMessageId: callbackQuery.Message.MessageId);
-                }
-            }
-            catch (Exception ex)
-            {
-                await Log.WriteErrorAsync(nameof(NettingEngineStateSubscriber), nameof(ProcessCallbackQueryInternal), "", ex);
-            }
+            return Task.CompletedTask;
         }
 
         protected override async Task<long[]> GetAllowedChatIds()
         {
             return (await Repo.GetNeChatPublisherSettings()).Select(x => x.ChatId).ToArray();
-        }
-
-        private string ExtractInstanceId(string data)
-        {
-            var match = InstanceIdRegex.Match(data);
-            if (!match.Success)
-                return null;
-
-            var group = match.Groups["instanceId"];
-            if (!group.Success)
-                return null;
-
-            return group.Value;
         }
     }
 }

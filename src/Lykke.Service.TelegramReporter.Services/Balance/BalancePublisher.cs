@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Lykke.Common.Log;
 using Lykke.Service.Balances.AutorestClient.Models;
 using Lykke.Service.Balances.Client;
+using Lykke.Service.TelegramReporter.Core;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services;
