@@ -18,10 +18,13 @@ using Lykke.Service.TelegramReporter.Services.Balance;
 using Lykke.Service.TelegramReporter.Services.NettingEngine;
 using Lykke.Service.TelegramReporter.Services.NettingEngine.Rabbit;
 using Lykke.Common.Log;
+using Lykke.Service.MarketMakerArbitrageDetector.Client;
 using Lykke.Service.TelegramReporter.Core.Services.WalletsRebalancer;
 using Lykke.Service.TelegramReporter.Services.WalletsRebalancer;
 using Lykke.Service.TelegramReporter.Services.WalletsRebalancer.Rabbit;
 using Lykke.Service.MarketMakerReports.Client;
+using Lykke.Service.TelegramReporter.Core.Services.MarketMakerArbitrages;
+using Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages;
 
 namespace Lykke.Service.TelegramReporter.Modules
 {    
@@ -59,6 +62,8 @@ namespace Lykke.Service.TelegramReporter.Modules
 
             builder.RegisterBalancesClient(_appSettings.CurrentValue.BalancesServiceClient.ServiceUrl);
             builder.RegisterMarketMakerReportsClient(_appSettings.CurrentValue.MarketMakerReportsServiceClient, null);
+            builder.RegisterMarketMakerArbitrageDetectorClient(new MarketMakerArbitrageDetectorServiceClientSettings
+                { ServiceUrl = _appSettings.CurrentValue.MarketMakerArbitrageDetectorServiceClient.ServiceUrl }, null);
 
             builder.RegisterType<NettingEngineStateProvider>()
                 .As<INettingEngineStateProvider>()
@@ -78,6 +83,10 @@ namespace Lykke.Service.TelegramReporter.Modules
 
             builder.RegisterType<ExternalBalanceWarningProvider>()
                 .As<IExternalBalanceWarningProvider>()
+                .SingleInstance();
+
+            builder.RegisterType<MarketMakerArbitragesWarningProvider>()
+                .As<IMarketMakerArbitragesWarningProvider>()
                 .SingleInstance();
 
             builder.RegisterType<NettingEngineStateSubscriber>()

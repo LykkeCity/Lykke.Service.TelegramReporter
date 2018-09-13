@@ -75,6 +75,19 @@ namespace Lykke.Service.TelegramReporter.Controllers
         }
 
         /// <summary>
+        /// Gets MakerMakerArbitrages chat publishers.
+        /// </summary>
+        /// <returns>MakerMakerArbitrages chat publishers</returns>
+        [HttpGet("marketmakerarbitrageschatpublishersettings")]
+        [ProducesResponseType(typeof(IReadOnlyList<ChatPublisherSettingsDto>), (int)HttpStatusCode.OK)]
+        public async Task<IReadOnlyList<ChatPublisherSettingsDto>> GetMarketMakerArbitragesChatPublisherSettingsAsync()
+        {
+            var chatPublishers = await _chatPublisherService.GetMarketMakerArbitragesChatPublishersAsync();
+            var vm = Mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
+            return vm;
+        }
+
+        /// <summary>
         /// Adds NE chat publisher.
         /// </summary>
         /// <param name="chatPublisher">NE chat publisher to add.</param>
@@ -128,6 +141,20 @@ namespace Lykke.Service.TelegramReporter.Controllers
             var model = Mapper.Map<ChatPublisherSettings>(chatPublisher);
 
             await _chatPublisherService.AddWalletsRebalancerChatPublisherAsync(model);
+        }
+
+        /// <summary>
+        /// Adds MarketMakerArbitrages chat publisher.
+        /// </summary>
+        /// <param name="chatPublisher">MarketMakerArbitrages chat publisher to add.</param>
+        [HttpPost("marketmakerarbitrageschatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task AddMarketMakerArbitragesChatPublisherSettingsAsync([FromBody] ChatPublisherSettingsPost chatPublisher)
+        {
+            var model = Mapper.Map<ChatPublisherSettings>(chatPublisher);
+
+            await _chatPublisherService.AddMarketMakerArbitragesChatPublisherAsync(model);
         }
 
         /// <summary>
@@ -200,6 +227,24 @@ namespace Lykke.Service.TelegramReporter.Controllers
             }
 
             await _chatPublisherService.RemoveWalletsRebalancerChatPublisherAsync(chatPublisherSettingsId);
+        }
+
+        /// <summary>
+        /// Deletes MarketMakerArbitrages chat publisher.
+        /// </summary>
+        /// <param name="chatPublisherSettingsId">MarketMakerArbitrages chat publisher settings Id</param>
+        /// <returns></returns>
+        [HttpDelete("marketmakerarbitrageschatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task RemoveMarketMakerArbitragesChatPublisherSettingsAsync(string chatPublisherSettingsId)
+        {
+            if (string.IsNullOrEmpty(chatPublisherSettingsId))
+            {
+                throw new ValidationApiException($"{nameof(chatPublisherSettingsId)} required");
+            }
+
+            await _chatPublisherService.RemoveMarketMakerArbitragesChatPublisherAsync(chatPublisherSettingsId);
         }
 
         /// <summary>
