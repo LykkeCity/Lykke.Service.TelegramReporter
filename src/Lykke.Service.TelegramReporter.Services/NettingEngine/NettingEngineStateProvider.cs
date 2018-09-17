@@ -53,10 +53,21 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
                 var assetInventory = assetBalance2 - assetBalance1;
                 var assetTurnover = assetTurnover2 - assetTurnover1;
 
-                var assetPrice1 = assetBalance1 != 0 ? prevRow?.Summary?.BalanceUsd ?? 0 / assetBalance1 : 0;
-                var assetPrice2 = assetBalance2 != 0 ? row?.Summary?.BalanceUsd ?? 0 / assetBalance2 : 0;
+                var assetPrice1 = 0m;
+                if (assetBalance1 != 0)
+                {
+                    assetPrice1 = (prevRow?.Summary?.BalanceUsd ?? 0m) / assetBalance1;
+                }
 
-                var price = assetPrice1 != 0 ? (assetPrice2 - assetPrice1) / assetPrice1 * 100 : 0;
+                var assetPrice2 = 0m;
+                if (assetBalance1 != 0)
+                {
+                    assetPrice2 = (row?.Summary?.BalanceUsd ?? 0m) / assetBalance2;
+                }
+
+                var price = assetPrice1 != 0 
+                    ? (assetPrice2 - assetPrice1) / assetPrice1 * 100m 
+                    : 0m;
 
                 messageText.AppendLine(
                     $"{row?.Asset?.Title ?? prevRow?.Asset?.Title}; " +

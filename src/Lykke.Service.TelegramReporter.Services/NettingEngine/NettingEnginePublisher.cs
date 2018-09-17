@@ -31,13 +31,18 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
 
         public InventorySnapshotModel PrevSnapshot { get; private set; }
 
+        public Task<InventorySnapshotModel> GetCurrentInventorySnapshot()
+        {
+            return _marketMakerReportsClient.InventorySnapshotsApi.GetLastAsync();
+        }
+
         public override async void Publish()
         {
             EnsureInitialized();
 
             try
             {
-                var snapshot = await _marketMakerReportsClient.InventorySnapshotsApi.GetLastAsync();
+                var snapshot = await GetCurrentInventorySnapshot();
 
                 await TelegramSender.SendTextMessageAsync(PublisherSettings.ChatId,
                     await _nettingEngineStateProvider.GetStateMessageAsync(PrevSnapshot, snapshot));
