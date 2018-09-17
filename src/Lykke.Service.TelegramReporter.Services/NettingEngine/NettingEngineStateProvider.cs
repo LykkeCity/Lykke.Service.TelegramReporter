@@ -78,7 +78,7 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
 
                 inventoryPnL += assetInventory * assetPrice2;
                 capitalPnL += assetBalance2 * assetPrice2 - assetBalance1 * assetPrice1;
-                oldInventoryPnL += row?.Summary?.Inventory ?? 0 * assetPrice2;
+                oldInventoryPnL += (row?.Summary?.Inventory ?? 0) * assetPrice2;
             }
 
             messageText.AppendLine();
