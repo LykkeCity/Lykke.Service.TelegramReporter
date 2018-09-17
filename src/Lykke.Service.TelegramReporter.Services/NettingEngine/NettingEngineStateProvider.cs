@@ -60,7 +60,7 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
                 }
 
                 var assetPrice2 = 0m;
-                if (assetBalance1 != 0)
+                if (assetBalance2 != 0)
                 {
                     assetPrice2 = (row?.Summary?.BalanceUsd ?? 0m) / assetBalance2;
                 }
