@@ -17,6 +17,8 @@ namespace Lykke.Service.TelegramReporter.Client.Api
         Task<IReadOnlyList<ChatPublisherSettingsDto>> GetExternalBalanceChatPublisherSettingsAsync();
         [Get("/api/v1/chatpublisher/walletsrebalancerchatpublishersettings")]
         Task<IReadOnlyList<ChatPublisherSettingsDto>> GetWalletsRebalancerChatPublisherSettingsAsync();
+        [Get("/api/v1/chatpublisher/marketmakerarbitrageschatpublishersettings")]
+        Task<IReadOnlyList<ChatPublisherSettingsDto>> GetMarketMakerArbitragesChatPublisherSettingsAsync();
 
         [Post("/api/v1/chatpublisher/nechatpublishersettings")]
         Task AddNeChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher);
@@ -26,6 +28,8 @@ namespace Lykke.Service.TelegramReporter.Client.Api
         Task AddExternalBalanceChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher);
         [Post("/api/v1/chatpublisher/walletsrebalancerchatpublishersettings")]
         Task AddWalletsRebalancerChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher);
+        [Post("/api/v1/chatpublisher/marketmakerarbitrageschatpublishersettings")]
+        Task AddMarketMakerArbitragesChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher);
 
         [Delete("/api/v1/chatpublisher/nechatpublishersettings")]
         Task RemoveNeChatPublisherSettingsAsync(string chatPublisherSettingsId);
@@ -35,6 +39,8 @@ namespace Lykke.Service.TelegramReporter.Client.Api
         Task RemoveExternalBalanceChatPublisherSettingsAsync(string chatPublisherSettingsId);
         [Delete("/api/v1/chatpublisher/walletsrebalancerchatpublishersettings")]
         Task RemoveWalletsRebalancerChatPublisherSettingsAsync(string chatPublisherSettingsId);
+        [Delete("/api/v1/chatpublisher/marketmakerarbitrageschatpublishersettings")]
+        Task RemoveMarketMakerArbitragesChatPublisherSettingsAsync(string chatPublisherSettingsId);
 
         [Get("/api/v1/chatpublisher/balanceswarnings")]
         Task<IReadOnlyList<BalanceWarningDto>> GetBalancesWarningsAsync();

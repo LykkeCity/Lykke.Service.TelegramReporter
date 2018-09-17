@@ -35,6 +35,11 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
             return "WalletsRebalancerChatPublisher";
         }
 
+        public static string GeneratePartitionKeyForMarketMakerArbitrages()
+        {
+            return "MarketMakerArbitragesChatPublisher";
+        }
+
         public static ChatPublisherSettingsEntity CreateForNe(IChatPublisherSettings chatPublisher)
         {
             return new ChatPublisherSettingsEntity
@@ -78,6 +83,17 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
                 ChatId = chatPublisher.ChatId
             };
         }
+
+        public static ChatPublisherSettingsEntity CreateForMarketMakerArbitrages(IChatPublisherSettings chatPublisher)
+        {
+            return new ChatPublisherSettingsEntity
+            {
+                PartitionKey = GeneratePartitionKeyForMarketMakerArbitrages(),
+                RowKey = Guid.NewGuid().ToString(),
+                TimeSpan = chatPublisher.TimeSpan,
+                ChatId = chatPublisher.ChatId
+            };
+        }
     }
 
     public class ChatPublisherSettingsRepository : IChatPublisherSettingsRepository
@@ -109,6 +125,11 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
             return (await _storage.GetDataAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForWalletsRebalancer())).ToArray();
         }
 
+        public async Task<IReadOnlyList<IChatPublisherSettings>> GetMarketMakerArbitragesChatPublisherSettings()
+        {
+            return (await _storage.GetDataAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForMarketMakerArbitrages())).ToArray();
+        }
+
         public Task AddNeChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher)
         {
             var entity = ChatPublisherSettingsEntity.CreateForNe(chatPublisher);
@@ -133,6 +154,12 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
             return _storage.InsertOrReplaceAsync(entity);
         }
 
+        public Task AddMarketMakerArbitragesChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher)
+        {
+            var entity = ChatPublisherSettingsEntity.CreateForMarketMakerArbitrages(chatPublisher);
+            return _storage.InsertOrReplaceAsync(entity);
+        }
+
         public async Task RemoveNeChatPublisherSettingsAsync(string chatPublisherId)
         {
             await _storage.DeleteAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForNe(), chatPublisherId);
@@ -151,6 +178,11 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
         public async Task RemoveWalletsRebalancerChatPublisherSettingsAsync(string chatPublisherId)
         {
             await _storage.DeleteAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForWalletsRebalancer(), chatPublisherId);
+        }
+
+        public async Task RemoveMarketMakerArbitragesChatPublisherSettingsAsync(string chatPublisherId)
+        {
+            await _storage.DeleteAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForMarketMakerArbitrages(), chatPublisherId);
         }
     }
 }

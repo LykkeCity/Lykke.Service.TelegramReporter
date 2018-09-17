@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using Lykke.Sdk.Settings;
+using Lykke.Service.MarketMakerArbitrageDetector.Client;
 using Lykke.Service.MarketMakerReports.Client;
 using Lykke.Service.NettingEngine.Client;
 
@@ -14,6 +15,7 @@ namespace Lykke.Service.TelegramReporter.Settings
         public BalanceServiceClientSettings BalancesServiceClient { get; set; }
         public MarketMakerReportsServiceClientSettings MarketMakerReportsServiceClient { get; set; }
         public NettingEngineServiceClientSettings NettingEngineServiceClient { get; set; }
+        public MarketMakerArbitrageDetectorServiceClientSettings MarketMakerArbitrageDetectorServiceClient { get; set; }
     }
 
     public class AssetsServiceClientSettings
