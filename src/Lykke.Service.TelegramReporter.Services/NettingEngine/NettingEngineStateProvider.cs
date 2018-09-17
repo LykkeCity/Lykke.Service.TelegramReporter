@@ -47,8 +47,8 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
 
                 var assetBalance1 = prevRow?.Summary?.Balance ?? 0;
                 var assetBalance2 = row?.Summary?.Balance ?? 0;
-                var assetTurnover1 = prevRow?.Summary?.Sell ?? 0 + prevRow?.Summary?.Buy ?? 0;
-                var assetTurnover2 = row?.Summary?.Sell ?? 0 + row?.Summary?.Buy ?? 0;
+                var assetTurnover1 = (prevRow?.Summary?.Sell ?? 0) + (prevRow?.Summary?.Buy ?? 0);
+                var assetTurnover2 = (row?.Summary?.Sell ?? 0) + (row?.Summary?.Buy ?? 0);
 
                 var assetInventory = assetBalance2 - assetBalance1;
                 var assetTurnover = assetTurnover2 - assetTurnover1;
