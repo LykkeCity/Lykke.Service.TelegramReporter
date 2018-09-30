@@ -15,13 +15,6 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine.Common
         public static async Task<InventoryReportViewModel> GetAssetInventory(InventorySnapshotModel snapshot,
             IAssetsServiceWithCache assetsServiceWithCache)
         {
-            Task<IReadOnlyCollection<Asset>> assetsTask = assetsServiceWithCache.GetAllAssetsAsync(false);
-
-            await Task.WhenAll(
-                assetsTask);
-
-            IReadOnlyCollection<Asset> assets = assetsTask.Result;
-
             var inventoryExchanges = snapshot?.Assets?.SelectManySafe(
                 asset => asset.Inventories?.Select(o => o.Exchange));
             var balanceExchanges = snapshot?.Assets?.SelectManySafe(
@@ -35,7 +28,7 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine.Common
             if (exchanges.Contains(ExchangeNames.Lykke))
                 exchanges = new[] { ExchangeNames.Lykke }.Union(exchanges.OrderBy(o => o)).Distinct().ToList();
 
-            IReadOnlyList<string> inventoryAssets = (snapshot?.Assets?.Select(o => o.Asset).Distinct() ?? Enumerable.Empty<string>())
+            IReadOnlyList<string> inventoryAssets = (snapshot?.Assets?.Select(o => o.AssetId).Distinct() ?? Enumerable.Empty<string>())
                 .ToArray();
 
             var rows = new List<RowViewModel>();
@@ -44,13 +37,13 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine.Common
 
             foreach (string assetId in inventoryAssets)
             {
-                Asset asset = assets?.FirstOrDefault(o => o.Id == assetId);
+                Asset asset = await assetsServiceWithCache.TryGetAssetAsync(assetId);
 
                 var exchangeSummary = new List<ExchangeSummaryViewModel>();
 
                 foreach (string exchange in exchanges)
                 {
-                    AssetBalanceInventoryModel assetBalance = snapshot?.Assets?.FirstOrDefault(o => o.Asset == assetId);
+                    AssetBalanceInventoryModel assetBalance = snapshot?.Assets?.FirstOrDefault(o => o.AssetId == assetId);
 
                     AssetBalanceModel balance = assetBalance?.Balances?.FirstOrDefault(o => o.Exchange == exchange);
 
@@ -120,7 +113,9 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine.Common
             var vm = new InventoryReportViewModel
             {
                 Exchanges = exchanges,
-                Rows = rows,
+                Rows = rows
+                    .OrderBy(o => o.Asset.Title)
+                    .ToList(),
                 Total = new TotalRowViewModel
                 {
                     Exchanges = total
