@@ -49,7 +49,7 @@ namespace Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages
         {
             var arbitrages = await _marketMakerArbitrageDetectorClient.Arbitrages.GetAllAsync(null, null); // no filtration
 
-            if (PreviousCount != 0 || arbitrages.Count < 0)
+            if (PreviousCount != 0 || arbitrages.Count < 1)
                 return null;
 
             PreviousCount = arbitrages.Count;
