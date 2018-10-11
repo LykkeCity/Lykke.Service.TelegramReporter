@@ -34,6 +34,7 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
             messageText.AppendLine($"== from {prevSnapshot.Timestamp:yyyy/MM/dd HH:mm:ss} ===\r\n");
             messageText.AppendLine("Netting Engine State:\r\n");
 
+            var inventoryBalancePnL = 0m;
             var inventoryPnL = 0m;
             var capitalPnL = 0m;
             var oldInventoryPnL = 0m;
@@ -50,7 +51,11 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
                 var assetTurnover1 = (prevRow?.Summary?.Sell ?? 0) + (prevRow?.Summary?.Buy ?? 0);
                 var assetTurnover2 = (row?.Summary?.Sell ?? 0) + (row?.Summary?.Buy ?? 0);
 
-                var assetInventory = assetBalance2 - assetBalance1;
+                var assetInventory1 = prevRow?.Summary?.Inventory ?? 0;
+                var assetInventory2 = row?.Summary?.Inventory ?? 0;
+
+                var assetInventoryByBalance = assetBalance2 - assetBalance1;
+                var assetInventory = assetInventory2 - assetInventory1;
                 var assetTurnover = assetTurnover2 - assetTurnover1;
 
                 var assetPrice1 = 0m;
@@ -71,11 +76,13 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
 
                 messageText.AppendLine(
                     $"{row?.Asset?.Title ?? prevRow?.Asset?.Title}; " +
-                    $"Inv: {assetInventory:+0.00;-0.00;0.00}; " +
+                    $"Inv(bl): {assetInventoryByBalance:+0.00;-0.00;0.00}; " +
+                    $"Inv(tr): {assetInventory:+0.00;-0.00;0.00}; " +
                     $"Tur: {assetTurnover:+0.00;-0.00;0.00}; " +
                     $"Price $: {price:+0.00;-0.00;0.00}%"
                 );
 
+                inventoryBalancePnL += assetInventoryByBalance * assetPrice2;
                 inventoryPnL += assetInventory * assetPrice2;
                 capitalPnL += assetBalance2 * assetPrice2 - assetBalance1 * assetPrice1;
                 oldInventoryPnL += (row?.Summary?.Inventory ?? 0) * assetPrice2;
@@ -83,9 +90,10 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
 
             messageText.AppendLine();
 
-            messageText.AppendLine($"Inv PnL: {inventoryPnL:+0.00;-0.00;0.00}$");
+            messageText.AppendLine($"Inv (by balance) PnL: {inventoryBalancePnL:+0.00;-0.00;0.00}$");
+            messageText.AppendLine($"Inv (by trade) PnL: {inventoryPnL:+0.00;-0.00;0.00}$");
             messageText.AppendLine($"Capital PnL: {capitalPnL:+0.00;-0.00;0.00}$");
-            messageText.AppendLine($"Old Inv PnL: {oldInventoryPnL:+0.00;-0.00;0.00}$");
+            //messageText.AppendLine($"Old Inv PnL: {oldInventoryPnL:+0.00;-0.00;0.00}$");
 
             return messageText.ToString();
         }
