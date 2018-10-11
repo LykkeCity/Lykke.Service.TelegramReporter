@@ -61,13 +61,13 @@ namespace Lykke.Service.TelegramReporter.Services
         private void ClientOnOnReceiveGeneralError(object sender, ReceiveGeneralErrorEventArgs receiveGeneralErrorEventArgs)
         {
             _log.WriteErrorAsync(nameof(TelegramService), nameof(ClientOnOnReceiveGeneralError),
-                null, receiveGeneralErrorEventArgs.Exception);
+                null, receiveGeneralErrorEventArgs.Exception).GetAwaiter().GetResult();
         }
 
         private void ClientOnOnReceiveError(object sender, ReceiveErrorEventArgs receiveErrorEventArgs)
         {
-            _log.WriteErrorAsync(nameof(TelegramService), nameof(ClientOnOnReceiveError),
-                null, receiveErrorEventArgs.ApiRequestException);
+            _log.WriteInfoAsync(nameof(TelegramService), nameof(ClientOnOnReceiveError),
+                null, receiveErrorEventArgs.ApiRequestException.ToString()).GetAwaiter().GetResult();
         }
 
         private async void ClientOnOnCallbackQuery(object sender, CallbackQueryEventArgs callbackQueryEventArgs)

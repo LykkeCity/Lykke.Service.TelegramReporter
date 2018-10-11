@@ -18,6 +18,7 @@ using Lykke.Service.TelegramReporter.Core.Services.Balance;
 using Lykke.Service.TelegramReporter.Core.Services.MarketMakerArbitrages;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
 using Lykke.Service.TelegramReporter.Services.Balance;
+using Lykke.Service.TelegramReporter.Services.LquidityEngineTrades;
 using Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages;
 using Lykke.Service.TelegramReporter.Services.NettingEngine;
 
@@ -107,6 +108,12 @@ namespace Lykke.Service.TelegramReporter.Services
             return await _repo.GetMarketMakerArbitragesChatPublisherSettings();
         }
 
+        public async Task<IReadOnlyList<IChatPublisherSettings>> GetLiquidityEngineTradesChatPublishersAsync()
+        {
+            EnsureInitialized();
+            return await _repo.GetLiquidityEngineTradesChatPublisherSettings();
+        }
+
         public async Task AddNeChatPublisherAsync(IChatPublisherSettings chatPublisher)
         {
             EnsureInitialized();
@@ -142,6 +149,13 @@ namespace Lykke.Service.TelegramReporter.Services
             await UpdateChatPublishers();
         }
 
+        public async Task AddLiquidityEngineTradesChatPublisherAsync(IChatPublisherSettings chatPublisher)
+        {
+            EnsureInitialized();
+            await _repo.AddLiquidityEngineTradesChatPublisherSettingsAsync(chatPublisher);
+            await UpdateChatPublishers();
+        }
+
         public async Task RemoveNeChatPublisherAsync(string chatPublisherId)
         {
             EnsureInitialized();
@@ -174,6 +188,13 @@ namespace Lykke.Service.TelegramReporter.Services
         {
             EnsureInitialized();
             await _repo.RemoveMarketMakerArbitragesChatPublisherSettingsAsync(chatPublisherId);
+            await UpdateChatPublishers();
+        }
+
+        public async Task RemoveLiquidityEngineTradesChatPublisherAsync(string chatPublisherId)
+        {
+            EnsureInitialized();
+            await _repo.RemoveLiquidityEngineTradesChatPublisherSettingsAsync(chatPublisherId);
             await UpdateChatPublishers();
         }
 
@@ -260,6 +281,7 @@ namespace Lykke.Service.TelegramReporter.Services
             var balancePublisherSettings = await _repo.GetBalanceChatPublisherSettings();
             var externalBalancePublisherSettings = await _repo.GetExternalBalanceChatPublisherSettings();
             var marketMakerArbitragesPublisherSettings = await _repo.GetMarketMakerArbitragesChatPublisherSettings();
+            var liquidityEngineTradesPublisherSettings = await _repo.GetLiquidityEngineTradesChatPublisherSettings();
 
             CleanPublishers(nePublisherSettings, _chatPublisherStateService.NePublishers);
             foreach (var publisherSettings in nePublisherSettings)
@@ -283,6 +305,12 @@ namespace Lykke.Service.TelegramReporter.Services
             foreach (var publisherSettings in marketMakerArbitragesPublisherSettings)
             {
                 AddMarketMakerArbitragesPublisherIfNeeded(publisherSettings);
+            }
+
+            CleanPublishers(liquidityEngineTradesPublisherSettings, _chatPublisherStateService.LiquidityEngineTradessPublishers);
+            foreach (var publisherSettings in liquidityEngineTradesPublisherSettings)
+            {
+                AddLiquidityEngineTradesPublisherIfNeeded(publisherSettings);
             }
         }
 
@@ -316,6 +344,13 @@ namespace Lykke.Service.TelegramReporter.Services
                 _marketMakerArbitragesWarningProvider, _marketMakerArbitrageDetectorClient, _logFactory);
 
             AddPublisherIfNeeded(publisherSettings, _chatPublisherStateService.MarketMakerArbitragesPublishers, newChatPublisher);
+        }
+
+        private void AddLiquidityEngineTradesPublisherIfNeeded(IChatPublisherSettings publisherSettings)
+        {
+            var newChatPublisher = new LiquidityEngineTradesPublisher(_telegramSender, publisherSettings, _logFactory);
+
+            AddPublisherIfNeeded(publisherSettings, _chatPublisherStateService.LiquidityEngineTradessPublishers, newChatPublisher);
         }
 
         private static void AddPublisherIfNeeded(IChatPublisherSettings publisherSettings, IDictionary<long, ChatPublisher> publishers, ChatPublisher newChatPublisher)

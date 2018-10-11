@@ -11,17 +11,20 @@ namespace Lykke.Service.TelegramReporter.Core.Domain
         Task<IReadOnlyList<IChatPublisherSettings>> GetExternalBalanceChatPublisherSettings();
         Task<IReadOnlyList<IChatPublisherSettings>> GetWalletsRebalancerChatPublisherSettings();
         Task<IReadOnlyList<IChatPublisherSettings>> GetMarketMakerArbitragesChatPublisherSettings();
+        Task<IReadOnlyList<IChatPublisherSettings>> GetLiquidityEngineTradesChatPublisherSettings();
 
         Task AddNeChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher);
         Task AddBalanceChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher);
         Task AddExternalBalanceChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher);
         Task AddWalletsRebalancerChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher);
         Task AddMarketMakerArbitragesChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher);
+        Task AddLiquidityEngineTradesChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher);
 
         Task RemoveNeChatPublisherSettingsAsync(string chatPublisherId);
         Task RemoveBalanceChatPublisherSettingsAsync(string chatPublisherId);
         Task RemoveExternalBalanceChatPublisherSettingsAsync(string chatPublisherId);
         Task RemoveWalletsRebalancerChatPublisherSettingsAsync(string chatPublisherId);
         Task RemoveMarketMakerArbitragesChatPublisherSettingsAsync(string chatPublisherId);
+        Task RemoveLiquidityEngineTradesChatPublisherSettingsAsync(string chatPublisherId);
     }
 }

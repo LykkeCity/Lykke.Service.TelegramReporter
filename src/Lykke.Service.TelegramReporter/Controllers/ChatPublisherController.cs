@@ -88,6 +88,19 @@ namespace Lykke.Service.TelegramReporter.Controllers
         }
 
         /// <summary>
+        /// Gets LiquidityEngineTrades chat publishers.
+        /// </summary>
+        /// <returns>MakerMakerArbitrages chat publishers</returns>
+        [HttpGet("liquidityenginetradeschatpublishersettings")]
+        [ProducesResponseType(typeof(IReadOnlyList<ChatPublisherSettingsDto>), (int)HttpStatusCode.OK)]
+        public async Task<IReadOnlyList<ChatPublisherSettingsDto>> GetLiquidityEngineTradesChatPublisherSettingsAsync()
+        {
+            var chatPublishers = await _chatPublisherService.GetLiquidityEngineTradesChatPublishersAsync();
+            var vm = Mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
+            return vm;
+        }
+
+        /// <summary>
         /// Adds NE chat publisher.
         /// </summary>
         /// <param name="chatPublisher">NE chat publisher to add.</param>
@@ -155,6 +168,20 @@ namespace Lykke.Service.TelegramReporter.Controllers
             var model = Mapper.Map<ChatPublisherSettings>(chatPublisher);
 
             await _chatPublisherService.AddMarketMakerArbitragesChatPublisherAsync(model);
+        }
+
+        /// <summary>
+        /// Adds LiquidityEngineTrades chat publisher.
+        /// </summary>
+        /// <param name="chatPublisher">LiquidityEngineTrades chat publisher to add.</param>
+        [HttpPost("liquidityenginetradeschatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task AddLiquidityEngineTradesChatPublisherSettingsAsync([FromBody] ChatPublisherSettingsPost chatPublisher)
+        {
+            var model = Mapper.Map<ChatPublisherSettings>(chatPublisher);
+
+            await _chatPublisherService.AddLiquidityEngineTradesChatPublisherAsync(model);
         }
 
         /// <summary>
@@ -245,6 +272,24 @@ namespace Lykke.Service.TelegramReporter.Controllers
             }
 
             await _chatPublisherService.RemoveMarketMakerArbitragesChatPublisherAsync(chatPublisherSettingsId);
+        }
+
+        /// <summary>
+        /// Deletes LiquidityEngineTrades chat publisher.
+        /// </summary>
+        /// <param name="chatPublisherSettingsId">LiquidityEngineTrades chat publisher settings Id</param>
+        /// <returns></returns>
+        [HttpDelete("liquidityenginetradeschatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task RemoveLiquidityEngineTradesChatPublisherSettingsAsync(string chatPublisherSettingsId)
+        {
+            if (string.IsNullOrEmpty(chatPublisherSettingsId))
+            {
+                throw new ValidationApiException($"{nameof(chatPublisherSettingsId)} required");
+            }
+
+            await _chatPublisherService.RemoveLiquidityEngineTradesChatPublisherAsync(chatPublisherSettingsId);
         }
 
         /// <summary>
