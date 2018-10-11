@@ -41,6 +41,7 @@ namespace Lykke.Service.TelegramReporter.Services
         private readonly IMarketMakerArbitragesWarningProvider _marketMakerArbitragesWarningProvider;
         private readonly IBalanceWarningProvider _balanceWarningProvider;
         private readonly IExternalBalanceWarningProvider _externalBalanceWarningProvider;
+        private readonly LiquidityEngineUrlSettings _liquidityEngineUrlSettings;
         private readonly ITelegramSender _telegramSender;
 
         private bool _initialized;
@@ -58,7 +59,8 @@ namespace Lykke.Service.TelegramReporter.Services
             ITelegramSender telegramSender,
             INettingEngineStateProvider neStateProvider,
             IBalanceWarningProvider balanceWarningProvider,
-            IExternalBalanceWarningProvider externalBalanceWarningProvider)
+            IExternalBalanceWarningProvider externalBalanceWarningProvider,
+            LiquidityEngineUrlSettings liquidityEngineUrlSettings)
         {
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
             _log = logFactory.CreateLog(this);
@@ -75,6 +77,7 @@ namespace Lykke.Service.TelegramReporter.Services
             _neStateProvider = neStateProvider;
             _balanceWarningProvider = balanceWarningProvider;
             _externalBalanceWarningProvider = externalBalanceWarningProvider;
+            _liquidityEngineUrlSettings = liquidityEngineUrlSettings;
             _telegramSender = telegramSender;
         }
 
@@ -348,7 +351,7 @@ namespace Lykke.Service.TelegramReporter.Services
 
         private void AddLiquidityEngineTradesPublisherIfNeeded(IChatPublisherSettings publisherSettings)
         {
-            var newChatPublisher = new LiquidityEngineTradesPublisher(_telegramSender, publisherSettings, _logFactory);
+            var newChatPublisher = new LiquidityEngineTradesPublisher(_telegramSender, publisherSettings, _liquidityEngineUrlSettings, _logFactory);
 
             AddPublisherIfNeeded(publisherSettings, _chatPublisherStateService.LiquidityEngineTradessPublishers, newChatPublisher);
         }

@@ -9,9 +9,10 @@
 
   <ItemGroup>
     <PackageReference Include="HttpToSocks5Proxy" Version="1.0.5" />
-    <PackageReference Include="Lykke.HttpClientGenerator" Version="2.1.2" />
+    <PackageReference Include="Lykke.HttpClientGenerator" Version="2.3.0" />
     <PackageReference Include="Lykke.RabbitMqBroker" Version="7.2.0" />
     <PackageReference Include="Lykke.Service.Assets.Client" Version="4.4.0" />
+    <PackageReference Include="Lykke.Service.LiquidityEngine.Client" Version="1.0.0" />
     <PackageReference Include="Lykke.Service.MarketMakerArbitrageDetector.Client" Version="1.0.13" />
   </ItemGroup>
 

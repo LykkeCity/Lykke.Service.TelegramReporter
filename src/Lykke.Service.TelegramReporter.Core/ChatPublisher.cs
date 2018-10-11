@@ -33,7 +33,14 @@ namespace Lykke.Service.TelegramReporter.Core
             }
 
             _timer = new Timer(PublisherSettings.TimeSpan.TotalMilliseconds);
-            _timer.Elapsed += (sender, e) => Publish();
+            _timer.Elapsed += DoTimer;
+            _timer.Start();
+        }
+
+        private void DoTimer(object sender, ElapsedEventArgs e)
+        {
+            _timer.Stop();
+            Publish();
             _timer.Start();
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Autofac;
 using Common;
 using Lykke.Service.TelegramReporter.Core.Instances;
@@ -24,6 +25,7 @@ using Lykke.Service.TelegramReporter.Services.WalletsRebalancer;
 using Lykke.Service.TelegramReporter.Services.WalletsRebalancer.Rabbit;
 using Lykke.Service.MarketMakerReports.Client;
 using Lykke.Service.TelegramReporter.Core.Services.MarketMakerArbitrages;
+using Lykke.Service.TelegramReporter.Services.LquidityEngineTrades;
 using Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages;
 
 namespace Lykke.Service.TelegramReporter.Modules
@@ -64,6 +66,10 @@ namespace Lykke.Service.TelegramReporter.Modules
             builder.RegisterMarketMakerReportsClient(_appSettings.CurrentValue.MarketMakerReportsServiceClient, null);
             builder.RegisterMarketMakerArbitrageDetectorClient(new MarketMakerArbitrageDetectorServiceClientSettings
                 { ServiceUrl = _appSettings.CurrentValue.MarketMakerArbitrageDetectorServiceClient.ServiceUrl }, null);
+
+            builder.RegisterInstance(
+                    new LiquidityEngineUrlSettings(_appSettings.CurrentValue.LiquidityEngineServiceClient.Instances.Select(e => e.ServiceUrl).ToArray()))
+                .SingleInstance();
 
             builder.RegisterType<NettingEngineStateProvider>()
                 .As<INettingEngineStateProvider>()
