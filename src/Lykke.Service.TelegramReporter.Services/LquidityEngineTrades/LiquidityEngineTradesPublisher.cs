@@ -77,7 +77,7 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
                 _lastClose[key] = DateTime.UtcNow;
             }
 
-            Log.Info($"Check api complite. Found: {countTrade} trades. Api: {key}");
+            Log.Info($"Check api complite. Found: {countTrade} trades. Api: {key}. LastTime: {lastClose:yyyy-MM-dd HH:mm:ss}");
         }
 
         private IPositionsApi CreateApiClient(string url)
