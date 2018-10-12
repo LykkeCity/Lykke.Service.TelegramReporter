@@ -52,6 +52,7 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
             if (!_lastClose.TryGetValue(key, out var lastClose))
             {
                 lastClose = DateTime.UtcNow;
+                _lastClose[key] = lastClose;
             }
 
             var countTrade = 0;
