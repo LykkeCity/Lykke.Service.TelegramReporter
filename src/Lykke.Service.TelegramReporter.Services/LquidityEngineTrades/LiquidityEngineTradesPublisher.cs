@@ -54,6 +54,7 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
                 lastClose = DateTime.UtcNow;
             }
 
+            var countTrade = 0;
             try
             {
                 var data = await positionsApi.GetAllAsync(fromDate, toDate, 100);
@@ -67,6 +68,7 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
                     await TelegramSender.SendTextMessageAsync(PublisherSettings.ChatId, message);
 
                     _lastClose[key] = model.CloseDate;
+                    countTrade++;
                 }
             }
             catch (Exception ex)
@@ -74,6 +76,8 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
                 Log.Error(ex);
                 _lastClose[key] = DateTime.UtcNow;
             }
+
+            Log.Info($"Check api complite. Found: {countTrade} trades. Api: {key}");
         }
 
         private IPositionsApi CreateApiClient(string url)
