@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Lykke.Common.Log;
 using Lykke.Service.LiquidityEngine.Client.Api;
+using Lykke.Service.LiquidityEngine.Client.Models.Positions;
 using Lykke.Service.TelegramReporter.Core;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services;
@@ -55,17 +56,19 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
                 _lastClose[key] = lastClose;
             }
 
+            Log.Info($"Check api Start. trades. Api: {key}. LastTime: {lastClose:yyyy-MM-dd HH:mm:ss}");
+
             var countTrade = 0;
             try
             {
-                var data = await positionsApi.GetAllAsync(fromDate, toDate, 500);
+                var data = await positionsApi.GetAllAsync(fromDate, toDate, 1500);
 
                 var positions = data.Where(e => e.CloseDate > lastClose).ToList();
 
                 foreach (var model in positions.OrderBy(e => e.CloseDate))
                 {
                     var message =
-                        $"{model.AssetPairId}; PL={model.PnL}; Trade: {model.Type.ToString()}; Volume: {model.Volume}; OpenPrice: {model.Price}; ClosePrice: {model.ClosePrice}";
+                        $"{model.AssetPairId}; PL={Math.Round(model.PnL, 4)}; {(model.Type == PositionType.Short ? "Sell" : "Buy")}; Volume: {model.Volume}; OpenPrice: {model.Price}; ClosePrice: {model.ClosePrice}; CTime: {model.CloseDate:MM-DD HH:mm:ss}";
 
                     if (positions.Count >= 470) message += "; !!!max count of position in day, please add limit!!!";
                     await TelegramSender.SendTextMessageAsync(PublisherSettings.ChatId, message);

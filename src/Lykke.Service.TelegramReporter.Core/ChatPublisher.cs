@@ -1,4 +1,6 @@
-﻿using System.Timers;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
 using Autofac;
 using Common;
 using Common.Log;
@@ -15,7 +17,7 @@ namespace Lykke.Service.TelegramReporter.Core
 
         protected readonly ILog Log;
 
-        private Timer _timer;
+        private readonly TimerTrigger _timer;
 
         protected ChatPublisher(ITelegramSender telegramSender,
             IChatPublisherSettings publisherSettings, ILogFactory logFactory)
@@ -23,6 +25,12 @@ namespace Lykke.Service.TelegramReporter.Core
             TelegramSender = telegramSender;
             PublisherSettings = publisherSettings;
             Log = logFactory.CreateLog(this);
+            _timer = new TimerTrigger(this.GetType().FullName, PublisherSettings.TimeSpan, logFactory, TimeHendler);
+        }
+
+        private async Task TimeHendler(ITimerTrigger timer, TimerTriggeredHandlerArgs args, CancellationToken cancellationtoken)
+        {
+            Publish();
         }
 
         public void Start()
@@ -32,15 +40,6 @@ namespace Lykke.Service.TelegramReporter.Core
                 return;
             }
 
-            _timer = new Timer(PublisherSettings.TimeSpan.TotalMilliseconds);
-            _timer.Elapsed += DoTimer;
-            _timer.Start();
-        }
-
-        private void DoTimer(object sender, ElapsedEventArgs e)
-        {
-            _timer.Stop();
-            Publish();
             _timer.Start();
         }
 
