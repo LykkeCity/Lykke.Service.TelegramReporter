@@ -26,7 +26,7 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
             _settings = settings;
         }
 
-        public override async void Publish()
+        public override void Publish()
         {
             if (!_clients.Any())
             {
@@ -39,13 +39,13 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
 
             foreach (var positionsApi in _clients)
             {
-                await CheckApi(positionsApi.Key, positionsApi.Value);
+                CheckApi(positionsApi.Key, positionsApi.Value);
             }
         }
         
         private Dictionary<string, DateTime> _lastClose = new Dictionary<string, DateTime>();
 
-        private async Task CheckApi(string key, IPositionsApi positionsApi)
+        private void CheckApi(string key, IPositionsApi positionsApi)
         {
             var fromDate = DateTime.UtcNow.Date.AddDays(-1);
             var toDate = DateTime.UtcNow.Date.AddDays(+1);
@@ -61,7 +61,7 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
             var countTrade = 0;
             try
             {
-                var data = await positionsApi.GetAllAsync(fromDate, toDate, 1500);
+                var data = positionsApi.GetAllAsync(fromDate, toDate, 1500).GetAwaiter().GetResult();
 
                 var positions = data.Where(e => e.CloseDate > lastClose).ToList();
 
@@ -71,7 +71,7 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
                         $"{model.AssetPairId}; PL={Math.Round(model.PnL, 4)}; {(model.Type == PositionType.Short ? "Sell" : "Buy")}; Volume: {model.Volume}; OpenPrice: {model.Price}; ClosePrice: {model.ClosePrice}; CTime: {model.CloseDate:MM-DD HH:mm:ss}";
 
                     if (positions.Count >= 470) message += "; !!!max count of position in day, please add limit!!!";
-                    await TelegramSender.SendTextMessageAsync(PublisherSettings.ChatId, message);
+                    TelegramSender.SendTextMessageAsync(PublisherSettings.ChatId, message).Wait();
 
                     _lastClose[key] = model.CloseDate;
                     countTrade++;
