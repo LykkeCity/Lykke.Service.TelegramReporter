@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Lykke.Common.Log;
 using Lykke.Service.LiquidityEngine.Client.Api;
@@ -68,7 +67,13 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
                 foreach (var model in positions.OrderBy(e => e.CloseDate))
                 {
                     var message =
-                        $"{model.AssetPairId}; PL={Math.Round(model.PnL, 4)}; {(model.Type == PositionType.Short ? "Sell" : "Buy")}; Volume: {model.Volume}; OpenPrice: {model.Price}; ClosePrice: {model.ClosePrice}; CTime: {model.CloseDate:MM-DD HH:mm:ss}";
+                        $"{model.AssetPairId}; " +
+                        $"PL={Math.Round(model.PnL, 4)} [quote asset]; " +
+                        $"{(model.Type == PositionType.Short ? "Sell" : "Buy")}; " +
+                        $"Volume: {Math.Round(model.Volume, 6)}; " +
+                        $"OpenPrice: {Math.Round(model.Price, 6)}; " +
+                        $"ClosePrice: {Math.Round(model.ClosePrice, 6)}; " +
+                        $"Close: {model.CloseDate:MM-dd HH:mm:ss}";
 
                     if (positions.Count >= 470) message += "; !!!max count of position in day, please add limit!!!";
                     await TelegramSender.SendTextMessageAsync(PublisherSettings.ChatId, message);
@@ -88,8 +93,8 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
 
         private IPositionsApi CreateApiClient(string url)
         {
-            var generator = Lykke.HttpClientGenerator.HttpClientGenerator.BuildForUrl(url)
-                .WithAdditionalCallsWrapper(new Lykke.HttpClientGenerator.Infrastructure.ExceptionHandlerCallsWrapper())
+            var generator = HttpClientGenerator.HttpClientGenerator.BuildForUrl(url)
+                .WithAdditionalCallsWrapper(new HttpClientGenerator.Infrastructure.ExceptionHandlerCallsWrapper())
                 .WithoutRetries()
                 .WithoutCaching()
                 .Create();
