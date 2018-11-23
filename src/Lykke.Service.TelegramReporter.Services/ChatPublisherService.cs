@@ -330,7 +330,7 @@ namespace Lykke.Service.TelegramReporter.Services
                 AddMarketMakerArbitragesPublisherIfNeeded(publisherSettings);
             }
 
-            CleanPublishers(liquidityEngineTradesPublisherSettings, _chatPublisherStateService.LiquidityEngineTradessPublishers);
+            CleanPublishers(liquidityEngineTradesPublisherSettings, _chatPublisherStateService.LiquidityEngineTradesPublishers);
             foreach (var publisherSettings in liquidityEngineTradesPublisherSettings)
             {
                 AddLiquidityEngineTradesPublisherIfNeeded(publisherSettings);
@@ -373,7 +373,7 @@ namespace Lykke.Service.TelegramReporter.Services
         {
             var newChatPublisher = new LiquidityEngineTradesPublisher(_telegramSender, publisherSettings, _liquidityEngineUrlSettings, _logFactory);
 
-            AddPublisherIfNeeded(publisherSettings, _chatPublisherStateService.LiquidityEngineTradessPublishers, newChatPublisher);
+            AddPublisherIfNeeded(publisherSettings, _chatPublisherStateService.LiquidityEngineTradesPublishers, newChatPublisher);
         }
 
         private static void AddPublisherIfNeeded(IChatPublisherSettings publisherSettings, IDictionary<long, ChatPublisher> publishers, ChatPublisher newChatPublisher)
