@@ -117,6 +117,12 @@ namespace Lykke.Service.TelegramReporter.Services
             return await _repo.GetLiquidityEngineTradesChatPublisherSettings();
         }
 
+        public async Task<IReadOnlyList<IChatPublisherSettings>> GetLiquidityEngineSummaryChatPublishersAsync()
+        {
+            EnsureInitialized();
+            return await _repo.GetLiquidityEngineSummaryChatPublisherSettings();
+        }
+
         public async Task AddNeChatPublisherAsync(IChatPublisherSettings chatPublisher)
         {
             EnsureInitialized();
@@ -159,6 +165,13 @@ namespace Lykke.Service.TelegramReporter.Services
             await UpdateChatPublishers();
         }
 
+        public async Task AddLiquidityEngineSummaryChatPublisherAsync(IChatPublisherSettings chatPublisher)
+        {
+            EnsureInitialized();
+            await _repo.AddLiquidityEngineSummaryChatPublisherSettingsAsync(chatPublisher);
+            await UpdateChatPublishers();
+        }
+
         public async Task RemoveNeChatPublisherAsync(string chatPublisherId)
         {
             EnsureInitialized();
@@ -198,6 +211,13 @@ namespace Lykke.Service.TelegramReporter.Services
         {
             EnsureInitialized();
             await _repo.RemoveLiquidityEngineTradesChatPublisherSettingsAsync(chatPublisherId);
+            await UpdateChatPublishers();
+        }
+
+        public async Task RemoveLiquidityEngineSummaryChatPublisherAsync(string chatPublisherId)
+        {
+            EnsureInitialized();
+            await _repo.RemoveLiquidityEngineSummaryChatPublisherSettingsAsync(chatPublisherId);
             await UpdateChatPublishers();
         }
 

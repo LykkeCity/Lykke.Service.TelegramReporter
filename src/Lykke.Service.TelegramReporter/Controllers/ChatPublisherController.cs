@@ -22,6 +22,8 @@ namespace Lykke.Service.TelegramReporter.Controllers
             _chatPublisherService = chatPublisherService;
         }
 
+        #region Get publishers settings
+
         /// <summary>
         /// Gets NE chat publishers.
         /// </summary>
@@ -99,6 +101,22 @@ namespace Lykke.Service.TelegramReporter.Controllers
             var vm = Mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
             return vm;
         }
+
+        /// <summary>
+        /// Gets LiquidityEngineSummary chat publishers settings.
+        /// </summary>
+        [HttpGet("liquidityenginesummarychatpublishersettings")]
+        [ProducesResponseType(typeof(IReadOnlyList<ChatPublisherSettingsDto>), (int)HttpStatusCode.OK)]
+        public async Task<IReadOnlyList<ChatPublisherSettingsDto>> GetLiquidityEngineSummaryChatPublisherSettingsAsync()
+        {
+            var chatPublishers = await _chatPublisherService.GetLiquidityEngineSummaryChatPublishersAsync();
+            var vm = Mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
+            return vm;
+        }
+
+        #endregion Get publishers settigns
+
+        #region Add publishers settings
 
         /// <summary>
         /// Adds NE chat publisher.
@@ -183,6 +201,10 @@ namespace Lykke.Service.TelegramReporter.Controllers
 
             await _chatPublisherService.AddLiquidityEngineTradesChatPublisherAsync(model);
         }
+
+        #endregion Add publishers settings
+
+        #region Remove publishers settings
 
         /// <summary>
         /// Deletes NE chat publisher.
@@ -292,6 +314,10 @@ namespace Lykke.Service.TelegramReporter.Controllers
             await _chatPublisherService.RemoveLiquidityEngineTradesChatPublisherAsync(chatPublisherSettingsId);
         }
 
+        #endregion Remove publishers settings
+
+        #region Get warnings
+
         /// <summary>
         /// Gets balances warnings.
         /// </summary>
@@ -317,6 +343,10 @@ namespace Lykke.Service.TelegramReporter.Controllers
             var vm = Mapper.Map<IReadOnlyList<IExternalBalanceWarning>, IReadOnlyList<ExternalBalanceWarningDto>>(balancesWarnings);
             return vm;
         }
+
+        #endregion Get warnings
+
+        #region Add warnings
 
         /// <summary>
         /// Adds balance warning.
@@ -345,6 +375,10 @@ namespace Lykke.Service.TelegramReporter.Controllers
 
             await _chatPublisherService.AddExternalBalanceWarningAsync(model);
         }
+
+        #endregion Add warnings
+
+        #region Remove warnings
 
         /// <summary>
         /// Deletes balance warning.
@@ -393,5 +427,7 @@ namespace Lykke.Service.TelegramReporter.Controllers
 
             await _chatPublisherService.RemoveExternalBalanceWarningAsync(exchange, assetId);
         }
+
+        #endregion Remove warnings
     }
 }
