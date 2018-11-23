@@ -202,6 +202,20 @@ namespace Lykke.Service.TelegramReporter.Controllers
             await _chatPublisherService.AddLiquidityEngineTradesChatPublisherAsync(model);
         }
 
+        /// <summary>
+        /// Adds LiquidityEngineSummary chat publisher.
+        /// </summary>
+        /// <param name="chatPublisher">LiquidityEngineTrades chat publisher to add.</param>
+        [HttpPost("liquidityenginesummarychatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task AddLiquidityEngineSummaryChatPublisherSettingsAsync([FromBody] ChatPublisherSettingsPost chatPublisher)
+        {
+            var model = Mapper.Map<ChatPublisherSettings>(chatPublisher);
+
+            await _chatPublisherService.AddLiquidityEngineSummaryChatPublisherAsync(model);
+        }
+
         #endregion Add publishers settings
 
         #region Remove publishers settings
@@ -312,6 +326,24 @@ namespace Lykke.Service.TelegramReporter.Controllers
             }
 
             await _chatPublisherService.RemoveLiquidityEngineTradesChatPublisherAsync(chatPublisherSettingsId);
+        }
+
+        /// <summary>
+        /// Deletes LiquidityEngineSummary chat publisher.
+        /// </summary>
+        /// <param name="chatPublisherSettingsId">LiquidityEngineSummary chat publisher settings Id</param>
+        /// <returns></returns>
+        [HttpDelete("liquidityenginesummarychatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task RemoveLiquidityEngineSummaryChatPublisherSettingsAsync(string chatPublisherSettingsId)
+        {
+            if (string.IsNullOrEmpty(chatPublisherSettingsId))
+            {
+                throw new ValidationApiException($"{nameof(chatPublisherSettingsId)} required");
+            }
+
+            await _chatPublisherService.RemoveLiquidityEngineSummaryChatPublisherAsync(chatPublisherSettingsId);
         }
 
         #endregion Remove publishers settings
