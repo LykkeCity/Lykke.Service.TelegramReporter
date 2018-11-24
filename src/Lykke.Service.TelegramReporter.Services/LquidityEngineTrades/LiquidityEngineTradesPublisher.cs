@@ -15,7 +15,7 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
     {
         private readonly LiquidityEngineUrlSettings _settings;
 
-        private Dictionary<string, IPositionsApi> _clients = new Dictionary<string, IPositionsApi>();
+        private Dictionary<string, IReportsApi> _clients = new Dictionary<string, IReportsApi>();
 
         public LiquidityEngineTradesPublisher(ITelegramSender telegramSender, IChatPublisherSettings publisherSettings,
             LiquidityEngineUrlSettings settings,
@@ -36,15 +36,15 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
                 }
             }
 
-            foreach (var positionsApi in _clients)
+            foreach (var reportsApi in _clients)
             {
-                await CheckApi(positionsApi.Key, positionsApi.Value);
+                await CheckApi(reportsApi.Key, reportsApi.Value);
             }
         }
         
         private Dictionary<string, DateTime> _lastClose = new Dictionary<string, DateTime>();
 
-        private async Task CheckApi(string key, IPositionsApi positionsApi)
+        private async Task CheckApi(string key, IReportsApi reportsApi)
         {
             var fromDate = DateTime.UtcNow.Date.AddDays(-1);
             var toDate = DateTime.UtcNow.Date.AddDays(+1);
@@ -60,25 +60,31 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
             var countTrade = 0;
             try
             {
-                var data = await positionsApi.GetAllAsync(fromDate, toDate, 1500);
+                var data = await reportsApi.GetPositionsReportAsync(fromDate, toDate, 1500);
 
                 var positions = data.Where(e => e.CloseDate > lastClose).ToList();
 
                 foreach (var model in positions.OrderBy(e => e.CloseDate))
                 {
+                    var pnL = model.PnL ?? 0;
+                    var closePrice = model.ClosePrice ?? 0;
+                    var pnLStr = model.PnLUsd.HasValue ? $"{Math.Round(model.PnLUsd.Value, 4)}$" : $"{Math.Round(pnL, 4)} [quote asset]";
+
                     var message =
                         $"{model.AssetPairId}; " +
-                        $"PL={Math.Round(model.PnL, 4)} [quote asset]; " +
+                        $"PL={pnLStr}; " +
                         $"{(model.Type == PositionType.Short ? "Sell" : "Buy")}; " +
                         $"Volume: {Math.Round(model.Volume, 6)}; " +
                         $"OpenPrice: {Math.Round(model.Price, 6)}; " +
-                        $"ClosePrice: {Math.Round(model.ClosePrice, 6)}; " +
+                        $"ClosePrice: {Math.Round(closePrice, 6)}; " +
                         $"Close: {model.CloseDate:MM-dd HH:mm:ss}";
 
                     if (positions.Count >= 470) message += "; !!!max count of position in day, please add limit!!!";
                     await TelegramSender.SendTextMessageAsync(PublisherSettings.ChatId, message);
 
-                    _lastClose[key] = model.CloseDate;
+                    if (model.CloseDate.HasValue)
+                        _lastClose[key] = model.CloseDate.Value;
+
                     countTrade++;
                 }
             }
@@ -91,7 +97,7 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
             Log.Info($"Check api complite. Found: {countTrade} trades. Api: {key}. LastTime: {lastClose:yyyy-MM-dd HH:mm:ss}");
         }
 
-        private IPositionsApi CreateApiClient(string url)
+        private IReportsApi CreateApiClient(string url)
         {
             var generator = HttpClientGenerator.HttpClientGenerator.BuildForUrl(url)
                 .WithAdditionalCallsWrapper(new HttpClientGenerator.Infrastructure.ExceptionHandlerCallsWrapper())
@@ -99,7 +105,7 @@ namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
                 .WithoutCaching()
                 .Create();
 
-            var client = generator.Generate<IPositionsApi>();
+            var client = generator.Generate<IReportsApi>();
 
             return client;
         }
