@@ -10,7 +10,7 @@ using Lykke.Service.TelegramReporter.Core.Instances;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.Balance;
 
-namespace Lykke.Service.TelegramReporter.Services.Balance
+namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
 {
     public class ExternalBalancePublisher : ChatPublisher
     {

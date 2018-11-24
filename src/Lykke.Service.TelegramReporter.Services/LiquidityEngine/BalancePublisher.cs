@@ -11,7 +11,7 @@ using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.Balance;
 
-namespace Lykke.Service.TelegramReporter.Services.Balance
+namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
 {
     public class BalancePublisher : ChatPublisher
     {

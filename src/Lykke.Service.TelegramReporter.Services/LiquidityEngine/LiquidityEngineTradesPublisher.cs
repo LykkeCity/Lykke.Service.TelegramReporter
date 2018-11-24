@@ -9,7 +9,7 @@ using Lykke.Service.TelegramReporter.Core;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services;
 
-namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
+namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
 {
     public class LiquidityEngineTradesPublisher : ChatPublisher
     {

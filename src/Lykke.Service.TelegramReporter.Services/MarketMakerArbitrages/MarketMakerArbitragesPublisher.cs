@@ -71,7 +71,7 @@ namespace Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages
                 ? arbitrages.MaxBy(x => x.VolumeInUsd) : null;
             var biggestVolumeInUsdRow = $"{biggestVolumeInUsd?.Target} - {biggestVolumeInUsd?.Source}  ({biggestVolumeInUsd?.ConversionPath})";
 
-            return new MarketMakersArbitragesesWarning
+            return new MarketMakersArbitragesWarning
             {
                 ArbitragesCount = arbitrages.Count,
 

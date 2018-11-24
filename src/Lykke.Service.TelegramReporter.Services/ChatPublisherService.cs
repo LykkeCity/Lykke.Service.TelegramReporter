@@ -17,8 +17,7 @@ using Lykke.Service.TelegramReporter.Core.Instances;
 using Lykke.Service.TelegramReporter.Core.Services.Balance;
 using Lykke.Service.TelegramReporter.Core.Services.MarketMakerArbitrages;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
-using Lykke.Service.TelegramReporter.Services.Balance;
-using Lykke.Service.TelegramReporter.Services.LquidityEngineTrades;
+using Lykke.Service.TelegramReporter.Services.LiquidityEngine;
 using Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages;
 using Lykke.Service.TelegramReporter.Services.NettingEngine;
 
@@ -305,6 +304,7 @@ namespace Lykke.Service.TelegramReporter.Services
             var externalBalancePublisherSettings = await _repo.GetExternalBalanceChatPublisherSettings();
             var marketMakerArbitragesPublisherSettings = await _repo.GetMarketMakerArbitragesChatPublisherSettings();
             var liquidityEngineTradesPublisherSettings = await _repo.GetLiquidityEngineTradesChatPublisherSettings();
+            var liquidityEngineSummaryPublisherSettings = await _repo.GetLiquidityEngineSummaryChatPublisherSettings();
 
             CleanPublishers(nePublisherSettings, _chatPublisherStateService.NePublishers);
             foreach (var publisherSettings in nePublisherSettings)
@@ -334,6 +334,12 @@ namespace Lykke.Service.TelegramReporter.Services
             foreach (var publisherSettings in liquidityEngineTradesPublisherSettings)
             {
                 AddLiquidityEngineTradesPublisherIfNeeded(publisherSettings);
+            }
+
+            CleanPublishers(liquidityEngineSummaryPublisherSettings, _chatPublisherStateService.LiquidityEngineSummaryPublishers);
+            foreach (var publisherSettings in liquidityEngineSummaryPublisherSettings)
+            {
+                AddLiquidityEngineSummaryPublisherIfNeeded(publisherSettings);
             }
         }
 
@@ -374,6 +380,13 @@ namespace Lykke.Service.TelegramReporter.Services
             var newChatPublisher = new LiquidityEngineTradesPublisher(_telegramSender, publisherSettings, _liquidityEngineUrlSettings, _logFactory);
 
             AddPublisherIfNeeded(publisherSettings, _chatPublisherStateService.LiquidityEngineTradesPublishers, newChatPublisher);
+        }
+
+        private void AddLiquidityEngineSummaryPublisherIfNeeded(IChatPublisherSettings publisherSettings)
+        {
+            var newChatPublisher = new LiquidityEngineTradesPublisher(_telegramSender, publisherSettings, _liquidityEngineUrlSettings, _logFactory);
+
+            AddPublisherIfNeeded(publisherSettings, _chatPublisherStateService.LiquidityEngineSummaryPublishers, newChatPublisher);
         }
 
         private static void AddPublisherIfNeeded(IChatPublisherSettings publisherSettings, IDictionary<long, ChatPublisher> publishers, ChatPublisher newChatPublisher)
