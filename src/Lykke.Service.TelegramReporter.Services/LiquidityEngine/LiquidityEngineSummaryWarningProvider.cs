@@ -17,7 +17,7 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                           $"=== {warning.From:yyyy/MM/dd HH:mm:ss} (start date) ==={rn}" +
                           $"Liquidity Engine Statistic{rn}");
 
-            var pnL = warning.PnLInUsd.HasValue ? $"{warning.PnLInUsd.Value}$ [{warning.PnL}]" : $"{warning.PnL} quote asset";
+            var pnL = warning.PnLInUsd.HasValue ? $"{warning.PnLInUsd.Value}$ [{warning.PnL}]" : $"{warning.PnL} [quote asset]";
 
             sb.AppendLine($"{warning.AssetPair}; PL: {pnL}; Count: {warning.Count}; Sell: {warning.SellTotal}; Buy: {warning.BuyTotal};");
 
