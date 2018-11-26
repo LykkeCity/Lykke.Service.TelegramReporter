@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Lykke.Service.TelegramReporter.Core.Services.Balance;
+using Lykke.Service.TelegramReporter.Core.Services.LiquidityEngine;
 
 namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
 {

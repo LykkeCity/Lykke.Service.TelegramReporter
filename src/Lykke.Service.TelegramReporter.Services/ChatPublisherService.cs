@@ -14,7 +14,7 @@ using Lykke.Service.TelegramReporter.Core;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Instances;
-using Lykke.Service.TelegramReporter.Core.Services.Balance;
+using Lykke.Service.TelegramReporter.Core.Services.LiquidityEngine;
 using Lykke.Service.TelegramReporter.Core.Services.MarketMakerArbitrages;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
 using Lykke.Service.TelegramReporter.Services.LiquidityEngine;
