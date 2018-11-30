@@ -31,7 +31,7 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
             var messageText = new StringBuilder();
 
             messageText.AppendLine($"======= {snapshot.Timestamp:yyyy/MM/dd HH:mm:ss} =======");
-            messageText.AppendLine($"== from {prevSnapshot.Timestamp:yyyy/MM/dd HH:mm:ss} ===\r\n");
+            messageText.AppendLine($"=== from {prevSnapshot.Timestamp:yyyy/MM/dd HH:mm:ss} ===\r\n");
             messageText.AppendLine("Netting Engine State:\r\n");
 
             var inventoryBalancePnL = 0m;

@@ -13,7 +13,9 @@ namespace Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages
             var sb = new StringBuilder();
 
             sb.AppendLine($"====== {DateTime.UtcNow:yyyy/MM/dd HH:mm:ss} ======");
+            sb.AppendLine();
             sb.AppendLine("Market Maker Arbitrages Warning");
+            sb.AppendLine();
             sb.AppendLine($"Total: {mmArbitrageses.ArbitragesCount}");
 
             if (mmArbitrageses.BiggestSpread.HasValue)
@@ -34,7 +36,9 @@ namespace Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages
                 sb.AppendLine($"{mmArbitrageses.BiggestVolumeInUsdRow}");
             }
 
-            sb.AppendLine($"Most frequent asset pairs: {mmArbitrageses.MostFrequentAssetPairs}");
+            sb.AppendLine();
+            sb.AppendLine($"Most used asset pairs:");
+            sb.AppendLine($"{mmArbitrageses.MostFrequentAssetPairs}");
 
             return Task.FromResult(ChatMessageHelper.CheckSizeAndCutMessageIfNeeded(sb.ToString()));
         }
