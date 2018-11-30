@@ -12,8 +12,8 @@ namespace Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages
         {
             var sb = new StringBuilder();
 
-            sb.AppendLine($"======= {DateTime.UtcNow:yyyy/MM/dd HH:mm:ss} =======");
-            sb.AppendLine("Market Maker Arbitrages Warning:");
+            sb.AppendLine($"====== {DateTime.UtcNow:yyyy/MM/dd HH:mm:ss} ======");
+            sb.AppendLine("Market Maker Arbitrages Warning");
             sb.AppendLine($"Total: {mmArbitrageses.ArbitragesCount}");
 
             if (mmArbitrageses.BiggestSpread.HasValue)
