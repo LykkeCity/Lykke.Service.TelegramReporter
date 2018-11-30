@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Lykke.Common.Log;
 using Lykke.Service.LiquidityEngine.Client.Api;
+using Lykke.Service.LiquidityEngine.Client.Models.Positions;
 using Lykke.Service.TelegramReporter.Core;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services;
@@ -58,8 +59,8 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
 
             var sb = new StringBuilder();
             var rn = Environment.NewLine;
-            sb.AppendLine($"=== {toDate:yyyy/MM/dd HH:mm:ss} (end date) ===");
-            sb.AppendLine($"=== {fromDate:yyyy/MM/dd HH:mm:ss} (start date) ===");
+            sb.AppendLine($"=== {fromDate:yyyy/MM/dd HH:mm:ss} ===");
+            sb.AppendLine($"=== {toDate:yyyy/MM/dd HH:mm:ss} ===");
             sb.Append(Environment.NewLine);
             sb.AppendLine("Liquidity Engine Summary Statistics");
             sb.Append(Environment.NewLine);
@@ -67,29 +68,36 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
             var countTrade = 0;
             try
             {
-                var summaryReport = await reportsApi.GetSummaryReportByPeriodAsync(fromDate, toDate);
+                var report = (await reportsApi.GetPositionsReportAsync(DateTime.Now, DateTime.Now, int.MaxValue)).Where(x => x.IsClosed).ToList();
 
-                if (summaryReport.Count == 0)
+                if (report.Count == 0)
                     return;
 
-                _lastTime = DateTime.UtcNow;
+                var grouped = report.GroupBy(x => x.AssetPairId).OrderBy(x => x.Key);
 
-                foreach (var model in summaryReport.OrderBy(s => s.AssetPairId))
+                var result = new List<string>();
+                foreach (var assetPairTrades in grouped)
                 {
-                    var pnL = model.PnL;
-                    var pnLStr = model.PnLUsd.HasValue ? $"{Math.Round(model.PnLUsd.Value, 4)}$" : $"{Math.Round(pnL, 4)} [quote asset]";
+                    var assetPair = assetPairTrades.Key;
+                    var count = assetPairTrades.Count();
+                    var buyVolume = assetPairTrades.Where(x => x.Type == PositionType.Long).Sum(x => x.Volume);
+                    var sellVolume = assetPairTrades.Where(x => x.Type == PositionType.Short).Sum(x => x.Volume);
+                    var isPnLInUsd = assetPairTrades.All(x => x.PnLUsd.HasValue);
+                    var pnLInUsd = isPnLInUsd ? assetPairTrades.Sum(x => x.PnLUsd.Value) : (decimal?)null;
+                    var pnL = assetPairTrades.Sum(x => x.PnL.Value);
+                    var pnLStr = pnLInUsd.HasValue ? $"{Math.Round(pnLInUsd.Value, 4)}$" : $"{Math.Round(pnL, 4)} [quote asset]";
 
-                    var message =
-                        $"{model.AssetPairId}; " +
-                        $"PL={pnLStr}; " +
-                        $"Count: {model.ClosedPositionsCount}; " +
-                        $"Sell: {Math.Round(model.TotalSellBaseAssetVolume, 6)}; " +
-                        $"Buy: {Math.Round(model.TotalBuyBaseAssetVolume, 6)}; ";
-
-                    sb.AppendLine(message);
-
-                    countTrade++;
+                    var assetPairMessage = $"{assetPair}; " +
+                                           $"PL={pnLStr}; " +
+                                           $"Count: {count}; " +
+                                           $"Sell: {Math.Round(sellVolume, 6)}; " +
+                                           $"Buy: {Math.Round(buyVolume, 6)}; ";
+                    result.Add(assetPairMessage);
                 }
+
+                sb.AppendLine(string.Join(Environment.NewLine, result));
+
+                _lastTime = DateTime.UtcNow;
 
                 await TelegramSender.SendTextMessageAsync(PublisherSettings.ChatId, sb.ToString());
             }
