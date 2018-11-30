@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Lykke.Common.Log;
 using Lykke.Service.LiquidityEngine.Client.Api;
-using Lykke.Service.LiquidityEngine.Client.Models.Positions;
 using Lykke.Service.TelegramReporter.Core;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services;
@@ -67,6 +66,9 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
             try
             {
                 var summaryReport = await reportsApi.GetSummaryReportByPeriodAsync(fromDate, toDate);
+
+                if (summaryReport.Count == 0)
+                    return;
 
                 _lastTime = DateTime.UtcNow;
 

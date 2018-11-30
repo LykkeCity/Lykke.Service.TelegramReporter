@@ -384,7 +384,7 @@ namespace Lykke.Service.TelegramReporter.Services
 
         private void AddLiquidityEngineSummaryPublisherIfNeeded(IChatPublisherSettings publisherSettings)
         {
-            var newChatPublisher = new LiquidityEngineTradesPublisher(_telegramSender, publisherSettings, _liquidityEngineUrlSettings, _logFactory);
+            var newChatPublisher = new LiquidityEngineSummaryPublisher(_telegramSender, publisherSettings, _liquidityEngineUrlSettings, _logFactory);
 
             AddPublisherIfNeeded(publisherSettings, _chatPublisherStateService.LiquidityEngineSummaryPublishers, newChatPublisher);
         }

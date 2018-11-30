@@ -90,6 +90,10 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<IExternalBalanceWarningProvider>()
                 .SingleInstance();
 
+            builder.RegisterType<LiquidityEngineSummaryWarningProvider>()
+                .As<ILiquidityEngineSummaryWarningProvider>()
+                .SingleInstance();
+
             builder.RegisterType<MarketMakerArbitragesWarningProvider>()
                 .As<IMarketMakerArbitragesWarningProvider>()
                 .SingleInstance();
