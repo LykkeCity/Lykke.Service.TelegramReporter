@@ -68,7 +68,7 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
             var countTrade = 0;
             try
             {
-                var report = (await reportsApi.GetPositionsReportAsync(DateTime.Now, DateTime.Now, int.MaxValue)).Where(x => x.IsClosed).ToList();
+                var report = (await reportsApi.GetPositionsReportAsync(fromDate, toDate, int.MaxValue)).Where(x => x.IsClosed).ToList();
 
                 if (report.Count == 0)
                     return;
