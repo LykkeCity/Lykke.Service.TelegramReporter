@@ -1,6 +1,6 @@
 ﻿namespace Lykke.Service.TelegramReporter.Core.Domain.Model
 {
-    public class MarketMakersArbitragesesWarning : IMarketMakersArbitragesWarning
+    public class MarketMakersArbitragesWarning : IMarketMakersArbitragesWarning
     {
         public int ArbitragesCount { get; set; }
 

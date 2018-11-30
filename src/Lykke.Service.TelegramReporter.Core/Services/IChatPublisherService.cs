@@ -12,6 +12,7 @@ namespace Lykke.Service.TelegramReporter.Core.Services
         Task<IReadOnlyList<IChatPublisherSettings>> GetWalletsRebalancerChatPublishersAsync();
         Task<IReadOnlyList<IChatPublisherSettings>> GetMarketMakerArbitragesChatPublishersAsync();
         Task<IReadOnlyList<IChatPublisherSettings>> GetLiquidityEngineTradesChatPublishersAsync();
+        Task<IReadOnlyList<IChatPublisherSettings>> GetLiquidityEngineSummaryChatPublishersAsync();
 
         Task AddNeChatPublisherAsync(IChatPublisherSettings chatPublisher);
         Task AddBalanceChatPublisherAsync(IChatPublisherSettings chatPublisher);
@@ -19,6 +20,7 @@ namespace Lykke.Service.TelegramReporter.Core.Services
         Task AddWalletsRebalancerChatPublisherAsync(IChatPublisherSettings chatPublisher);
         Task AddMarketMakerArbitragesChatPublisherAsync(IChatPublisherSettings chatPublisher);
         Task AddLiquidityEngineTradesChatPublisherAsync(IChatPublisherSettings chatPublisher);
+        Task AddLiquidityEngineSummaryChatPublisherAsync(IChatPublisherSettings chatPublisher);
 
         Task RemoveNeChatPublisherAsync(string chatPublisherId);
         Task RemoveBalanceChatPublisherAsync(string chatPublisherId);
@@ -26,6 +28,7 @@ namespace Lykke.Service.TelegramReporter.Core.Services
         Task RemoveWalletsRebalancerChatPublisherAsync(string chatPublisherId);
         Task RemoveMarketMakerArbitragesChatPublisherAsync(string chatPublisherId);
         Task RemoveLiquidityEngineTradesChatPublisherAsync(string chatPublisherId);
+        Task RemoveLiquidityEngineSummaryChatPublisherAsync(string chatPublisherId);
 
         Task<IReadOnlyList<IBalanceWarning>> GetBalancesWarningsAsync();
         Task<IReadOnlyList<IExternalBalanceWarning>> GetExternalBalancesWarningsAsync();
@@ -33,5 +36,6 @@ namespace Lykke.Service.TelegramReporter.Core.Services
         Task AddExternalBalanceWarningAsync(IExternalBalanceWarning balanceWarning);
         Task RemoveBalanceWarningAsync(string clientId, string assetId);
         Task RemoveExternalBalanceWarningAsync(string exchange, string assetId);
+
     }
 }
