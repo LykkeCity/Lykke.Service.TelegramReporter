@@ -58,9 +58,11 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
 
             var sb = new StringBuilder();
             var rn = Environment.NewLine;
-            sb.AppendLine($"=== {toDate:yyyy/MM/dd HH:mm:ss} (end date) ==={rn}");
-            sb.AppendLine($"=== {fromDate:yyyy/MM/dd HH:mm:ss} (start date) ==={rn}");
-            sb.AppendLine("Liquidity Engine Statistic");
+            sb.AppendLine($"=== {toDate:yyyy/MM/dd HH:mm:ss} (end date) ===");
+            sb.AppendLine($"=== {fromDate:yyyy/MM/dd HH:mm:ss} (start date) ===");
+            sb.Append(Environment.NewLine);
+            sb.AppendLine("Liquidity Engine Summary Statistics");
+            sb.Append(Environment.NewLine);
 
             var countTrade = 0;
             try
