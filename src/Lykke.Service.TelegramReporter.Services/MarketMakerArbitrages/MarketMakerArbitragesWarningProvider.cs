@@ -20,19 +20,19 @@ namespace Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages
 
             if (mmArbitrages.BiggestSpread.HasValue)
             {
-                sb.AppendLine($"by Spread: {mmArbitrages.BiggestSpread:0.##}%");
+                sb.AppendLine($"{mmArbitrages.BiggestSpread:0.##}%  (top by spread)");
                 sb.AppendLine($"{ mmArbitrages.BiggestSpreadRow}");
             }
 
             if (mmArbitrages.BiggestPnlInUsd.HasValue)
             {
-                sb.AppendLine($"by PnL: ${mmArbitrages.BiggestPnlInUsd:0}");
+                sb.AppendLine($"${mmArbitrages.BiggestPnlInUsd:0}  (top by PnL)");
                 sb.AppendLine($"{mmArbitrages.BiggestPnlInUsdRow}");
             }
 
             if (mmArbitrages.BiggestVolumeInUsd.HasValue)
             {
-                sb.AppendLine($"by Volume: ${mmArbitrages.BiggestVolumeInUsd:0}");
+                sb.AppendLine($"by Volume: ${mmArbitrages.BiggestVolumeInUsd:0}  (top by Volume)");
                 sb.AppendLine($"{mmArbitrages.BiggestVolumeInUsdRow}");
             }
 

@@ -57,7 +57,7 @@ namespace Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages
             var assetPairs = new List<string>(arbitrages.Select(x => x.Target.Name));
             assetPairs.AddRange(arbitrages.SelectMany(x => x.ConversionPath.Split(" & ")));
             var grouped = assetPairs.GroupBy(x => x).OrderByDescending(x => x.Count()).Take(5);
-            var mostFrequent = string.Join(", ", grouped.Select(x => $"{x.Key}({x.Count()})"));
+            var mostFrequent = string.Join(", ", grouped.Select(x => $"{x.Key} ({x.Count()})"));
 
             var biggestSpread = arbitrages.Count(x => x.Spread < 0) > 0
                 ? arbitrages.MinBy(x => x.Spread) : null;
