@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Lykke.Common.Log;
+using Lykke.Service.Assets.Client;
 using Lykke.Service.LiquidityEngine.Client.Api;
 using Lykke.Service.LiquidityEngine.Client.Models.Positions;
 using Lykke.Service.TelegramReporter.Core;
@@ -16,15 +17,15 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
     {
         private readonly LiquidityEngineUrlSettings _settings;
         private DateTime _lastTime;
-
-        private Dictionary<string, IReportsApi> _clients = new Dictionary<string, IReportsApi>();
+        private readonly Dictionary<string, IReportsApi> _clients = new Dictionary<string, IReportsApi>();
+        private readonly IAssetsServiceWithCache _assetsServiceWithCache;
 
         public LiquidityEngineSummaryPublisher(ITelegramSender telegramSender, IChatPublisherSettings publisherSettings,
-            LiquidityEngineUrlSettings settings,
-            ILogFactory logFactory) 
+            LiquidityEngineUrlSettings settings, IAssetsServiceWithCache assetsServiceWithCache, ILogFactory logFactory)
             : base(telegramSender, publisherSettings, logFactory)
         {
             _settings = settings;
+            _assetsServiceWithCache = assetsServiceWithCache;
         }
 
         public override async void Publish()
@@ -68,7 +69,11 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
             var countTrade = 0;
             try
             {
-                var report = (await reportsApi.GetPositionsReportAsync(fromDate, toDate, int.MaxValue)).Where(x => x.IsClosed).ToList();
+                var report = (await reportsApi.GetPositionsReportAsync(fromDate, toDate, int.MaxValue))
+                    .Where(x => x.IsClosed)
+                    .Where(x => x.CloseDate > fromDate)
+                    .Where(x => x.CloseDate <= toDate)
+                    .ToList();
 
                 if (report.Count == 0)
                     return;
@@ -78,16 +83,23 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                 var result = new List<string>();
                 foreach (var assetPairTrades in grouped)
                 {
-                    var assetPair = assetPairTrades.Key;
+                    var assetPairId = assetPairTrades.Key;
                     var count = assetPairTrades.Count();
                     var buyVolume = assetPairTrades.Where(x => x.Type == PositionType.Long).Sum(x => x.Volume);
                     var sellVolume = assetPairTrades.Where(x => x.Type == PositionType.Short).Sum(x => x.Volume);
                     var isPnLInUsd = assetPairTrades.All(x => x.PnLUsd.HasValue);
                     var pnLInUsd = isPnLInUsd ? assetPairTrades.Sum(x => x.PnLUsd.Value) : (decimal?)null;
                     var pnL = assetPairTrades.Sum(x => x.PnL.Value);
-                    var pnLStr = pnLInUsd.HasValue ? $"{Math.Round(pnLInUsd.Value, 4)}$" : $"{Math.Round(pnL, 4)} [quote asset]";
 
-                    var assetPairMessage = $"{assetPair}; " +
+                    var assetPair = await _assetsServiceWithCache.TryGetAssetPairAsync(assetPairId);
+                    var quoteAssetId = assetPair?.QuotingAssetId;
+                    var asset = await _assetsServiceWithCache.TryGetAssetAsync(quoteAssetId);
+                    var quoteAssetDisplayId = quoteAssetId == null ? null : asset.Id;
+                    var quoteAssetStr = string.IsNullOrWhiteSpace(quoteAssetDisplayId) ? "[quote asset]" : quoteAssetDisplayId;
+
+                    var pnLStr = pnLInUsd.HasValue ? $"{Math.Round(pnLInUsd.Value, 4)}$" : $"{Math.Round(pnL, 4)} {quoteAssetStr}";
+
+                    var assetPairMessage = $"{assetPairId}; " +
                                            $"PL={pnLStr}; " +
                                            $"Count: {count}; " +
                                            $"Sell: {Math.Round(sellVolume, 6)}; " +
