@@ -70,7 +70,8 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                 {
                     var assetPair = await _assetsServiceWithCache.TryGetAssetPairAsync(position.AssetPairId);
                     var quoteAssetId = assetPair?.QuotingAssetId;
-                    var quoteAssetDisplayId = quoteAssetId == null ? null : (await _assetsServiceWithCache.TryGetAssetAsync(quoteAssetId)).DisplayId;
+                    var asset = await _assetsServiceWithCache.TryGetAssetAsync(quoteAssetId);
+                    var quoteAssetDisplayId = quoteAssetId == null ? null : asset.Id;
                     var quoteAssetStr = string.IsNullOrWhiteSpace(quoteAssetDisplayId) ? "[quote asset]" : quoteAssetDisplayId;
 
                     var pnL = position.PnL ?? 0;
