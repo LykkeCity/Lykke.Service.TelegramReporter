@@ -13,9 +13,7 @@ using Lykke.Service.Balances.Client;
 using Lykke.Service.TelegramReporter.AzureRepositories;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Services;
-using Lykke.Service.TelegramReporter.Core.Services.Balance;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
-using Lykke.Service.TelegramReporter.Services.Balance;
 using Lykke.Service.TelegramReporter.Services.NettingEngine;
 using Lykke.Service.TelegramReporter.Services.NettingEngine.Rabbit;
 using Lykke.Common.Log;
@@ -24,8 +22,9 @@ using Lykke.Service.TelegramReporter.Core.Services.WalletsRebalancer;
 using Lykke.Service.TelegramReporter.Services.WalletsRebalancer;
 using Lykke.Service.TelegramReporter.Services.WalletsRebalancer.Rabbit;
 using Lykke.Service.MarketMakerReports.Client;
+using Lykke.Service.TelegramReporter.Core.Services.LiquidityEngine;
 using Lykke.Service.TelegramReporter.Core.Services.MarketMakerArbitrages;
-using Lykke.Service.TelegramReporter.Services.LquidityEngineTrades;
+using Lykke.Service.TelegramReporter.Services.LiquidityEngine;
 using Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages;
 
 namespace Lykke.Service.TelegramReporter.Modules

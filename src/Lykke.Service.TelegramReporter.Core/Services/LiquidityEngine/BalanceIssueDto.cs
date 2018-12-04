@@ -1,8 +1,8 @@
-﻿namespace Lykke.Service.TelegramReporter.Core.Services.Balance
+﻿namespace Lykke.Service.TelegramReporter.Core.Services.LiquidityEngine
 {
-    public class ExternalBalanceIssueDto
+    public class BalanceIssueDto
     {
-        public string Exchange { get; set; }
+        public string ClientId { get; set; }
         public string AssetId { get; set; }
         public string Name { get; set; }
         public string AssetName { get; set; }

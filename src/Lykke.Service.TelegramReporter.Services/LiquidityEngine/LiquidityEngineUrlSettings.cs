@@ -1,4 +1,4 @@
-﻿namespace Lykke.Service.TelegramReporter.Services.LquidityEngineTrades
+﻿namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
 {
     public class LiquidityEngineUrlSettings
     {

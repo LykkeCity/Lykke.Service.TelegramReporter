@@ -14,7 +14,9 @@ namespace Lykke.Service.TelegramReporter.Services
             new ConcurrentDictionary<long, ChatPublisher>();
         public ConcurrentDictionary<long, ChatPublisher> MarketMakerArbitragesPublishers { get; } =
             new ConcurrentDictionary<long, ChatPublisher>();
-        public ConcurrentDictionary<long, ChatPublisher> LiquidityEngineTradessPublishers { get; } =
+        public ConcurrentDictionary<long, ChatPublisher> LiquidityEngineTradesPublishers { get; } =
+            new ConcurrentDictionary<long, ChatPublisher>();
+        public ConcurrentDictionary<long, ChatPublisher> LiquidityEngineSummaryPublishers { get; } =
             new ConcurrentDictionary<long, ChatPublisher>();
 
         public ChatPublisherStateService()

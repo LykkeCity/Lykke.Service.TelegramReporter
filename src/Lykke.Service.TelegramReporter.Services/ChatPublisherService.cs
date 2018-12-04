@@ -7,6 +7,7 @@ using Autofac;
 using Common;
 using Common.Log;
 using Lykke.Common.Log;
+using Lykke.Service.Assets.Client;
 using Lykke.Service.Balances.Client;
 using Lykke.Service.MarketMakerArbitrageDetector.Client;
 using Lykke.Service.MarketMakerReports.Client;
@@ -14,11 +15,10 @@ using Lykke.Service.TelegramReporter.Core;
 using Lykke.Service.TelegramReporter.Core.Domain;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Instances;
-using Lykke.Service.TelegramReporter.Core.Services.Balance;
+using Lykke.Service.TelegramReporter.Core.Services.LiquidityEngine;
 using Lykke.Service.TelegramReporter.Core.Services.MarketMakerArbitrages;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
-using Lykke.Service.TelegramReporter.Services.Balance;
-using Lykke.Service.TelegramReporter.Services.LquidityEngineTrades;
+using Lykke.Service.TelegramReporter.Services.LiquidityEngine;
 using Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages;
 using Lykke.Service.TelegramReporter.Services.NettingEngine;
 
@@ -43,6 +43,7 @@ namespace Lykke.Service.TelegramReporter.Services
         private readonly IExternalBalanceWarningProvider _externalBalanceWarningProvider;
         private readonly LiquidityEngineUrlSettings _liquidityEngineUrlSettings;
         private readonly ITelegramSender _telegramSender;
+        private readonly IAssetsServiceWithCache _assetsServiceWithCache;
 
         private bool _initialized;
 
@@ -60,7 +61,8 @@ namespace Lykke.Service.TelegramReporter.Services
             INettingEngineStateProvider neStateProvider,
             IBalanceWarningProvider balanceWarningProvider,
             IExternalBalanceWarningProvider externalBalanceWarningProvider,
-            LiquidityEngineUrlSettings liquidityEngineUrlSettings)
+            LiquidityEngineUrlSettings liquidityEngineUrlSettings,
+            IAssetsServiceWithCache assetsServiceWithCache)
         {
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
             _log = logFactory.CreateLog(this);
@@ -79,6 +81,7 @@ namespace Lykke.Service.TelegramReporter.Services
             _externalBalanceWarningProvider = externalBalanceWarningProvider;
             _liquidityEngineUrlSettings = liquidityEngineUrlSettings;
             _telegramSender = telegramSender;
+            _assetsServiceWithCache = assetsServiceWithCache;
         }
 
         public async Task<IReadOnlyList<IChatPublisherSettings>> GetNeChatPublishersAsync()
@@ -115,6 +118,12 @@ namespace Lykke.Service.TelegramReporter.Services
         {
             EnsureInitialized();
             return await _repo.GetLiquidityEngineTradesChatPublisherSettings();
+        }
+
+        public async Task<IReadOnlyList<IChatPublisherSettings>> GetLiquidityEngineSummaryChatPublishersAsync()
+        {
+            EnsureInitialized();
+            return await _repo.GetLiquidityEngineSummaryChatPublisherSettings();
         }
 
         public async Task AddNeChatPublisherAsync(IChatPublisherSettings chatPublisher)
@@ -159,6 +168,13 @@ namespace Lykke.Service.TelegramReporter.Services
             await UpdateChatPublishers();
         }
 
+        public async Task AddLiquidityEngineSummaryChatPublisherAsync(IChatPublisherSettings chatPublisher)
+        {
+            EnsureInitialized();
+            await _repo.AddLiquidityEngineSummaryChatPublisherSettingsAsync(chatPublisher);
+            await UpdateChatPublishers();
+        }
+
         public async Task RemoveNeChatPublisherAsync(string chatPublisherId)
         {
             EnsureInitialized();
@@ -198,6 +214,13 @@ namespace Lykke.Service.TelegramReporter.Services
         {
             EnsureInitialized();
             await _repo.RemoveLiquidityEngineTradesChatPublisherSettingsAsync(chatPublisherId);
+            await UpdateChatPublishers();
+        }
+
+        public async Task RemoveLiquidityEngineSummaryChatPublisherAsync(string chatPublisherId)
+        {
+            EnsureInitialized();
+            await _repo.RemoveLiquidityEngineSummaryChatPublisherSettingsAsync(chatPublisherId);
             await UpdateChatPublishers();
         }
 
@@ -285,6 +308,7 @@ namespace Lykke.Service.TelegramReporter.Services
             var externalBalancePublisherSettings = await _repo.GetExternalBalanceChatPublisherSettings();
             var marketMakerArbitragesPublisherSettings = await _repo.GetMarketMakerArbitragesChatPublisherSettings();
             var liquidityEngineTradesPublisherSettings = await _repo.GetLiquidityEngineTradesChatPublisherSettings();
+            var liquidityEngineSummaryPublisherSettings = await _repo.GetLiquidityEngineSummaryChatPublisherSettings();
 
             CleanPublishers(nePublisherSettings, _chatPublisherStateService.NePublishers);
             foreach (var publisherSettings in nePublisherSettings)
@@ -310,10 +334,16 @@ namespace Lykke.Service.TelegramReporter.Services
                 AddMarketMakerArbitragesPublisherIfNeeded(publisherSettings);
             }
 
-            CleanPublishers(liquidityEngineTradesPublisherSettings, _chatPublisherStateService.LiquidityEngineTradessPublishers);
+            CleanPublishers(liquidityEngineTradesPublisherSettings, _chatPublisherStateService.LiquidityEngineTradesPublishers);
             foreach (var publisherSettings in liquidityEngineTradesPublisherSettings)
             {
                 AddLiquidityEngineTradesPublisherIfNeeded(publisherSettings);
+            }
+
+            CleanPublishers(liquidityEngineSummaryPublisherSettings, _chatPublisherStateService.LiquidityEngineSummaryPublishers);
+            foreach (var publisherSettings in liquidityEngineSummaryPublisherSettings)
+            {
+                AddLiquidityEngineSummaryPublisherIfNeeded(publisherSettings);
             }
         }
 
@@ -351,9 +381,18 @@ namespace Lykke.Service.TelegramReporter.Services
 
         private void AddLiquidityEngineTradesPublisherIfNeeded(IChatPublisherSettings publisherSettings)
         {
-            var newChatPublisher = new LiquidityEngineTradesPublisher(_telegramSender, publisherSettings, _liquidityEngineUrlSettings, _logFactory);
+            var newChatPublisher = new LiquidityEngineTradesPublisher(_telegramSender, publisherSettings, _liquidityEngineUrlSettings,
+                _assetsServiceWithCache, _logFactory);
 
-            AddPublisherIfNeeded(publisherSettings, _chatPublisherStateService.LiquidityEngineTradessPublishers, newChatPublisher);
+            AddPublisherIfNeeded(publisherSettings, _chatPublisherStateService.LiquidityEngineTradesPublishers, newChatPublisher);
+        }
+
+        private void AddLiquidityEngineSummaryPublisherIfNeeded(IChatPublisherSettings publisherSettings)
+        {
+            var newChatPublisher = new LiquidityEngineSummaryPublisher(_telegramSender, publisherSettings, _liquidityEngineUrlSettings,
+                _assetsServiceWithCache, _logFactory);
+
+            AddPublisherIfNeeded(publisherSettings, _chatPublisherStateService.LiquidityEngineSummaryPublishers, newChatPublisher);
         }
 
         private static void AddPublisherIfNeeded(IChatPublisherSettings publisherSettings, IDictionary<long, ChatPublisher> publishers, ChatPublisher newChatPublisher)
