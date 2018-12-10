@@ -9,6 +9,7 @@ using Lykke.Service.LiquidityEngine.Client.Models.Positions;
 using Lykke.Service.TelegramReporter.Core;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services;
+using MongoDB.Bson.Serialization.IdGenerators;
 
 namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
 {
@@ -27,7 +28,7 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
             _assetsServiceWithCache = assetsServiceWithCache;
         }
 
-        public override async void Publish()
+        public override async Task Publish()
         {
             if (!_clients.Any())
             {

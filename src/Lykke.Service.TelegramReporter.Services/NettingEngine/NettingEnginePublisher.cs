@@ -36,7 +36,7 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
             return _marketMakerReportsClient.InventorySnapshotsApi.GetLastAsync();
         }
 
-        public override async void Publish()
+        public override async Task Publish()
         {
             EnsureInitialized();
 

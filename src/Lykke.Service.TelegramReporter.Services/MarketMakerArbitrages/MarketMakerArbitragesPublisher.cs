@@ -28,7 +28,7 @@ namespace Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages
             _marketMakerArbitrageDetectorClient = marketMakerArbitrageDetectorClient;
         }
 
-        public override async void Publish()
+        public override async Task Publish()
         {
             try
             {

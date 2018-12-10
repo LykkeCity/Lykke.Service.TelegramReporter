@@ -31,7 +31,7 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
             _externalBalanceWarningProvider = externalBalanceWarningProvider;
         }
 
-        public override async void Publish()
+        public override async Task Publish()
         {
             try
             {

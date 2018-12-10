@@ -30,7 +30,7 @@ namespace Lykke.Service.TelegramReporter.Core
 
         private async Task TimeHendler(ITimerTrigger timer, TimerTriggeredHandlerArgs args, CancellationToken cancellationtoken)
         {
-            Publish();
+            await Publish();
         }
 
         public void Start()
@@ -43,7 +43,7 @@ namespace Lykke.Service.TelegramReporter.Core
             _timer.Start();
         }
 
-        public abstract void Publish();
+        public abstract Task Publish();
 
         public void Dispose()
         {

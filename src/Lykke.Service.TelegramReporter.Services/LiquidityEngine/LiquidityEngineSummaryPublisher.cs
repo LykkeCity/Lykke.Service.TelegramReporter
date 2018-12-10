@@ -28,7 +28,7 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
             _assetsServiceWithCache = assetsServiceWithCache;
         }
 
-        public override async void Publish()
+        public override async Task Publish()
         {
             if (!_clients.Any())
             {
