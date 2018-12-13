@@ -30,6 +30,11 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
             return "NeChatPublisher";
         }
 
+        public static string GeneratePartitionKeyForNeTrades()
+        {
+            return "NeTradesChatPublisher";
+        }
+
         public static string GeneratePartitionKeyForWalletsRebalancer()
         {
             return "WalletsRebalancerChatPublisher";
@@ -55,6 +60,17 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
             return new ChatPublisherSettingsEntity
             {
                 PartitionKey = GeneratePartitionKeyForNe(),
+                RowKey = Guid.NewGuid().ToString(),
+                TimeSpan = chatPublisher.TimeSpan,
+                ChatId = chatPublisher.ChatId
+            };
+        }
+
+        public static ChatPublisherSettingsEntity CreateForNeTrades(IChatPublisherSettings chatPublisher)
+        {
+            return new ChatPublisherSettingsEntity
+            {
+                PartitionKey = GeneratePartitionKeyForNeTrades(),
                 RowKey = Guid.NewGuid().ToString(),
                 TimeSpan = chatPublisher.TimeSpan,
                 ChatId = chatPublisher.ChatId
@@ -172,6 +188,11 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
             return (await _storage.GetDataAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForLiquidityEngineSummary())).ToArray();
         }
 
+        public async Task<IReadOnlyList<IChatPublisherSettings>> GetNeTradesChatPublisherSettings()
+        {
+            return (await _storage.GetDataAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForNeTrades())).ToArray();
+        }
+
         public Task AddNeChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher)
         {
             var entity = ChatPublisherSettingsEntity.CreateForNe(chatPublisher);
@@ -214,6 +235,12 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
             return _storage.InsertOrReplaceAsync(entity);
         }
 
+        public Task AddNeTradesChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher)
+        {
+            var entity = ChatPublisherSettingsEntity.CreateForNeTrades(chatPublisher);
+            return _storage.InsertOrReplaceAsync(entity);
+        }
+
         public async Task RemoveNeChatPublisherSettingsAsync(string chatPublisherId)
         {
             await _storage.DeleteAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForNe(), chatPublisherId);
@@ -247,6 +274,11 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
         public async Task RemoveLiquidityEngineSummaryChatPublisherSettingsAsync(string chatPublisherId)
         {
             await _storage.DeleteAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForLiquidityEngineSummary(), chatPublisherId);
+        }
+
+        public async Task RemoveNeTradesChatPublisherSettingsAsync(string chatPublisherId)
+        {
+            await _storage.DeleteAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForNeTrades(), chatPublisherId);
         }
     }
 }

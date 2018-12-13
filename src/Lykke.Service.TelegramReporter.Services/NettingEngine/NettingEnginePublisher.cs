@@ -20,7 +20,8 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
         public NettingEnginePublisher(ITelegramSender telegramSender,
             INettingEngineStateProvider nettingEngineStateProvider,
             IMarketMakerReportsClient marketMakerReportsClient,
-            IChatPublisherSettings publisherSettings, ILogFactory logFactory)
+            IChatPublisherSettings publisherSettings, 
+            ILogFactory logFactory)
             : base(telegramSender, publisherSettings, logFactory)
         {
             _nettingEngineStateProvider = nettingEngineStateProvider;

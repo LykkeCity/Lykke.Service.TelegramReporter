@@ -17,6 +17,7 @@ using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
 using Lykke.Service.TelegramReporter.Services.NettingEngine;
 using Lykke.Service.TelegramReporter.Services.NettingEngine.Rabbit;
 using Lykke.Common.Log;
+using Lykke.HttpClientGenerator.Infrastructure;
 using Lykke.Service.MarketMakerArbitrageDetector.Client;
 using Lykke.Service.TelegramReporter.Core.Services.WalletsRebalancer;
 using Lykke.Service.TelegramReporter.Services.WalletsRebalancer;
@@ -63,6 +64,9 @@ namespace Lykke.Service.TelegramReporter.Modules
 
             builder.RegisterBalancesClient(_appSettings.CurrentValue.BalancesServiceClient.ServiceUrl);
             builder.RegisterMarketMakerReportsClient(_appSettings.CurrentValue.MarketMakerReportsServiceClient, null);
+
+            RegiaterFiatMarketMakerReportsClient(builder, _appSettings.CurrentValue.MarketMakerReportsServiceClient);
+
             builder.RegisterMarketMakerArbitrageDetectorClient(new MarketMakerArbitrageDetectorServiceClientSettings
                 { ServiceUrl = _appSettings.CurrentValue.MarketMakerArbitrageDetectorServiceClient.ServiceUrl }, null);
 
@@ -116,6 +120,20 @@ namespace Lykke.Service.TelegramReporter.Modules
 
             RegisterRepositories(builder);
             RegisterRabbitMqSubscribers(builder);
+        }
+
+        private void RegiaterFiatMarketMakerReportsClient(ContainerBuilder builder,
+            MarketMakerReportsServiceClientSettings settings)
+        {
+            var clientBuilder = HttpClientGenerator.HttpClientGenerator.BuildForUrl(settings.ServiceUrl)
+                .WithAdditionalCallsWrapper(new ExceptionHandlerCallsWrapper())
+                .WithoutRetries();
+
+            var client = new MarketMakerReportsFiatClient(new MarketMakerReportsClient(clientBuilder.Create()));
+
+            builder.RegisterInstance(client)
+                .As<IMarketMakerReportsFiatClient>()
+                .SingleInstance();
         }
 
         private void RegisterRepositories(ContainerBuilder builder)

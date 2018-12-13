@@ -8,6 +8,8 @@ namespace Lykke.Service.TelegramReporter.Services
     {
         public ConcurrentDictionary<long, ChatPublisher> NePublishers { get; } =
             new ConcurrentDictionary<long, ChatPublisher>();
+        public ConcurrentDictionary<long, ChatPublisher> NeTradesPublishers { get; } =
+            new ConcurrentDictionary<long, ChatPublisher>();
         public ConcurrentDictionary<long, ChatPublisher> BalancePublishers { get; } =
             new ConcurrentDictionary<long, ChatPublisher>();
         public ConcurrentDictionary<long, ChatPublisher> ExternalBalancePublishers { get; } =

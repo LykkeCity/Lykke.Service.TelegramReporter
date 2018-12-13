@@ -23,6 +23,8 @@ namespace Lykke.Service.TelegramReporter.Client.Api
         Task<IReadOnlyList<ChatPublisherSettingsDto>> GetLiquidityEngineTradesChatPublisherSettingsAsync();
         [Get("/api/v1/chatpublisher/liquidityenginesummarychatpublishersettings")]
         Task<IReadOnlyList<ChatPublisherSettingsDto>> GetLiquidityEngineSummaryChatPublisherSettingsAsync();
+        [Get("/api/v1/chatpublisher/netradeschatpublishersettings")]
+        Task<IReadOnlyList<ChatPublisherSettingsDto>> GetNeTradesChatPublisherSettingsAsync();
 
         [Post("/api/v1/chatpublisher/nechatpublishersettings")]
         Task AddNeChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher);
@@ -38,6 +40,8 @@ namespace Lykke.Service.TelegramReporter.Client.Api
         Task AddLiquidityEngineTradesChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher);
         [Post("/api/v1/chatpublisher/liquidityenginesummarychatpublishersettings")]
         Task AddLiquidityEngineSummaryChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher);
+        [Post("/api/v1/chatpublisher/netradeschatpublishersettings")]
+        Task AddNeTradesChatPublisherSettingsAsync(ChatPublisherSettingsPost chatPublisher);
 
         [Delete("/api/v1/chatpublisher/nechatpublishersettings")]
         Task RemoveNeChatPublisherSettingsAsync(string chatPublisherSettingsId);
@@ -53,6 +57,8 @@ namespace Lykke.Service.TelegramReporter.Client.Api
         Task RemoveLiquidityEngineTradesChatPublisherSettingsAsync(string chatPublisherSettingsId);
         [Delete("/api/v1/chatpublisher/liquidityenginesummarychatpublishersettings")]
         Task RemoveLiquidityEngineSummaryChatPublisherSettingsAsync(string chatPublisherSettingsId);
+        [Delete("/api/v1/chatpublisher/netradeschatpublishersettings")]
+        Task RemoveNeTradesChatPublisherSettingsAsync(string chatPublisherSettingsId);
 
         [Get("/api/v1/chatpublisher/balanceswarnings")]
         Task<IReadOnlyList<BalanceWarningDto>> GetBalancesWarningsAsync();

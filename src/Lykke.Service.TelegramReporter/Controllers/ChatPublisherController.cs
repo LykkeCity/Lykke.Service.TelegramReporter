@@ -114,6 +114,19 @@ namespace Lykke.Service.TelegramReporter.Controllers
             return vm;
         }
 
+        /// <summary>
+        /// Gets NE Trades chat publishers.
+        /// </summary>
+        /// <returns>NE Trades chat publishers</returns>
+        [HttpGet("netradeschatpublishersettings")]
+        [ProducesResponseType(typeof(IReadOnlyList<ChatPublisherSettingsDto>), (int)HttpStatusCode.OK)]
+        public async Task<IReadOnlyList<ChatPublisherSettingsDto>> GetNeTradesChatPublisherSettingsAsync()
+        {
+            var chatPublishers = await _chatPublisherService.GetNeTradesChatPublishersAsync();
+            var vm = Mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
+            return vm;
+        }
+
         #endregion Get publishers settigns
 
         #region Add publishers settings
@@ -214,6 +227,20 @@ namespace Lykke.Service.TelegramReporter.Controllers
             var model = Mapper.Map<ChatPublisherSettings>(chatPublisher);
 
             await _chatPublisherService.AddLiquidityEngineSummaryChatPublisherAsync(model);
+        }
+
+        /// <summary>
+        /// Adds NE Trades chat publisher.
+        /// </summary>
+        /// <param name="chatPublisher">NE Trades chat publisher to add.</param>
+        [HttpPost("netradeschatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task AddNeTradesChatPublisherSettingsAsync([FromBody] ChatPublisherSettingsPost chatPublisher)
+        {
+            var model = Mapper.Map<ChatPublisherSettings>(chatPublisher);
+
+            await _chatPublisherService.AddNeTradesChatPublisherAsync(model);
         }
 
         #endregion Add publishers settings
@@ -344,6 +371,24 @@ namespace Lykke.Service.TelegramReporter.Controllers
             }
 
             await _chatPublisherService.RemoveLiquidityEngineSummaryChatPublisherAsync(chatPublisherSettingsId);
+        }
+
+        /// <summary>
+        /// Deletes NE Trades chat publisher.
+        /// </summary>
+        /// <param name="chatPublisherSettingsId">NE Trades chat publisher settings Id</param>
+        /// <returns></returns>
+        [HttpDelete("netradeschatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task RemoveNeTradesChatPublisherSettingsAsync(string chatPublisherSettingsId)
+        {
+            if (string.IsNullOrEmpty(chatPublisherSettingsId))
+            {
+                throw new ValidationApiException($"{nameof(chatPublisherSettingsId)} required");
+            }
+
+            await _chatPublisherService.RemoveNeTradesChatPublisherAsync(chatPublisherSettingsId);
         }
 
         #endregion Remove publishers settings
