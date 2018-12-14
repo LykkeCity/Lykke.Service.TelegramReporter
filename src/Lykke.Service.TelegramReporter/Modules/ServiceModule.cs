@@ -65,7 +65,7 @@ namespace Lykke.Service.TelegramReporter.Modules
             builder.RegisterBalancesClient(_appSettings.CurrentValue.BalancesServiceClient.ServiceUrl);
             builder.RegisterMarketMakerReportsClient(_appSettings.CurrentValue.MarketMakerReportsServiceClient, null);
 
-            RegiaterFiatMarketMakerReportsClient(builder, _appSettings.CurrentValue.MarketMakerReportsServiceClient);
+            RegiaterFiatMarketMakerReportsClient(builder, _appSettings.CurrentValue.FiatMarketMakerReportsServiceClient);
 
             builder.RegisterMarketMakerArbitrageDetectorClient(new MarketMakerArbitrageDetectorServiceClientSettings
                 { ServiceUrl = _appSettings.CurrentValue.MarketMakerArbitrageDetectorServiceClient.ServiceUrl }, null);
