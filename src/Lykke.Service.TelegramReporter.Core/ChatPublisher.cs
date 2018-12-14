@@ -41,6 +41,8 @@ namespace Lykke.Service.TelegramReporter.Core
             }
 
             _timer.Start();
+
+            Log.Info($"Start work ChatPublisher: {this.GetType().FullName} with timeout: {PublisherSettings?.TimeSpan}");
         }
 
         public abstract Task Publish();
@@ -52,6 +54,7 @@ namespace Lykke.Service.TelegramReporter.Core
 
         public void Stop()
         {
+            Log.Info($"Stop work ChatPublisher: {this.GetType().FullName} with timeout: {PublisherSettings?.TimeSpan}");
             _timer?.Stop();
         }
     }
