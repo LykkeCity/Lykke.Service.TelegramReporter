@@ -129,7 +129,7 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .WithAdditionalCallsWrapper(new ExceptionHandlerCallsWrapper())
                 .WithoutRetries();
 
-            var client = new MarketMakerReportsFiatClient(new MarketMakerReportsClient(clientBuilder.Create()));
+            var client = new MarketMakerReportsFiatClient(new MarketMakerReportsClient(clientBuilder.Create()), settings.ServiceUrl);
 
             builder.RegisterInstance(client)
                 .As<IMarketMakerReportsFiatClient>()

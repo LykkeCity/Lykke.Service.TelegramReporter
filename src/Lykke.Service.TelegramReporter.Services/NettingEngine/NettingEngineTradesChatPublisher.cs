@@ -35,6 +35,8 @@ namespace Lykke.Service.TelegramReporter.Services.NettingEngine
 
             var data = dataraw.Entities.OrderBy(e => e.Time).ToList();
 
+            Log.Info($"Found {data.Count} trades from {_lastTradeTime:yyyy-MM-dd HH:mm:ss}. Api: {_marketMakerReportsClient.ApiUrl}");
+
             try
             {
                 foreach (var trade in data)
