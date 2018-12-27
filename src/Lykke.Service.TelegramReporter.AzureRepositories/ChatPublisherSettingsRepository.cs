@@ -35,6 +35,11 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
             return "NeTradesChatPublisher";
         }
 
+        public static string GeneratePartitionKeyForCryptoIndexWarnings()
+        {
+            return "CryptoIndexWarningsChatPublisher";
+        }
+
         public static string GeneratePartitionKeyForWalletsRebalancer()
         {
             return "WalletsRebalancerChatPublisher";
@@ -142,6 +147,17 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
                 ChatId = chatPublisher.ChatId
             };
         }
+
+        public static ChatPublisherSettingsEntity CreateForCryptoIndexWarnings(IChatPublisherSettings chatPublisher)
+        {
+            return new ChatPublisherSettingsEntity
+            {
+                PartitionKey = GeneratePartitionKeyForCryptoIndexWarnings(),
+                RowKey = Guid.NewGuid().ToString(),
+                TimeSpan = chatPublisher.TimeSpan,
+                ChatId = chatPublisher.ChatId
+            };
+        }
     }
 
     public class ChatPublisherSettingsRepository : IChatPublisherSettingsRepository
@@ -152,6 +168,7 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
         {
             _storage = storage;
         }
+
 
         public async Task<IReadOnlyList<IChatPublisherSettings>> GetNeChatPublisherSettings()
         {
@@ -192,6 +209,12 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
         {
             return (await _storage.GetDataAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForNeTrades())).ToArray();
         }
+
+        public async Task<IReadOnlyList<IChatPublisherSettings>> GetCryptoIndexWarningsChatPublisherSettings()
+        {
+            return (await _storage.GetDataAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForCryptoIndexWarnings())).ToArray();
+        }
+
 
         public Task AddNeChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher)
         {
@@ -241,6 +264,13 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
             return _storage.InsertOrReplaceAsync(entity);
         }
 
+        public Task AddCryptoIndexWarningsChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher)
+        {
+            var entity = ChatPublisherSettingsEntity.CreateForCryptoIndexWarnings(chatPublisher);
+            return _storage.InsertOrReplaceAsync(entity);
+        }
+
+
         public async Task RemoveNeChatPublisherSettingsAsync(string chatPublisherId)
         {
             await _storage.DeleteAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForNe(), chatPublisherId);
@@ -279,6 +309,11 @@ namespace Lykke.Service.TelegramReporter.AzureRepositories
         public async Task RemoveNeTradesChatPublisherSettingsAsync(string chatPublisherId)
         {
             await _storage.DeleteAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForNeTrades(), chatPublisherId);
+        }
+
+        public async Task RemoveCryptoIndexWarningsChatPublisherSettingsAsync(string chatPublisherId)
+        {
+            await _storage.DeleteAsync(ChatPublisherSettingsEntity.GeneratePartitionKeyForCryptoIndexWarnings(), chatPublisherId);
         }
     }
 }

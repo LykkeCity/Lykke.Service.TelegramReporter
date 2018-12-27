@@ -9,14 +9,13 @@ using Lykke.Service.LiquidityEngine.Client.Models.Positions;
 using Lykke.Service.TelegramReporter.Core;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services;
-using MongoDB.Bson.Serialization.IdGenerators;
 
 namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
 {
     public class LiquidityEngineTradesPublisher : ChatPublisher
     {
         private readonly LiquidityEngineUrlSettings _settings;
-        private Dictionary<string, IReportsApi> _clients = new Dictionary<string, IReportsApi>();
+        private readonly Dictionary<string, IReportsApi> _clients = new Dictionary<string, IReportsApi>();
         private readonly IAssetsServiceWithCache _assetsServiceWithCache;
 
         public LiquidityEngineTradesPublisher(ITelegramSender telegramSender, IChatPublisherSettings publisherSettings,

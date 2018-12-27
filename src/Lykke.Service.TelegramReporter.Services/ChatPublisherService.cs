@@ -18,6 +18,8 @@ using Lykke.Service.TelegramReporter.Core.Instances;
 using Lykke.Service.TelegramReporter.Core.Services.LiquidityEngine;
 using Lykke.Service.TelegramReporter.Core.Services.MarketMakerArbitrages;
 using Lykke.Service.TelegramReporter.Core.Services.NettingEngine;
+using Lykke.Service.TelegramReporter.Services.CryptoIndex;
+using Lykke.Service.TelegramReporter.Services.CryptoIndex.InstancesSettings;
 using Lykke.Service.TelegramReporter.Services.LiquidityEngine;
 using Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages;
 using Lykke.Service.TelegramReporter.Services.NettingEngine;
@@ -42,6 +44,7 @@ namespace Lykke.Service.TelegramReporter.Services
         private readonly IBalanceWarningProvider _balanceWarningProvider;
         private readonly IExternalBalanceWarningProvider _externalBalanceWarningProvider;
         private readonly LiquidityEngineUrlSettings _liquidityEngineUrlSettings;
+        private readonly CryptoIndexInstancesSettings _cryptoIndexInstancesSettings;
         private readonly ITelegramSender _telegramSender;
         private readonly IAssetsServiceWithCache _assetsServiceWithCache;
         private readonly IMarketMakerReportsFiatClient _marketMakerReportsFiatClient;
@@ -63,6 +66,7 @@ namespace Lykke.Service.TelegramReporter.Services
             IBalanceWarningProvider balanceWarningProvider,
             IExternalBalanceWarningProvider externalBalanceWarningProvider,
             LiquidityEngineUrlSettings liquidityEngineUrlSettings,
+            CryptoIndexInstancesSettings cryptoIndexInstancesSettings,
             IAssetsServiceWithCache assetsServiceWithCache,
             IMarketMakerReportsFiatClient marketMakerReportsFiatClient)
         {
@@ -82,10 +86,13 @@ namespace Lykke.Service.TelegramReporter.Services
             _balanceWarningProvider = balanceWarningProvider;
             _externalBalanceWarningProvider = externalBalanceWarningProvider;
             _liquidityEngineUrlSettings = liquidityEngineUrlSettings;
+            _cryptoIndexInstancesSettings = cryptoIndexInstancesSettings;
             _telegramSender = telegramSender;
             _assetsServiceWithCache = assetsServiceWithCache;
             _marketMakerReportsFiatClient = marketMakerReportsFiatClient;
         }
+
+        #region GetChatPublishers
 
         public async Task<IReadOnlyList<IChatPublisherSettings>> GetNeChatPublishersAsync()
         {
@@ -134,6 +141,16 @@ namespace Lykke.Service.TelegramReporter.Services
             EnsureInitialized();
             return await _repo.GetNeTradesChatPublisherSettings();
         }
+
+        public async Task<IReadOnlyList<IChatPublisherSettings>> GetCryptoIndexWarningsChatPublishersAsync()
+        {
+            EnsureInitialized();
+            return await _repo.GetCryptoIndexWarningsChatPublisherSettings();
+        }
+
+        #endregion
+
+        #region AddChatPublisher
 
         public async Task AddNeChatPublisherAsync(IChatPublisherSettings chatPublisher)
         {
@@ -191,6 +208,17 @@ namespace Lykke.Service.TelegramReporter.Services
             await UpdateChatPublishers();
         }
 
+        public async Task AddCryptoIndexWarningsChatPublisherAsync(IChatPublisherSettings chatPublisher)
+        {
+            EnsureInitialized();
+            await _repo.AddCryptoIndexWarningsChatPublisherSettingsAsync(chatPublisher);
+            await UpdateChatPublishers();
+        }
+
+        #endregion
+
+        #region RemoveChatPublisher
+
         public async Task RemoveNeChatPublisherAsync(string chatPublisherId)
         {
             EnsureInitialized();
@@ -246,6 +274,15 @@ namespace Lykke.Service.TelegramReporter.Services
             await _repo.RemoveNeTradesChatPublisherSettingsAsync(chatPublisherId);
             await UpdateChatPublishers();
         }
+
+        public async Task RemoveCryptoIndexWarningsChatPublisherAsync(string chatPublisherId)
+        {
+            EnsureInitialized();
+            await _repo.RemoveCryptoIndexWarningsChatPublisherSettingsAsync(chatPublisherId);
+            await UpdateChatPublishers();
+        }
+
+        #endregion
 
         public async Task<IReadOnlyList<IBalanceWarning>> GetBalancesWarningsAsync()
         {
@@ -333,6 +370,7 @@ namespace Lykke.Service.TelegramReporter.Services
             var marketMakerArbitragesPublisherSettings = await _repo.GetMarketMakerArbitragesChatPublisherSettings();
             var liquidityEngineTradesPublisherSettings = await _repo.GetLiquidityEngineTradesChatPublisherSettings();
             var liquidityEngineSummaryPublisherSettings = await _repo.GetLiquidityEngineSummaryChatPublisherSettings();
+            var cryptoIndexWarningsPublisherSettings = await _repo.GetCryptoIndexWarningsChatPublisherSettings();
 
             CleanPublishers(nePublisherSettings, _chatPublisherStateService.NePublishers);
             foreach (var publisherSettings in nePublisherSettings)
@@ -375,7 +413,21 @@ namespace Lykke.Service.TelegramReporter.Services
             {
                 AddLiquidityEngineSummaryPublisherIfNeeded(publisherSettings);
             }
+
+            CleanPublishers(liquidityEngineSummaryPublisherSettings, _chatPublisherStateService.LiquidityEngineSummaryPublishers);
+            foreach (var publisherSettings in liquidityEngineSummaryPublisherSettings)
+            {
+                AddLiquidityEngineSummaryPublisherIfNeeded(publisherSettings);
+            }
+
+            CleanPublishers(cryptoIndexWarningsPublisherSettings, _chatPublisherStateService.CryptoIndexWarningsPublishers);
+            foreach (var publisherSettings in cryptoIndexWarningsPublisherSettings)
+            {
+                AddCryptoIndexWarningsPublisherIfNeeded(publisherSettings);
+            }
         }
+
+        #region AddPublisherIfNeeded
 
         private void AddNePublisherIfNeeded(IChatPublisherSettings publisherSettings)
         {
@@ -432,6 +484,15 @@ namespace Lykke.Service.TelegramReporter.Services
 
             AddPublisherIfNeeded(publisherSettings, _chatPublisherStateService.LiquidityEngineSummaryPublishers, newChatPublisher);
         }
+
+        private void AddCryptoIndexWarningsPublisherIfNeeded(IChatPublisherSettings publisherSettings)
+        {
+            var newChatPublisher = new CryptoIndexWarningsPublisher(_telegramSender, publisherSettings, _cryptoIndexInstancesSettings, _logFactory);
+
+            AddPublisherIfNeeded(publisherSettings, _chatPublisherStateService.CryptoIndexWarningsPublishers, newChatPublisher);
+        }
+
+        #endregion
 
         private static void AddPublisherIfNeeded(IChatPublisherSettings publisherSettings, IDictionary<long, ChatPublisher> publishers, ChatPublisher newChatPublisher)
         {

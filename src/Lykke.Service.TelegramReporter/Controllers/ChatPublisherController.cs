@@ -92,7 +92,7 @@ namespace Lykke.Service.TelegramReporter.Controllers
         /// <summary>
         /// Gets LiquidityEngineTrades chat publishers.
         /// </summary>
-        /// <returns>MakerMakerArbitrages chat publishers</returns>
+        /// <returns>LiquidityEngineTrades chat publishers</returns>
         [HttpGet("liquidityenginetradeschatpublishersettings")]
         [ProducesResponseType(typeof(IReadOnlyList<ChatPublisherSettingsDto>), (int)HttpStatusCode.OK)]
         public async Task<IReadOnlyList<ChatPublisherSettingsDto>> GetLiquidityEngineTradesChatPublisherSettingsAsync()
@@ -105,6 +105,7 @@ namespace Lykke.Service.TelegramReporter.Controllers
         /// <summary>
         /// Gets LiquidityEngineSummary chat publishers settings.
         /// </summary>
+        /// <returns>LiquidityEngineSummary chat publishers</returns>
         [HttpGet("liquidityenginesummarychatpublishersettings")]
         [ProducesResponseType(typeof(IReadOnlyList<ChatPublisherSettingsDto>), (int)HttpStatusCode.OK)]
         public async Task<IReadOnlyList<ChatPublisherSettingsDto>> GetLiquidityEngineSummaryChatPublisherSettingsAsync()
@@ -123,6 +124,19 @@ namespace Lykke.Service.TelegramReporter.Controllers
         public async Task<IReadOnlyList<ChatPublisherSettingsDto>> GetNeTradesChatPublisherSettingsAsync()
         {
             var chatPublishers = await _chatPublisherService.GetNeTradesChatPublishersAsync();
+            var vm = Mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
+            return vm;
+        }
+
+        /// <summary>
+        /// Gets CryptoIndexWarnings chat publishers.
+        /// </summary>
+        /// <returns>CryptoIndexWarnings chat publishers</returns>
+        [HttpGet("cryptoindexwarningschatpublishersettings")]
+        [ProducesResponseType(typeof(IReadOnlyList<ChatPublisherSettingsDto>), (int)HttpStatusCode.OK)]
+        public async Task<IReadOnlyList<ChatPublisherSettingsDto>> GetCryptoIndexWarningsChatPublisherSettingsAsync()
+        {
+            var chatPublishers = await _chatPublisherService.GetCryptoIndexWarningsChatPublishersAsync();
             var vm = Mapper.Map<IReadOnlyList<IChatPublisherSettings>, IReadOnlyList<ChatPublisherSettingsDto>>(chatPublishers);
             return vm;
         }
@@ -241,6 +255,20 @@ namespace Lykke.Service.TelegramReporter.Controllers
             var model = Mapper.Map<ChatPublisherSettings>(chatPublisher);
 
             await _chatPublisherService.AddNeTradesChatPublisherAsync(model);
+        }
+
+        /// <summary>
+        /// Adds CryptoIndexWarnings chat publisher.
+        /// </summary>
+        /// <param name="chatPublisher">CryptoIndexWarnings chat publisher to add.</param>
+        [HttpPost("cryptoindexwarningschatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task AddCryptoIndexWarningsChatPublisherSettingsAsync([FromBody] ChatPublisherSettingsPost chatPublisher)
+        {
+            var model = Mapper.Map<ChatPublisherSettings>(chatPublisher);
+
+            await _chatPublisherService.AddCryptoIndexWarningsChatPublisherAsync(model);
         }
 
         #endregion Add publishers settings
@@ -389,6 +417,25 @@ namespace Lykke.Service.TelegramReporter.Controllers
             }
 
             await _chatPublisherService.RemoveNeTradesChatPublisherAsync(chatPublisherSettingsId);
+        }
+
+
+        /// <summary>
+        /// Deletes CryptoIndexWarnings chat publisher.
+        /// </summary>
+        /// <param name="chatPublisherSettingsId">CryptoIndexWarnings chat publisher settings Id</param>
+        /// <returns></returns>
+        [HttpDelete("cryptoindexwarningschatpublishersettings")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        public async Task RemoveCryptoIndexWarningsChatPublisherSettingsAsync(string chatPublisherSettingsId)
+        {
+            if (string.IsNullOrEmpty(chatPublisherSettingsId))
+            {
+                throw new ValidationApiException($"{nameof(chatPublisherSettingsId)} required");
+            }
+
+            await _chatPublisherService.RemoveCryptoIndexWarningsChatPublisherAsync(chatPublisherSettingsId);
         }
 
         #endregion Remove publishers settings

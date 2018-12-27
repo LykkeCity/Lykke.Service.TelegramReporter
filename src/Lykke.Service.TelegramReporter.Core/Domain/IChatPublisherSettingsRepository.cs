@@ -14,6 +14,7 @@ namespace Lykke.Service.TelegramReporter.Core.Domain
         Task<IReadOnlyList<IChatPublisherSettings>> GetLiquidityEngineTradesChatPublisherSettings();
         Task<IReadOnlyList<IChatPublisherSettings>> GetLiquidityEngineSummaryChatPublisherSettings();
         Task<IReadOnlyList<IChatPublisherSettings>> GetNeTradesChatPublisherSettings();
+        Task<IReadOnlyList<IChatPublisherSettings>> GetCryptoIndexWarningsChatPublisherSettings();
 
         Task AddNeChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher);
         Task AddBalanceChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher);
@@ -23,6 +24,7 @@ namespace Lykke.Service.TelegramReporter.Core.Domain
         Task AddLiquidityEngineTradesChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher);
         Task AddLiquidityEngineSummaryChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher);
         Task AddNeTradesChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher);
+        Task AddCryptoIndexWarningsChatPublisherSettingsAsync(IChatPublisherSettings chatPublisher);
 
         Task RemoveNeChatPublisherSettingsAsync(string chatPublisherId);
         Task RemoveBalanceChatPublisherSettingsAsync(string chatPublisherId);
@@ -32,5 +34,6 @@ namespace Lykke.Service.TelegramReporter.Core.Domain
         Task RemoveLiquidityEngineTradesChatPublisherSettingsAsync(string chatPublisherId);
         Task RemoveLiquidityEngineSummaryChatPublisherSettingsAsync(string chatPublisherId);
         Task RemoveNeTradesChatPublisherSettingsAsync(string chatPublisherId);
+        Task RemoveCryptoIndexWarningsChatPublisherSettingsAsync(string chatPublisherId);
     }
 }
