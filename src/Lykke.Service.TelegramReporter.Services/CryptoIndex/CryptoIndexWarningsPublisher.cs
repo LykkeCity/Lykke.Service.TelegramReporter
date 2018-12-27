@@ -67,7 +67,7 @@ namespace Lykke.Service.TelegramReporter.Services.CryptoIndex
 
                     await TelegramSender.SendTextMessageAsync(PublisherSettings.ChatId, message);
 
-                    _lastTimes[indexName] = warning.Time;
+                    _lastTimes[indexName] = toDate;
                 }
             }
             catch (Exception ex)
