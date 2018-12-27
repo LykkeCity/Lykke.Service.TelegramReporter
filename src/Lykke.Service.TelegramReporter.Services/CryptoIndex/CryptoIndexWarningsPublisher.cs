@@ -63,7 +63,7 @@ namespace Lykke.Service.TelegramReporter.Services.CryptoIndex
 
                 foreach (var warning in warnings)
                 {
-                    var message = $"{indexName}: {warning.Message}. {warning.Time.ToIsoDateTime()}";
+                    var message = $"{indexName}: {warning.Message} {warning.Time.ToIsoDateTime()}";
 
                     await TelegramSender.SendTextMessageAsync(PublisherSettings.ChatId, message);
 
