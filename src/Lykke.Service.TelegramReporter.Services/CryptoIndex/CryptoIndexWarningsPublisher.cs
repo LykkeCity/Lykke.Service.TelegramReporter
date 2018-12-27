@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common;
 using Lykke.Common.Log;
 using Lykke.Service.CryptoIndex.Client.Api;
 using Lykke.Service.CryptoIndex.Client.Models;
@@ -62,7 +63,7 @@ namespace Lykke.Service.TelegramReporter.Services.CryptoIndex
 
                 foreach (var warning in warnings)
                 {
-                    var message = $"{indexName}: {warning.Message}";
+                    var message = $"{indexName}: {warning.Message}. {warning.Time.ToIsoDateTime()}";
 
                     await TelegramSender.SendTextMessageAsync(PublisherSettings.ChatId, message);
 
