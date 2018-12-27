@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Common;
@@ -25,8 +26,10 @@ using Lykke.Service.TelegramReporter.Services.WalletsRebalancer.Rabbit;
 using Lykke.Service.MarketMakerReports.Client;
 using Lykke.Service.TelegramReporter.Core.Services.LiquidityEngine;
 using Lykke.Service.TelegramReporter.Core.Services.MarketMakerArbitrages;
+using Lykke.Service.TelegramReporter.Services.CryptoIndex.InstancesSettings;
 using Lykke.Service.TelegramReporter.Services.LiquidityEngine;
 using Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages;
+using CryptoIndexClientSettings = Lykke.Service.TelegramReporter.Services.CryptoIndex.InstancesSettings.CryptoIndexClientSettings;
 
 namespace Lykke.Service.TelegramReporter.Modules
 {    
@@ -74,6 +77,16 @@ namespace Lykke.Service.TelegramReporter.Modules
                     new LiquidityEngineUrlSettings(_appSettings.CurrentValue.LiquidityEngineServiceClient.Instances.Select(e => e.ServiceUrl).ToArray()))
                 .SingleInstance();
 
+            var cryptoIndexInstances = new List<CryptoIndexClientSettings>();
+            foreach (var cics in _appSettings.CurrentValue.CryptoIndexServiceClient.Instances)
+                cryptoIndexInstances.Add(new CryptoIndexClientSettings { DisplayName = cics.DisplayName, ServiceUrl = cics.ServiceUrl });
+            builder.RegisterInstance(
+                    new CryptoIndexInstancesSettings
+                    {
+                        Instances = cryptoIndexInstances.ToArray()
+                    })
+                .SingleInstance();
+
             builder.RegisterType<NettingEngineStateProvider>()
                 .As<INettingEngineStateProvider>()
                 .SingleInstance();
@@ -106,6 +119,7 @@ namespace Lykke.Service.TelegramReporter.Modules
 
             builder.RegisterType<WalletsRebalancerPublisher>()
                 .As<IWalletsRebalancerPublisher>();
+
 
             builder.RegisterType<ChatPublisherService>()
                 .As<IChatPublisherService>()

@@ -59,7 +59,6 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
             Log.Info($"Check api Start. summary. Api: {key}. LastTime: {_lastTime:yyyy-MM-dd HH:mm:ss}");
 
             var sb = new StringBuilder();
-            var rn = Environment.NewLine;
             sb.AppendLine($"=== {fromDate:yyyy/MM/dd HH:mm:ss} ===");
             sb.AppendLine($"=== {toDate:yyyy/MM/dd HH:mm:ss} ===");
             sb.Append(Environment.NewLine);
