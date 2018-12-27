@@ -43,15 +43,15 @@ namespace Lykke.Service.TelegramReporter.Services.CryptoIndex
         }
         
         private async Task CheckApi(string indexName, IWarningsApi warningsApi)
-        {
-            var fromDate = DateTime.UtcNow;
-            var toDate = DateTime.UtcNow;
-            
+        {            
             if (!_lastTimes.TryGetValue(indexName, out var lastTime))
             {
                 lastTime = DateTime.UtcNow;
                 _lastTimes[indexName] = lastTime;
             }
+
+            var fromDate = lastTime;
+            var toDate = DateTime.UtcNow;
 
             Log.Info($"Started requesting warning history. Api: {indexName}. LastTime: {lastTime:yyyy-MM-dd HH:mm:ss}");
 
