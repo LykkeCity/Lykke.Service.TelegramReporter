@@ -11,10 +11,14 @@ namespace Lykke.Service.TelegramReporter.Client
         /// <summary>Api for TelegramReporter</summary>
         public ITelegramReporterApi TelegramReporterApi { get; private set; }
 
+        /// <summary>ReportChannelApi</summary>
+        public IReportChannelApi ReportChannelApi { get; }
+
         /// <summary>C-tor</summary>
         public TelegramReporterClient(IHttpClientGenerator httpClientGenerator)
         {
             TelegramReporterApi = httpClientGenerator.Generate<ITelegramReporterApi>();
+            ReportChannelApi = httpClientGenerator.Generate<IReportChannelApi>();
         }
     }
 }

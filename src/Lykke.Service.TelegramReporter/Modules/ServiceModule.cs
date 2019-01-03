@@ -24,8 +24,10 @@ using Lykke.Service.TelegramReporter.Core.Services.WalletsRebalancer;
 using Lykke.Service.TelegramReporter.Services.WalletsRebalancer;
 using Lykke.Service.TelegramReporter.Services.WalletsRebalancer.Rabbit;
 using Lykke.Service.MarketMakerReports.Client;
+using Lykke.Service.TelegramReporter.Core.Services.Channelv2;
 using Lykke.Service.TelegramReporter.Core.Services.LiquidityEngine;
 using Lykke.Service.TelegramReporter.Core.Services.MarketMakerArbitrages;
+using Lykke.Service.TelegramReporter.Services.Channelv2;
 using Lykke.Service.TelegramReporter.Services.CryptoIndex.InstancesSettings;
 using Lykke.Service.TelegramReporter.Services.LiquidityEngine;
 using Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages;
@@ -52,6 +54,13 @@ namespace Lykke.Service.TelegramReporter.Modules
             builder.RegisterType<TelegramService>()
                 .As<ITelegramSender>()
                 .WithParameter("settings", _appSettings.CurrentValue.TelegramReporterService.Telegram)
+                .As<IStartable>()
+                .As<IStopable>()
+                .AutoActivate()
+                .SingleInstance();
+
+            builder.RegisterType<ChannelManager>()
+                .As<IChannelManager>()
                 .As<IStartable>()
                 .As<IStopable>()
                 .AutoActivate()
@@ -169,6 +178,13 @@ namespace Lykke.Service.TelegramReporter.Modules
                     .Create(_appSettings.ConnectionString(x => x.TelegramReporterService.Db.DataConnString), "ExternalBalancesWarnings", container.Resolve<ILogFactory>())))
                 .As<IExternalBalanceWarningRepository>()
                 .SingleInstance();
+
+            builder.Register(container => new ChannelRepository(
+                    AzureTableStorage<ReportChannelEntity>
+                        .Create(_appSettings.ConnectionString(x => x.TelegramReporterService.Db.DataConnString), "ReportChannelSettings", container.Resolve<ILogFactory>())))
+                .As<IChannelRepository>()
+                .SingleInstance();
+            
         }
 
         private void RegisterRabbitMqSubscribers(ContainerBuilder builder)

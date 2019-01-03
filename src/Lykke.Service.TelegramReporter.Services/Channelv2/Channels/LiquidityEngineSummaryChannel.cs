@@ -7,32 +7,34 @@ using Lykke.Common.Log;
 using Lykke.Service.Assets.Client;
 using Lykke.Service.LiquidityEngine.Client.Api;
 using Lykke.Service.LiquidityEngine.Client.Models.Positions;
-using Lykke.Service.TelegramReporter.Core;
-using Lykke.Service.TelegramReporter.Core.Domain.Model;
 using Lykke.Service.TelegramReporter.Core.Services;
+using Lykke.Service.TelegramReporter.Core.Services.Channelv2;
+using Lykke.Service.TelegramReporter.Services.LiquidityEngine;
 
-namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
+namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
 {
-    public class LiquidityEngineSummaryPublisher : ChatPublisher
+    public class LiquidityEngineSummaryChannel : ReportChannel
     {
         private readonly LiquidityEngineUrlSettings _settings;
-        private DateTime _lastTime;
-        private readonly Dictionary<string, IReportsApi> _clients = new Dictionary<string, IReportsApi>();
         private readonly IAssetsServiceWithCache _assetsServiceWithCache;
+        private readonly Dictionary<string, IReportsApi> _clients = new Dictionary<string, IReportsApi>();
+        private DateTime _lastTime;
 
-        public LiquidityEngineSummaryPublisher(
+        public const string Name = "LiquidityEngineSummary";
+
+        public LiquidityEngineSummaryChannel(
+            IReportChannel channel, 
             ITelegramSender telegramSender, 
-            IChatPublisherSettings publisherSettings,
-            LiquidityEngineUrlSettings settings, 
-            IAssetsServiceWithCache assetsServiceWithCache, 
-            ILogFactory logFactory)
-            : base(telegramSender, publisherSettings, logFactory)
+            ILogFactory logFactory,
+            LiquidityEngineUrlSettings settings,
+            IAssetsServiceWithCache assetsServiceWithCache) 
+            : base(channel, telegramSender, logFactory)
         {
             _settings = settings;
             _assetsServiceWithCache = assetsServiceWithCache;
         }
 
-        public override async Task Publish()
+        protected override async Task DoTimer()
         {
             if (!_clients.Any())
             {
@@ -53,8 +55,7 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
         {
             if (_lastTime == default(DateTime))
             {
-                _lastTime = DateTime.UtcNow;
-                return;
+                _lastTime = DateTime.UtcNow.Subtract(Interval);
             }
 
             var fromDate = _lastTime;
@@ -72,7 +73,8 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
             var countTrade = 0;
             try
             {
-                var report = (await reportsApi.GetPositionsReportAsync(fromDate, toDate, int.MaxValue))
+                var data = await reportsApi.GetPositionsReportAsync(fromDate, toDate, int.MaxValue);
+                var report = data
                     .Where(x => x.IsClosed)
                     .Where(x => x.CloseDate > fromDate)
                     .Where(x => x.CloseDate <= toDate)
@@ -84,6 +86,7 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                 var grouped = report.GroupBy(x => x.AssetPairId).OrderBy(x => x.Key);
 
                 var result = new List<string>();
+                var totalPl = 0m;
                 foreach (var assetPairTrades in grouped)
                 {
                     var assetPairId = assetPairTrades.Key;
@@ -91,8 +94,8 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                     var buyVolume = assetPairTrades.Where(x => x.Type == PositionType.Long).Sum(x => x.Volume);
                     var sellVolume = assetPairTrades.Where(x => x.Type == PositionType.Short).Sum(x => x.Volume);
                     var isPnLInUsd = assetPairTrades.All(x => x.PnLUsd.HasValue);
-                    var pnLInUsd = isPnLInUsd ? assetPairTrades.Sum(x => x.PnLUsd.Value) : (decimal?)null;
-                    var pnL = assetPairTrades.Sum(x => x.PnL.Value);
+                    var pnLInUsd = isPnLInUsd ? assetPairTrades.Sum(x => x.PnLUsd ?? 0) : (decimal?)null;
+                    var pnL = assetPairTrades.Sum(x => x.PnL ?? 0);
 
                     var assetPair = await _assetsServiceWithCache.TryGetAssetPairAsync(assetPairId);
                     var quoteAssetId = assetPair?.QuotingAssetId;
@@ -107,14 +110,19 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                                            $"Count: {count}; " +
                                            $"Sell: {Math.Round(sellVolume, 6)}; " +
                                            $"Buy: {Math.Round(buyVolume, 6)}; ";
+
+                    totalPl += pnLInUsd ?? 0m;
+
                     result.Add(assetPairMessage);
                 }
 
                 sb.AppendLine(string.Join(Environment.NewLine, result));
+                sb.Append($"");
+                sb.Append($"Tatal PL: {Math.Round(totalPl, 2)} $");
 
                 _lastTime = DateTime.UtcNow;
 
-                await TelegramSender.SendTextMessageAsync(PublisherSettings.ChatId, sb.ToString());
+                await SendMessage(sb.ToString());
             }
             catch (Exception ex)
             {

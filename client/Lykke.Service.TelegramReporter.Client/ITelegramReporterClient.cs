@@ -11,5 +11,8 @@ namespace Lykke.Service.TelegramReporter.Client
     {
         /// <summary>Api for TelegramReporter</summary>
         ITelegramReporterApi TelegramReporterApi { get; }
+
+        /// <summary> ReportChannelApi </summary>
+        IReportChannelApi ReportChannelApi { get; }
     }
 }
