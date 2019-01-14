@@ -117,15 +117,17 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
 
                     var assetPairMessage = $"{assetPairId}; " +
                                            $"PL={pnLStr}; " +
-                                           $"Count: {count}; " +
-                                           $"Sell: {Math.Round(sellVolume, 6)}; " +
-                                           $"Buy: {Math.Round(buyVolume, 6)}; " +
                                            $"Turnover: {Math.Round(turnoverUsd, 0)} $; ";
+
+                    result.Add(assetPairMessage);
+
+                    assetPairMessage = $". Count: {count}; " +
+                                       $"Sell: {Math.Round(sellVolume, 6)}; " +
+                                       $"Buy: {Math.Round(buyVolume, 6)}; ";
+                    result.Add(assetPairMessage);
 
                     totalPl += pnLInUsd ?? 0m;
                     totalTurnover += turnoverUsd;
-
-                    result.Add(assetPairMessage);
                 }
 
                 sb.AppendLine(string.Join(Environment.NewLine, result));
