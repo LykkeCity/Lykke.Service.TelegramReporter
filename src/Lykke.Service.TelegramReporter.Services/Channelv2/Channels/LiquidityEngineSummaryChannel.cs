@@ -17,7 +17,7 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
     {
         private readonly LiquidityEngineUrlSettings _settings;
         private readonly IAssetsServiceWithCache _assetsServiceWithCache;
-        private readonly Dictionary<string, IReportsApi> _clients = new Dictionary<string, IReportsApi>();
+        private readonly Dictionary<string, Apis> _clients = new Dictionary<string, Apis>();
         private DateTime _lastTime;
 
         public const string Name = "LiquidityEngineSummary";
@@ -45,13 +45,13 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
                 }
             }
 
-            foreach (var reportsApi in _clients)
+            foreach (var client in _clients)
             {
-                await CheckApi(reportsApi.Key, reportsApi.Value);
+                await CheckApi(client.Key, client.Value.ReportsApi, client.Value.TradesApi);
             }
         }
 
-        private async Task CheckApi(string key, IReportsApi reportsApi)
+        private async Task CheckApi(string key, IReportsApi reportsApi, ITradesApi tradesApi)
         {
             if (_lastTime == default(DateTime))
             {
@@ -80,13 +80,16 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
                     .Where(x => x.CloseDate <= toDate)
                     .ToList();
 
-                if (report.Count == 0)
-                    return;
+                var summary = await reportsApi.GetBalanceIndicatorsReportAsync();
+
+                //if (report.Count == 0)
+                //    return;
 
                 var grouped = report.GroupBy(x => x.AssetPairId).OrderBy(x => x.Key);
 
                 var result = new List<string>();
                 var totalPl = 0m;
+                var totalTurnover = 0m;
                 foreach (var assetPairTrades in grouped)
                 {
                     var assetPairId = assetPairTrades.Key;
@@ -105,24 +108,48 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
 
                     var pnLStr = pnLInUsd.HasValue ? $"{Math.Round(pnLInUsd.Value, 4)}$" : $"{Math.Round(pnL, 4)} {quoteAssetStr}";
 
+                    var lastTrade = assetPairTrades.Where(e => e.PnLUsd.HasValue).OrderByDescending(e => e.ClosePrice).FirstOrDefault();
+                    var latsUsdPrice = (lastTrade != null && lastTrade.PnLUsd.HasValue && lastTrade.PnL.HasValue)
+                        ? lastTrade.PnLUsd.Value / lastTrade.PnL.Value
+                        : 0m;
+                    decimal turnover = assetPairTrades.Sum(e => e.Volume * e.ClosePrice) ?? 0m;
+                    var turnoverUsd = turnover * latsUsdPrice;
+
                     var assetPairMessage = $"{assetPairId}; " +
                                            $"PL={pnLStr}; " +
                                            $"Count: {count}; " +
                                            $"Sell: {Math.Round(sellVolume, 6)}; " +
-                                           $"Buy: {Math.Round(buyVolume, 6)}; ";
+                                           $"Buy: {Math.Round(buyVolume, 6)}; " +
+                                           $"Turnover: {Math.Round(turnoverUsd, 0)} $; ";
 
                     totalPl += pnLInUsd ?? 0m;
+                    totalTurnover += turnoverUsd;
 
                     result.Add(assetPairMessage);
                 }
 
                 sb.AppendLine(string.Join(Environment.NewLine, result));
                 sb.Append($"");
-                sb.Append($"Tatal PL: {Math.Round(totalPl, 2)} $");
+                sb.Append($"Tatal PL: {Math.Round(totalPl, 2)} $, Turnover: {Math.Round(totalTurnover, 2)} $");
 
                 _lastTime = DateTime.UtcNow;
 
                 await SendMessage(sb.ToString());
+
+                var sammuryMessage = $"Equity: {(int) summary.Equity} $.  RiskExposure: {(int) summary.RiskExposure} $";
+                await SendMessage(sammuryMessage);
+
+                var fiatSettlement = await tradesApi.GetSettlementTradesAsync();
+                if (fiatSettlement.Any(e => !e.IsCompleted))
+                {
+                    sb.Clear();
+                    sb.AppendLine("Detect fiat trades without settlement in lykke: ");
+                    foreach (var model in fiatSettlement.Where(e => !e.IsCompleted))
+                    {
+                        sb.AppendLine($"{model.AssetPair}, {model.Type}, price: {model.Price}, volume: {model.Volume}");
+                    }
+                    await SendMessage(sb.ToString());
+                }
             }
             catch (Exception ex)
             {
@@ -132,7 +159,7 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
             Log.Info($"Check api complete. Found: {countTrade} asset pairs. Api: {key}. LastTime: {_lastTime:yyyy-MM-dd HH:mm:ss}");
         }
 
-        private IReportsApi CreateApiClient(string url)
+        private Apis CreateApiClient(string url)
         {
             var generator = HttpClientGenerator.HttpClientGenerator.BuildForUrl(url)
                 .WithAdditionalCallsWrapper(new HttpClientGenerator.Infrastructure.ExceptionHandlerCallsWrapper())
@@ -140,9 +167,17 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
                 .WithoutCaching()
                 .Create();
 
-            var client = generator.Generate<IReportsApi>();
+            Apis api = new Apis();
+            api.ReportsApi = generator.Generate<IReportsApi>();
+            api.TradesApi = generator.Generate<ITradesApi>();
 
-            return client;
+            return api;
+        }
+
+        public struct Apis
+        {
+            public IReportsApi ReportsApi { get; set; }
+            public ITradesApi TradesApi { get; set; }
         }
     }
 }
