@@ -130,7 +130,10 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
 
                 sb.AppendLine(string.Join(Environment.NewLine, result));
                 sb.Append($"");
-                sb.Append($"Tatal PL: {Math.Round(totalPl, 2)} $, Turnover: {Math.Round(totalTurnover, 2)} $");
+
+                var fee = totalTurnover > 0 ? totalPl / totalTurnover : 0m;
+
+                sb.Append($"Tatal PL: {Math.Round(totalPl, 2)} $, Turnover: {Math.Round(totalTurnover, 2)} $, fee: {Math.Round(fee * 100, 2)} %");
 
                 _lastTime = DateTime.UtcNow;
 
