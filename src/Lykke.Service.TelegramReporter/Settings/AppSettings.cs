@@ -19,6 +19,7 @@ namespace Lykke.Service.TelegramReporter.Settings
         public MarketMakerArbitrageDetectorServiceClientSettings MarketMakerArbitrageDetectorServiceClient { get; set; }
         public LiquidityEngineServiceClientInstancesSettings LiquidityEngineServiceClient { get; set; }
         public CryptoIndexServiceClientInstancesSettings CryptoIndexServiceClient { get; set; }
+        public DwhServiceClientSettings DwhServiceClient { get; set; }
     }
 
     public class AssetsServiceClientSettings
@@ -27,6 +28,11 @@ namespace Lykke.Service.TelegramReporter.Settings
     }
 
     public class BalanceServiceClientSettings
+    {
+        public string ServiceUrl { get; set; }
+    }
+
+    public class DwhServiceClientSettings
     {
         public string ServiceUrl { get; set; }
     }

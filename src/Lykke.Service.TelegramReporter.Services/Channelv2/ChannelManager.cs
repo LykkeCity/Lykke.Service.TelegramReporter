@@ -7,6 +7,7 @@ using Common;
 using Common.Log;
 using Lykke.Common.Log;
 using Lykke.Service.Assets.Client;
+using Lykke.Service.Dwh.Client;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.Channelv2;
 using Lykke.Service.TelegramReporter.Services.Channelv2.Channels;
@@ -24,17 +25,23 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2
         private readonly ILogFactory _logFactory;
         private readonly LiquidityEngineUrlSettings _liquidityEngineUrlSettings;
         private readonly IAssetsServiceWithCache _assetsServiceWithCache;
+        private readonly IDwhClient _dwhClient;
         private readonly ILog _log;
 
-        public ChannelManager(IChannelRepository channelRepository, ITelegramSender telegramSender, ILogFactory logFactory,
+        public ChannelManager(
+            IChannelRepository channelRepository, 
+            ITelegramSender telegramSender, 
+            ILogFactory logFactory,
             LiquidityEngineUrlSettings liquidityEngineUrlSettings,
-            IAssetsServiceWithCache assetsServiceWithCache)
+            IAssetsServiceWithCache assetsServiceWithCache,
+            IDwhClient dwhClient)
         {
             _channelRepository = channelRepository;
             _telegramSender = telegramSender;
             _logFactory = logFactory;
             _liquidityEngineUrlSettings = liquidityEngineUrlSettings;
             _assetsServiceWithCache = assetsServiceWithCache;
+            _dwhClient = dwhClient;
             _log = _logFactory.CreateLog(this);
             RegisterChannels();
         }
@@ -43,6 +50,8 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2
         {
             _channelTypes.Add(HelloWorldReportChannel.Name);
             _channelTypes.Add(LiquidityEngineSummaryChannel.Name);
+            _channelTypes.Add(DwhStoreProcedureChannel.Name);
+            _channelTypes.Add(LyciSandipOfferChannel.Name);
         }
 
         private ReportChannel CreateReportChannel(IReportChannel channel)
@@ -52,6 +61,12 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2
 
             if (channel.Type == LiquidityEngineSummaryChannel.Name)
                 return new LiquidityEngineSummaryChannel(channel, _telegramSender, _logFactory, _liquidityEngineUrlSettings, _assetsServiceWithCache);
+
+            if (channel.Type == DwhStoreProcedureChannel.Name)
+                return new DwhStoreProcedureChannel(channel, _telegramSender, _logFactory, _dwhClient);
+
+            if (channel.Type == LyciSandipOfferChannel.Name)
+                return new LyciSandipOfferChannel(channel, _telegramSender, _logFactory, _dwhClient);
 
             return null;
         }

@@ -19,6 +19,7 @@ using Lykke.Service.TelegramReporter.Services.NettingEngine;
 using Lykke.Service.TelegramReporter.Services.NettingEngine.Rabbit;
 using Lykke.Common.Log;
 using Lykke.HttpClientGenerator.Infrastructure;
+using Lykke.Service.Dwh.Client;
 using Lykke.Service.MarketMakerArbitrageDetector.Client;
 using Lykke.Service.TelegramReporter.Core.Services.WalletsRebalancer;
 using Lykke.Service.TelegramReporter.Services.WalletsRebalancer;
@@ -143,6 +144,8 @@ namespace Lykke.Service.TelegramReporter.Modules
 
             RegisterRepositories(builder);
             RegisterRabbitMqSubscribers(builder);
+
+            builder.RegisterLykkeServiceClient(_appSettings.CurrentValue.DwhServiceClient.ServiceUrl, null);
         }
 
         private void RegiaterFiatMarketMakerReportsClient(ContainerBuilder builder,
