@@ -32,30 +32,28 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
                 .ToArray();
 
 
-            foreach(var table in report)
+            var table = report.FirstOrDefault();
+            if (table == null || table.Rows.Count <= 0)
+                return;
+            
+            var str = new StringBuilder();
+            str.AppendLine($"please do these actions at cryptofacilities.com");
+            str.AppendLine();
+            foreach (DataRow row in table.Rows)
             {
-                if (table.Rows.Count <= 0)
-                    continue;
-                
-                var str = new StringBuilder();
-                str.AppendLine($"please do these actions at cryptofacilities.com");
-                str.AppendLine();
-                foreach (DataRow row in table.Rows)
+                if (row[table.Columns[0].ColumnName].ToString() == "Adjustment_Required_($)")
                 {
-                    if (row[table.Columns[0].ColumnName].ToString() == "Adjustment_Required_($)")
-                    {
-                        var value = decimal.Parse(row[table.Columns[2].ColumnName].ToString());
-                        str.AppendLine($"* Position Adjustment Required at {Math.Round(value, 2)} $, asset: {row[table.Columns[1].ColumnName]}. ");
-                    }
-
-                    if (row[table.Columns[0].ColumnName].ToString() == "Margin_Adjustment_Required_($)")
-                    {
-                        var value = decimal.Parse(row[table.Columns[2].ColumnName].ToString());
-                        str.AppendLine($"* Margin Adjustment Required at {Math.Round(value, 2)}, asset: {row[table.Columns[1].ColumnName]}. ");
-                    }
+                    var value = decimal.Parse(row[table.Columns[2].ColumnName].ToString());
+                    str.AppendLine($"* Position Adjustment Required at {Math.Round(value, 2)} $, asset: {row[table.Columns[1].ColumnName]}. ");
                 }
-                await SendMessage(str.ToString());
+
+                if (row[table.Columns[0].ColumnName].ToString() == "Margin_Adjustment_Required_($)")
+                {
+                    var value = decimal.Parse(row[table.Columns[2].ColumnName].ToString());
+                    str.AppendLine($"* Margin Adjustment Required at {Math.Round(value, 2)}, asset: {row[table.Columns[1].ColumnName]}. ");
+                }
             }
+            await SendMessage(str.ToString());
         }
     }
 }
