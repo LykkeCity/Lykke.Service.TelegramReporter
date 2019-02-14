@@ -7,6 +7,8 @@ using Common;
 using Common.Log;
 using Lykke.Common.Log;
 using Lykke.Service.Assets.Client;
+using Lykke.Service.Dwh.Client;
+using Lykke.Service.IndexHedgingEngine.Client;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.Channelv2;
 using Lykke.Service.TelegramReporter.Services.Channelv2.Channels;
@@ -19,22 +21,31 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2
         private readonly List<ReportChannel> _channelList = new List<ReportChannel>();
         private readonly HashSet<string> _channelTypes = new HashSet<string>();
 
+        private readonly IIndexHedgingEngineClient _indexHedgingEngineClient;
         private readonly IChannelRepository _channelRepository;
         private readonly ITelegramSender _telegramSender;
         private readonly ILogFactory _logFactory;
         private readonly LiquidityEngineUrlSettings _liquidityEngineUrlSettings;
         private readonly IAssetsServiceWithCache _assetsServiceWithCache;
+        private readonly IDwhClient _dwhClient;
         private readonly ILog _log;
 
-        public ChannelManager(IChannelRepository channelRepository, ITelegramSender telegramSender, ILogFactory logFactory,
+        public ChannelManager(
+            IIndexHedgingEngineClient indexHedgingEngineClient,
+            IChannelRepository channelRepository,
+            ITelegramSender telegramSender,
+            ILogFactory logFactory,
             LiquidityEngineUrlSettings liquidityEngineUrlSettings,
-            IAssetsServiceWithCache assetsServiceWithCache)
+            IAssetsServiceWithCache assetsServiceWithCache,
+            IDwhClient dwhClient)
         {
+            _indexHedgingEngineClient = indexHedgingEngineClient;
             _channelRepository = channelRepository;
             _telegramSender = telegramSender;
             _logFactory = logFactory;
             _liquidityEngineUrlSettings = liquidityEngineUrlSettings;
             _assetsServiceWithCache = assetsServiceWithCache;
+            _dwhClient = dwhClient;
             _log = _logFactory.CreateLog(this);
             RegisterChannels();
         }
@@ -43,6 +54,9 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2
         {
             _channelTypes.Add(HelloWorldReportChannel.Name);
             _channelTypes.Add(LiquidityEngineSummaryChannel.Name);
+            _channelTypes.Add(DwhStoreProcedureChannel.Name);
+            _channelTypes.Add(LyciSandipOfferChannel.Name);
+            _channelTypes.Add(IndexHedgingEngineHealthIssuesChannel.Name);
         }
 
         private ReportChannel CreateReportChannel(IReportChannel channel)
@@ -51,7 +65,18 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2
                 return new HelloWorldReportChannel(channel, _telegramSender, _logFactory);
 
             if (channel.Type == LiquidityEngineSummaryChannel.Name)
-                return new LiquidityEngineSummaryChannel(channel, _telegramSender, _logFactory, _liquidityEngineUrlSettings, _assetsServiceWithCache);
+                return new LiquidityEngineSummaryChannel(channel, _telegramSender, _logFactory,
+                    _liquidityEngineUrlSettings, _assetsServiceWithCache);
+
+            if (channel.Type == DwhStoreProcedureChannel.Name)
+                return new DwhStoreProcedureChannel(channel, _telegramSender, _logFactory, _dwhClient);
+
+            if (channel.Type == LyciSandipOfferChannel.Name)
+                return new LyciSandipOfferChannel(channel, _telegramSender, _logFactory, _dwhClient);
+
+            if (channel.Type == IndexHedgingEngineHealthIssuesChannel.Name)
+                return new IndexHedgingEngineHealthIssuesChannel(channel, _telegramSender, _logFactory,
+                    _indexHedgingEngineClient);
 
             return null;
         }
@@ -79,7 +104,8 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2
             return item.ChannelId;
         }
 
-        public async Task<string> UpdateChannelAsync(string channelId, string type, long chatId, TimeSpan interval, string metainfo)
+        public async Task<string> UpdateChannelAsync(string channelId, string type, long chatId, TimeSpan interval,
+            string metainfo)
         {
             var settings = new ReportChannelSettings(Guid.NewGuid().ToString(), type, chatId, interval, metainfo);
             var item = CreateReportChannel(settings);
@@ -101,7 +127,8 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2
             _channelList.Add(item);
             old.Stop();
             item.Start();
-            _log.Info($"Channel started, Id={item.ChannelId}, Type={item.GetType().FullName}, Metainfo: {item.Metainfo}");
+            _log.Info(
+                $"Channel started, Id={item.ChannelId}, Type={item.GetType().FullName}, Metainfo: {item.Metainfo}");
 
             return item.ChannelId;
         }
@@ -133,9 +160,11 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2
                     _log.Error($"Incorrect channel Type = {channel.Type}.", context: $"Data: {channel.ToJson()}");
                     continue;
                 }
+
                 _channelList.Add(item);
                 item.Start();
-                _log.Info($"Channel started, Id={item.ChannelId}, Type={item.GetType().FullName}, Metainfo: {item.Metainfo}");
+                _log.Info(
+                    $"Channel started, Id={item.ChannelId}, Type={item.GetType().FullName}, Metainfo: {item.Metainfo}");
             }
         }
 
