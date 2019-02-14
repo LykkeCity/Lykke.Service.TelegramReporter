@@ -140,7 +140,6 @@ namespace Lykke.Service.TelegramReporter.Modules
             builder.RegisterType<WalletsRebalancerPublisher>()
                 .As<IWalletsRebalancerPublisher>();
 
-
             builder.RegisterType<ChatPublisherService>()
                 .As<IChatPublisherService>()
                 .As<IStartable>()

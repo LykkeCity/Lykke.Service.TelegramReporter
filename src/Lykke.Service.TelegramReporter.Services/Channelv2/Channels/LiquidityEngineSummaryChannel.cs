@@ -82,9 +82,6 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
 
                 var summary = await reportsApi.GetBalanceIndicatorsReportAsync();
 
-                //if (report.Count == 0)
-                //    return;
-
                 var grouped = report.GroupBy(x => x.AssetPairId).OrderBy(x => x.Key);
 
                 var result = new List<string>();

@@ -30,7 +30,7 @@
     <PackageReference Include="AutoMapper" Version="8.0.0" />
     <PackageReference Include="Lykke.Sdk" Version="5.9.0" />
     <PackageReference Include="Lykke.Service.Dwh.Client" Version="1.1.0" />
-    <PackageReference Include="Lykke.Service.LiquidityEngine.Client" Version="1.18.2" />
+    <PackageReference Include="Lykke.Service.LiquidityEngine.Client" Version="1.22.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
   </ItemGroup>
