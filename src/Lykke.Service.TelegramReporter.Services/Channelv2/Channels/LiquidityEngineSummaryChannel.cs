@@ -108,7 +108,7 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
 
                     var pnLStr = pnLInUsd.HasValue ? $"{Math.Round(pnLInUsd.Value, 4)}$" : $"{Math.Round(pnL, 4)} {quoteAssetStr}";
 
-                    var lastTrade = assetPairTrades.Where(e => e.PnLUsd.HasValue).OrderByDescending(e => e.ClosePrice).FirstOrDefault();
+                    var lastTrade = assetPairTrades.Where(e => e.PnLUsd.HasValue && e.PnLUsd.Value > 0).OrderByDescending(e => e.ClosePrice).FirstOrDefault();
                     var latsUsdPrice = (lastTrade != null && lastTrade.PnLUsd.HasValue && lastTrade.PnL.HasValue)
                         ? lastTrade.PnLUsd.Value / lastTrade.PnL.Value
                         : 0m;
