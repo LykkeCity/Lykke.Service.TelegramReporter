@@ -51,7 +51,15 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2
 
         private async Task Handler(ITimerTrigger timer, TimerTriggeredHandlerArgs args, CancellationToken cancellationtoken)
         {
-            await DoTimer();
+            try
+            {
+                await DoTimer();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, context: $"Metainfo: {Metainfo}");
+            }
+            
         }
 
         protected abstract Task DoTimer();

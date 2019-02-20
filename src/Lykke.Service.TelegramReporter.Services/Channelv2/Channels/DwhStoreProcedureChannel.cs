@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -23,7 +24,7 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
 
         protected override async Task DoTimer()
         {
-            ResponceDataSet response = await _dwhClient.Call(new Dictionary<string, string>(), Metainfo, "report");
+            ResponceDataSet response = await ExecuteProcedure();
 
             var report = response.Data.Tables
                 .Cast<DataTable>()
@@ -43,6 +44,33 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
                     await SendMessage(str.ToString());
                 }
             }
+        }
+
+        private async Task<ResponceDataSet> ExecuteProcedure()
+        {
+            int countTry = 3;
+            while (countTry > 0)
+            {
+                countTry--;
+                try
+                {
+                    ResponceDataSet response =
+                        await _dwhClient.Call(new Dictionary<string, string>(), Metainfo, "report");
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, context: $"Procedure: {Metainfo}");
+                    if (countTry <= 0)
+                    {
+                        throw;
+                    }
+                }
+
+                await Task.Delay(5000);
+            }
+
+            throw new Exception("Cannot execute store procedure");
         }
     }
 }
