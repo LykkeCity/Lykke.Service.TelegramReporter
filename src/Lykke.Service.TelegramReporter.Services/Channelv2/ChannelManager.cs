@@ -58,6 +58,7 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2
             _channelTypes.Add(LyciSandipOfferChannel.Name);
             _channelTypes.Add(IndexHedgingEngineHealthIssuesChannel.Name);
             _channelTypes.Add(LiquidityEngineMessagesChannel.Name);
+            _channelTypes.Add(LiquidityEnginePnLStopLossEnginesChannel.Name);
         }
 
         private ReportChannel CreateReportChannel(IReportChannel channel)
@@ -88,6 +89,9 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2
             {
                 _log.Warning($"Can't create channel '{channel.Type}'.", ex, channel.Type);
             }
+
+            if (channel.Type == LiquidityEnginePnLStopLossEnginesChannel.Name)
+                return new LiquidityEnginePnLStopLossEnginesChannel(channel, _telegramSender, _liquidityEngineUrlSettings, _logFactory);
 
             return null;
         }
