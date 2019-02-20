@@ -58,29 +58,40 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2
             _channelTypes.Add(LyciSandipOfferChannel.Name);
             _channelTypes.Add(IndexHedgingEngineHealthIssuesChannel.Name);
             _channelTypes.Add(LiquidityEngineMessagesChannel.Name);
+            _channelTypes.Add(LiquidityEnginePnLStopLossEnginesChannel.Name);
         }
 
         private ReportChannel CreateReportChannel(IReportChannel channel)
         {
-            if (channel.Type == HelloWorldReportChannel.Name)
-                return new HelloWorldReportChannel(channel, _telegramSender, _logFactory);
+            try
+            {
+                if (channel.Type == HelloWorldReportChannel.Name)
+                    return new HelloWorldReportChannel(channel, _telegramSender, _logFactory);
 
-            if (channel.Type == LiquidityEngineSummaryChannel.Name)
-                return new LiquidityEngineSummaryChannel(channel, _telegramSender, _logFactory,
-                    _liquidityEngineUrlSettings, _assetsServiceWithCache);
+                if (channel.Type == LiquidityEngineSummaryChannel.Name)
+                    return new LiquidityEngineSummaryChannel(channel, _telegramSender, _logFactory,
+                        _liquidityEngineUrlSettings, _assetsServiceWithCache);
 
-            if (channel.Type == DwhStoreProcedureChannel.Name)
-                return new DwhStoreProcedureChannel(channel, _telegramSender, _logFactory, _dwhClient);
+                if (channel.Type == DwhStoreProcedureChannel.Name)
+                    return new DwhStoreProcedureChannel(channel, _telegramSender, _logFactory, _dwhClient);
 
-            if (channel.Type == LyciSandipOfferChannel.Name)
-                return new LyciSandipOfferChannel(channel, _telegramSender, _logFactory, _dwhClient);
+                if (channel.Type == LyciSandipOfferChannel.Name)
+                    return new LyciSandipOfferChannel(channel, _telegramSender, _logFactory, _dwhClient);
 
-            if (channel.Type == IndexHedgingEngineHealthIssuesChannel.Name)
-                return new IndexHedgingEngineHealthIssuesChannel(channel, _telegramSender, _logFactory,
-                    _indexHedgingEngineClient);
+                if (channel.Type == IndexHedgingEngineHealthIssuesChannel.Name)
+                    return new IndexHedgingEngineHealthIssuesChannel(channel, _telegramSender, _logFactory,
+                        _indexHedgingEngineClient);
 
-            if (channel.Type == LiquidityEngineMessagesChannel.Name)
-                return new LiquidityEngineMessagesChannel(channel, _telegramSender, _liquidityEngineUrlSettings, _logFactory);
+                if (channel.Type == LiquidityEngineMessagesChannel.Name)
+                    return new LiquidityEngineMessagesChannel(channel, _telegramSender, _liquidityEngineUrlSettings, _logFactory);
+            }
+            catch (Exception ex)
+            {
+                _log.Warning($"Can't create channel '{channel.Type}'.", ex, channel.Type);
+            }
+
+            if (channel.Type == LiquidityEnginePnLStopLossEnginesChannel.Name)
+                return new LiquidityEnginePnLStopLossEnginesChannel(channel, _telegramSender, _liquidityEngineUrlSettings, _logFactory);
 
             return null;
         }
@@ -166,7 +177,19 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2
                 }
 
                 _channelList.Add(item);
-                item.Start();
+
+                try
+                {
+                    item.Start();
+                }
+                catch (Exception ex)
+                {
+                    _channelList.Remove(item);
+
+                    _log.Warning($"Can't start channel '{item.Type}'.", ex, item.Type);
+                }
+
+
                 _log.Info(
                     $"Channel started, Id={item.ChannelId}, Type={item.GetType().FullName}, Metainfo: {item.Metainfo}");
             }
