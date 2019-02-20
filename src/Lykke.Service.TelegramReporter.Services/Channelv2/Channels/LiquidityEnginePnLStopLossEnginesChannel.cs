@@ -59,6 +59,9 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
 
                 pnLStopLossEngines = pnLStopLossEngines.Where(x => x.Mode == PnLStopLossEngineMode.Active).ToList();
 
+                if (!pnLStopLossEngines.Any())
+                    return;
+                
                 foreach (var slE in pnLStopLossEngines)
                 {
                     var expectedTime = DateTime.UtcNow - (slE.LastTime + slE.Interval);
