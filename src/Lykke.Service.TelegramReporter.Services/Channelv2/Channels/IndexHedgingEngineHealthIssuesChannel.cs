@@ -45,18 +45,20 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
 
             if (positionsWithErrors.Count == 0)
                 return;
-
-            var header = "IHE Assets Errors";
-
             var message = new StringBuilder();
 
-            message.AppendLine(header);
+            bool empty = true;
+
+            message.AppendLine("IHE Assets Errors");
 
             foreach (PositionReportModel position in positionsWithErrors)
                 if (!(position.Error == "No quote" && position.AssetInvestment.RemainingAmount == 0))
+                {
+                    empty = false;
                     message.AppendLine($"{position.AssetId}: {position.Error}");
-
-            if (message.ToString() == header)
+                }
+                    
+            if (empty)
                 return;
 
             await SendMessage(message.ToString());
