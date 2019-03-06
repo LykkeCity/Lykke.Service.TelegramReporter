@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,7 +50,8 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
             message.AppendLine("IHE Assets Errors");
 
             foreach (PositionReportModel position in positionsWithErrors)
-                message.AppendLine($"{position.AssetId}: {position.Error}");
+                if (!(position.Error == "No quote" && position.AssetInvestment.RemainingAmount == 0))
+                    message.AppendLine($"{position.AssetId}: {position.Error}");
 
             await SendMessage(message.ToString());
         }
