@@ -22,6 +22,7 @@ using Lykke.Common.Log;
 using Lykke.HttpClientGenerator.Infrastructure;
 using Lykke.Service.Dwh.Client;
 using Lykke.Service.IndexHedgingEngine.Client;
+using Lykke.Service.LiquidityEngine.Client;
 using Lykke.Service.MarketMakerArbitrageDetector.Client;
 using Lykke.Service.TelegramReporter.Core.Services.WalletsRebalancer;
 using Lykke.Service.TelegramReporter.Services.WalletsRebalancer;
@@ -34,8 +35,7 @@ using Lykke.Service.TelegramReporter.Services.Channelv2;
 using Lykke.Service.TelegramReporter.Services.CryptoIndex.InstancesSettings;
 using Lykke.Service.TelegramReporter.Services.LiquidityEngine;
 using Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages;
-using CryptoIndexClientSettings =
-    Lykke.Service.TelegramReporter.Services.CryptoIndex.InstancesSettings.CryptoIndexClientSettings;
+using CryptoIndexClientSettings = Lykke.Service.TelegramReporter.Services.CryptoIndex.InstancesSettings.CryptoIndexClientSettings;
 
 namespace Lykke.Service.TelegramReporter.Modules
 {
@@ -51,14 +51,13 @@ namespace Lykke.Service.TelegramReporter.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<NettingEngineInstanceManager>()
-                .WithParameter(TypedParameter.From(_appSettings.CurrentValue.NettingEngineServiceClient.Instances))
-                .As<INettingEngineInstanceManager>()
-                .SingleInstance();
+            var appSettings = _appSettings.CurrentValue;
+
+            RegisterServiceClients(builder, appSettings);
 
             builder.RegisterType<TelegramService>()
                 .As<ITelegramSender>()
-                .WithParameter("settings", _appSettings.CurrentValue.TelegramReporterService.Telegram)
+                .WithParameter("settings", appSettings.TelegramReporterService.Telegram)
                 .As<IStartable>()
                 .As<IStopable>()
                 .AutoActivate()
@@ -69,42 +68,6 @@ namespace Lykke.Service.TelegramReporter.Modules
                 .As<IStartable>()
                 .As<IStopable>()
                 .AutoActivate()
-                .SingleInstance();
-
-            builder.RegisterInstance(
-                    new AssetsService(new Uri(_appSettings.CurrentValue.AssetsServiceClient.ServiceUrl)))
-                .As<IAssetsService>()
-                .SingleInstance();
-
-            builder.RegisterAssetsClient(AssetServiceSettings.Create(
-                new Uri(_appSettings.CurrentValue.AssetsServiceClient.ServiceUrl),
-                _appSettings.CurrentValue.TelegramReporterService.AssetsCacheExpirationPeriod));
-
-            builder.RegisterBalancesClient(_appSettings.CurrentValue.BalancesServiceClient.ServiceUrl);
-            builder.RegisterMarketMakerReportsClient(_appSettings.CurrentValue.MarketMakerReportsServiceClient, null);
-
-            RegisterFiatMarketMakerReportsClient(builder,
-                _appSettings.CurrentValue.FiatMarketMakerReportsServiceClient);
-
-            builder.RegisterMarketMakerArbitrageDetectorClient(new MarketMakerArbitrageDetectorServiceClientSettings
-                {ServiceUrl = _appSettings.CurrentValue.MarketMakerArbitrageDetectorServiceClient.ServiceUrl}, null);
-
-            builder.RegisterInstance(
-                    new LiquidityEngineUrlSettings(_appSettings.CurrentValue.LiquidityEngineServiceClient.Instances
-                        .Select(e => e.ServiceUrl).ToArray()))
-                .SingleInstance();
-
-            builder.RegisterIndexHedgingEngineClient(_appSettings.CurrentValue.IndexHedgingEngineClient, null);
-
-            var cryptoIndexInstances = new List<CryptoIndexClientSettings>();
-            foreach (var cics in _appSettings.CurrentValue.CryptoIndexServiceClient.Instances)
-                cryptoIndexInstances.Add(new CryptoIndexClientSettings
-                    {DisplayName = cics.DisplayName, ServiceUrl = cics.ServiceUrl});
-            builder.RegisterInstance(
-                    new CryptoIndexInstancesSettings
-                    {
-                        Instances = cryptoIndexInstances.ToArray()
-                    })
                 .SingleInstance();
 
             builder.RegisterType<NettingEngineStateProvider>()
@@ -154,7 +117,51 @@ namespace Lykke.Service.TelegramReporter.Modules
             RegisterRepositories(builder);
             RegisterRabbitMqSubscribers(builder);
 
-            builder.RegisterLykkeServiceClient(_appSettings.CurrentValue.DwhServiceClient.ServiceUrl, null);
+            builder.RegisterLykkeServiceClient(appSettings.DwhServiceClient.ServiceUrl, null);
+        }
+
+        private void RegisterServiceClients(ContainerBuilder builder, AppSettings appSettings)
+        {
+            builder.RegisterType<NettingEngineInstanceManager>()
+                .WithParameter(TypedParameter.From(appSettings.NettingEngineServiceClient.Instances))
+                .As<INettingEngineInstanceManager>()
+                .SingleInstance();
+
+            builder.RegisterInstance(
+                    new AssetsService(new Uri(appSettings.AssetsServiceClient.ServiceUrl)))
+                .As<IAssetsService>()
+                .SingleInstance();
+
+            builder.RegisterAssetsClient(AssetServiceSettings.Create(
+                new Uri(appSettings.AssetsServiceClient.ServiceUrl),
+                appSettings.TelegramReporterService.AssetsCacheExpirationPeriod));
+
+            builder.RegisterBalancesClient(appSettings.BalancesServiceClient.ServiceUrl);
+            builder.RegisterMarketMakerReportsClient(appSettings.MarketMakerReportsServiceClient, null);
+
+            RegisterFiatMarketMakerReportsClient(builder,
+                appSettings.FiatMarketMakerReportsServiceClient);
+
+            builder.RegisterMarketMakerArbitrageDetectorClient(new MarketMakerArbitrageDetectorServiceClientSettings
+                {ServiceUrl = appSettings.MarketMakerArbitrageDetectorServiceClient.ServiceUrl}, null);
+
+            builder.RegisterInstance(
+                    new LiquidityEngineUrlSettings(appSettings.LiquidityEngineServiceClient.Instances
+                        .Select(e => e.ServiceUrl).ToArray()))
+                .SingleInstance();
+
+            builder.RegisterIndexHedgingEngineClient(appSettings.IndexHedgingEngineClient, null);
+
+            var cryptoIndexInstances = new List<CryptoIndexClientSettings>();
+            foreach (var cics in appSettings.CryptoIndexServiceClient.Instances)
+                cryptoIndexInstances.Add(new CryptoIndexClientSettings
+                    {DisplayName = cics.DisplayName, ServiceUrl = cics.ServiceUrl});
+            builder.RegisterInstance(
+                    new CryptoIndexInstancesSettings
+                    {
+                        Instances = cryptoIndexInstances.ToArray()
+                    })
+                .SingleInstance();
         }
 
         private void RegisterFiatMarketMakerReportsClient(ContainerBuilder builder,
