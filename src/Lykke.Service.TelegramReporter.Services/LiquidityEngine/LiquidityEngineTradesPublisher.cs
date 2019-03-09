@@ -15,7 +15,9 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
     public class LiquidityEngineTradesPublisher : ChatPublisher
     {
         private readonly LiquidityEngineUrlSettings _settings;
-        private readonly Dictionary<string, IReportsApi> _clients = new Dictionary<string, IReportsApi>();
+        private readonly Dictionary<string, IReportsApi> _reportsApis = new Dictionary<string, IReportsApi>();
+        private readonly Dictionary<string, IInstrumentMarkupsApi> _markupsApis = new Dictionary<string, IInstrumentMarkupsApi>();
+        private readonly Dictionary<string, DateTime> _lastClose = new Dictionary<string, DateTime>();
         private readonly IAssetsServiceWithCache _assetsServiceWithCache;
 
         public LiquidityEngineTradesPublisher(ITelegramSender telegramSender, IChatPublisherSettings publisherSettings,
@@ -29,24 +31,25 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
 
         public override async Task Publish()
         {
-            if (!_clients.Any())
+            if (!_reportsApis.Any())
             {
                 foreach (var url in _settings.Urls)
                 {
-                    var client = CreateApiClient(url);
-                    _clients.Add(url, client);
+                    var reportsApi = CreateReportApi(url);
+                    _reportsApis.Add(url, reportsApi);
+
+                    var markupsApi = CreateMarkupApi(url);
+                    _markupsApis.Add(url, markupsApi);
                 }
             }
 
-            foreach (var reportsApi in _clients)
+            foreach (var reportsApi in _reportsApis)
             {
                 await CheckApi(reportsApi.Key, reportsApi.Value);
             }
         }
-        
-        private Dictionary<string, DateTime> _lastClose = new Dictionary<string, DateTime>();
 
-        private async Task CheckApi(string key, IReportsApi reportsApi)
+        private async Task CheckApi(string key, IReportsApi reportsApi, IInstrumentMarkupsApi markupsApi)
         {
             var fromDate = DateTime.UtcNow.Date.AddDays(-1);
             var toDate = DateTime.UtcNow.Date.AddDays(+1);
@@ -57,12 +60,13 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                 _lastClose[key] = lastClose;
             }
 
-            Log.Info($"Check api Start. trades. Api: {key}. LastTime: {lastClose:yyyy-MM-dd HH:mm:ss}");
+            Log.Info($"Check api started. Trades. Api: {key}. LastTime: {lastClose:yyyy-MM-dd HH:mm:ss}");
 
             var countTrade = 0;
             try
             {
                 var data = await reportsApi.GetPositionsReportAsync(fromDate, toDate, 1500);
+                var markups = await markupsApi.GetAllAsync();
 
                 var positions = data.Where(e => e.CloseDate > lastClose).ToList();
 
@@ -73,6 +77,7 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                     var asset = await _assetsServiceWithCache.TryGetAssetAsync(quoteAssetId);
                     var quoteAssetDisplayId = quoteAssetId == null ? null : asset.Id;
                     var quoteAssetStr = string.IsNullOrWhiteSpace(quoteAssetDisplayId) ? "[quote asset]" : quoteAssetDisplayId;
+                    var markup = markups.Single(x => x.AssetPairId == position.AssetPairId);
 
                     var pnL = position.PnL ?? 0;
                     var closePrice = position.ClosePrice ?? 0;
@@ -85,7 +90,8 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                         $"Volume: {Math.Round(position.Volume, 6)}; " +
                         $"OpenPrice: {Math.Round(position.Price, 6)}; " +
                         $"ClosePrice: {Math.Round(closePrice, 6)}; " +
-                        $"Close: {position.CloseDate:MM-dd HH:mm:ss}";
+                        $"Close: {position.CloseDate:MM-dd HH:mm:ss}; " +
+                        $"Markup: {(position.Type == PositionType.Short ? markup.TotalAskMarkup : markup.TotalBidMarkup)}";
 
                     if (positions.Count >= 470) message += "; !!!max count of position in day, please add limit!!!";
                     await TelegramSender.SendTextMessageAsync(PublisherSettings.ChatId, message);
@@ -102,10 +108,10 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                 _lastClose[key] = DateTime.UtcNow;
             }
 
-            Log.Info($"Check api complite. Found: {countTrade} trades. Api: {key}. LastTime: {lastClose:yyyy-MM-dd HH:mm:ss}");
+            Log.Info($"Check api completed. Found: {countTrade} trades. Api: {key}. LastTime: {lastClose:yyyy-MM-dd HH:mm:ss}");
         }
 
-        private IReportsApi CreateApiClient(string url)
+        private IReportsApi CreateReportApi(string url)
         {
             var generator = HttpClientGenerator.HttpClientGenerator.BuildForUrl(url)
                 .WithAdditionalCallsWrapper(new HttpClientGenerator.Infrastructure.ExceptionHandlerCallsWrapper())
@@ -114,6 +120,19 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                 .Create();
 
             var client = generator.Generate<IReportsApi>();
+
+            return client;
+        }
+
+        private IInstrumentMarkupsApi CreateMarkupApi(string url)
+        {
+            var generator = HttpClientGenerator.HttpClientGenerator.BuildForUrl(url)
+                .WithAdditionalCallsWrapper(new HttpClientGenerator.Infrastructure.ExceptionHandlerCallsWrapper())
+                .WithoutRetries()
+                .WithoutCaching()
+                .Create();
+
+            var client = generator.Generate<IInstrumentMarkupsApi>();
 
             return client;
         }
