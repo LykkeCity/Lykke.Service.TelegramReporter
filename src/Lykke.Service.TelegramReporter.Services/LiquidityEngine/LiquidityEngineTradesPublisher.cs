@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Common.Log;
 using Lykke.Service.Assets.Client;
-using Lykke.Service.LiquidityEngine.Client.Api;
+using Lykke.Service.LiquidityEngine.Client;
 using Lykke.Service.LiquidityEngine.Client.Models.Positions;
 using Lykke.Service.TelegramReporter.Core;
 using Lykke.Service.TelegramReporter.Core.Domain.Model;
@@ -15,8 +15,7 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
     public class LiquidityEngineTradesPublisher : ChatPublisher
     {
         private readonly LiquidityEngineUrlSettings _settings;
-        private readonly Dictionary<string, IReportsApi> _reportsApis = new Dictionary<string, IReportsApi>();
-        private readonly Dictionary<string, IInstrumentMarkupsApi> _markupsApis = new Dictionary<string, IInstrumentMarkupsApi>();
+        private readonly Dictionary<string, ILiquidityEngineClient> _clients = new Dictionary<string, ILiquidityEngineClient>();
         private readonly Dictionary<string, DateTime> _lastClose = new Dictionary<string, DateTime>();
         private readonly IAssetsServiceWithCache _assetsServiceWithCache;
 
@@ -31,25 +30,22 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
 
         public override async Task Publish()
         {
-            if (!_reportsApis.Any())
+            if (!_clients.Any())
             {
                 foreach (var url in _settings.Urls)
                 {
-                    var reportsApi = CreateReportApi(url);
-                    _reportsApis.Add(url, reportsApi);
-
-                    var markupsApi = CreateMarkupApi(url);
-                    _markupsApis.Add(url, markupsApi);
+                    var client = CreateClient(url);
+                    _clients.Add(url, client);
                 }
             }
 
-            foreach (var key in _reportsApis.Keys)
+            foreach (var key in _clients.Keys)
             {
-                await CheckApi(key, _reportsApis[key], _markupsApis[key]);
+                await CheckApi(key, _clients[key]);
             }
         }
 
-        private async Task CheckApi(string key, IReportsApi reportsApi, IInstrumentMarkupsApi markupsApi)
+        private async Task CheckApi(string key, ILiquidityEngineClient client)
         {
             var fromDate = DateTime.UtcNow.Date.AddDays(-1);
             var toDate = DateTime.UtcNow.Date.AddDays(+1);
@@ -65,8 +61,8 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
             var countTrade = 0;
             try
             {
-                var data = await reportsApi.GetPositionsReportAsync(fromDate, toDate, 1500);
-                var markups = await markupsApi.GetAllAsync();
+                var data = await client.Reports.GetPositionsReportAsync(fromDate, toDate, 1500);
+                var markups = await client.InstrumentMarkupsApi.GetAllAsync();
 
                 var positions = data.Where(e => e.CloseDate > lastClose).ToList();
 
@@ -111,21 +107,7 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
             Log.Info($"Check api completed. Found: {countTrade} trades. Api: {key}. LastTime: {lastClose:yyyy-MM-dd HH:mm:ss}");
         }
 
-        private IReportsApi CreateReportApi(string url)
-        {
-            var client = GetClientGenerator(url).Generate<IReportsApi>();
-
-            return client;
-        }
-
-        private IInstrumentMarkupsApi CreateMarkupApi(string url)
-        {
-            var client = GetClientGenerator(url).Generate<IInstrumentMarkupsApi>();
-
-            return client;
-        }
-
-        private static HttpClientGenerator.HttpClientGenerator GetClientGenerator(string url)
+        private ILiquidityEngineClient CreateClient(string url)
         {
             var generator = HttpClientGenerator.HttpClientGenerator.BuildForUrl(url)
                 .WithAdditionalCallsWrapper(new HttpClientGenerator.Infrastructure.ExceptionHandlerCallsWrapper())
@@ -133,7 +115,9 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                 .WithoutCaching()
                 .Create();
 
-            return generator;
+            var client = new LiquidityEngineClient(generator);
+
+            return client;
         }
     }
 }
