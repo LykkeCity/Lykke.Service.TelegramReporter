@@ -43,9 +43,9 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                 }
             }
 
-            foreach (var reportsApi in _reportsApis)
+            foreach (var key in _reportsApis.Keys)
             {
-                await CheckApi(reportsApi.Key, reportsApi.Value);
+                await CheckApi(key, _reportsApis[key], _markupsApis[key]);
             }
         }
 
@@ -113,18 +113,19 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
 
         private IReportsApi CreateReportApi(string url)
         {
-            var generator = HttpClientGenerator.HttpClientGenerator.BuildForUrl(url)
-                .WithAdditionalCallsWrapper(new HttpClientGenerator.Infrastructure.ExceptionHandlerCallsWrapper())
-                .WithoutRetries()
-                .WithoutCaching()
-                .Create();
-
-            var client = generator.Generate<IReportsApi>();
+            var client = GetClientGenerator(url).Generate<IReportsApi>();
 
             return client;
         }
 
         private IInstrumentMarkupsApi CreateMarkupApi(string url)
+        {
+            var client = GetClientGenerator(url).Generate<IInstrumentMarkupsApi>();
+
+            return client;
+        }
+
+        private static HttpClientGenerator.HttpClientGenerator GetClientGenerator(string url)
         {
             var generator = HttpClientGenerator.HttpClientGenerator.BuildForUrl(url)
                 .WithAdditionalCallsWrapper(new HttpClientGenerator.Infrastructure.ExceptionHandlerCallsWrapper())
@@ -132,9 +133,7 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                 .WithoutCaching()
                 .Create();
 
-            var client = generator.Generate<IInstrumentMarkupsApi>();
-
-            return client;
+            return generator;
         }
     }
 }
