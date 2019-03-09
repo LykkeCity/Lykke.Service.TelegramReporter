@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Lykke.Common.Log;
-using Lykke.Service.LiquidityEngine.Client.Api;
+using Lykke.Service.LiquidityEngine.Client;
 using Lykke.Service.LiquidityEngine.Client.Models.PnLStopLossEngines;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.Channelv2;
@@ -15,8 +15,7 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
     public class LiquidityEnginePnLStopLossEnginesTriggeredChannel : ReportChannel
     {
         private readonly LiquidityEngineUrlSettings _settings;
-        private readonly Dictionary<string, IPnLStopLossEnginesApi> _clients
-            = new Dictionary<string, IPnLStopLossEnginesApi>();
+        private readonly Dictionary<string, ILiquidityEngineClient> _clients = new Dictionary<string, ILiquidityEngineClient>();
         private readonly object _sync = new object();
         private readonly Dictionary<string, IReadOnlyList<PnLStopLossEngineModel>> _lastEnginesStates
             = new Dictionary<string, IReadOnlyList<PnLStopLossEngineModel>>();
@@ -39,7 +38,7 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
             {
                 foreach (var url in _settings.Urls)
                 {
-                    var client = CreateApiClient(url);
+                    var client = CreateClient(url);
                     _clients.Add(url, client);
                 }
             }
@@ -50,7 +49,7 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
             }
         }
 
-        private async Task Execute(string key, IPnLStopLossEnginesApi pnLStopLossEnginesApi)
+        private async Task Execute(string key, ILiquidityEngineClient client)
         {
             Log.Info($"Started checking pnl stop loss engines triggered for LE with key '{key}'.");
 
@@ -61,7 +60,7 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
 
             try
             {
-                IReadOnlyList<PnLStopLossEngineModel> pnLStopLossEngines = (await pnLStopLossEnginesApi.GetAllAsync()).ToList();
+                IReadOnlyList<PnLStopLossEngineModel> pnLStopLossEngines = (await client.PnLStopLossEngines.GetAllAsync()).ToList();
 
                 pnLStopLossEngines = pnLStopLossEngines.Where(x => x.Mode == PnLStopLossEngineMode.Active).ToList();
 
@@ -110,7 +109,7 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
             Log.Info($"Finished checking pnl stop loss engines triggered for LE with key '{key}'.");
         }
 
-        private IPnLStopLossEnginesApi CreateApiClient(string url)
+        private ILiquidityEngineClient CreateClient(string url)
         {
             var generator = HttpClientGenerator.HttpClientGenerator.BuildForUrl(url)
                 .WithAdditionalCallsWrapper(new HttpClientGenerator.Infrastructure.ExceptionHandlerCallsWrapper())
@@ -118,7 +117,9 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
                 .WithoutCaching()
                 .Create();
 
-            return generator.Generate<IPnLStopLossEnginesApi>();
+            var client = new LiquidityEngineClient(generator);
+
+            return client;
         }
     }
 }
