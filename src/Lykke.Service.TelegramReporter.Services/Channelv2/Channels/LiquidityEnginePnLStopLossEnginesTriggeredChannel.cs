@@ -60,33 +60,28 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
 
             try
             {
-                IReadOnlyList<PnLStopLossEngineModel> pnLStopLossEngines = (await client.PnLStopLossEngines.GetAllAsync()).ToList();
+                IReadOnlyList<PnLStopLossEngineModel> current = (await client.PnLStopLossEngines.GetAllAsync()).ToList();
 
-                pnLStopLossEngines = pnLStopLossEngines.Where(x => x.Mode == PnLStopLossEngineMode.Active).ToList();
-
-                if (!pnLStopLossEngines.Any())
-                    return;
+                current = current.Where(x => x.Mode == PnLStopLossEngineMode.Active).ToList();
 
                 lock (_sync)
                 {
                     if (!_lastEnginesStates.ContainsKey(key))
+                        newTriggered.AddRange(current);
+                    else
                     {
-                        _lastEnginesStates[key] = pnLStopLossEngines;
+                        var previous = _lastEnginesStates[key];
 
-                        return;
+                        foreach (var engine in current)
+                        {
+                            if (previous.Any(x => x.Id == engine.Id))
+                                continue;
+
+                            newTriggered.Add(engine);
+                        }
                     }
 
-                    var previous = _lastEnginesStates[key];
-
-                    foreach (var engine in pnLStopLossEngines)
-                    {
-                        if (previous.Any(x => x.Id == engine.Id))
-                            continue;
-
-                        newTriggered.Add(engine);
-                    }
-
-                    _lastEnginesStates[key] = pnLStopLossEngines;
+                    _lastEnginesStates[key] = current;
                 }
 
                 if (!newTriggered.Any())
@@ -94,9 +89,11 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
 
                 foreach (var engine in newTriggered)
                 {
-                    var expectedTime = DateTime.UtcNow - (engine.LastTime + engine.Interval);
+                    var passedSinceStart = DateTime.UtcNow - engine.LastTime.Value;
+                    var expectedTime = DateTime.UtcNow + engine.Interval - passedSinceStart;
+                    var remainingTime = expectedTime - DateTime.UtcNow;
 
-                    sb.AppendLine($"{engine.AssetPairId}: Threshold={engine.Threshold}, Interval={engine.Interval}. ExpectedTime: {expectedTime}.");
+                    sb.AppendLine($"{engine.AssetPairId}: Threshold={engine.Threshold}, Interval={engine.Interval}. RemainingTime: {remainingTime:hh\\:mm\\:ss}.");
                 }
 
                 await SendMessage(sb.ToString());

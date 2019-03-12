@@ -73,12 +73,15 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                     var asset = await _assetsServiceWithCache.TryGetAssetAsync(quoteAssetId);
                     var quoteAssetDisplayId = quoteAssetId == null ? null : asset.Id;
                     var quoteAssetStr = string.IsNullOrWhiteSpace(quoteAssetDisplayId) ? "[quote asset]" : quoteAssetDisplayId;
-                    var markup = markups.Single(x => x.AssetPairId == position.AssetPairId);
+
+                    var markupModel = markups.Single(x => x.AssetPairId == position.AssetPairId);
+                    var markupValue = position.Type == PositionType.Short ? markupModel.TotalAskMarkup : markupModel.TotalBidMarkup;
+                    var markup = markupValue == -1 ? "stop sell" : Math.Round(markupValue * 100, 2) + "%";
 
                     var pnL = position.PnL ?? 0;
                     var closePrice = position.ClosePrice ?? 0;
                     var pnLStr = position.PnLUsd.HasValue ? $"{Math.Round(position.PnLUsd.Value, 4)}$" : $"{Math.Round(pnL, 4)} {quoteAssetStr}";
-
+                    
                     var message =
                         $"{position.AssetPairId}; " +
                         $"PL={pnLStr}; " +
@@ -87,7 +90,7 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                         $"OpenPrice: {Math.Round(position.Price, 6)}; " +
                         $"ClosePrice: {Math.Round(closePrice, 6)}; " +
                         $"Close: {position.CloseDate:MM-dd HH:mm:ss}; " +
-                        $"Markup: {(position.Type == PositionType.Short ? markup.TotalAskMarkup : markup.TotalBidMarkup)}";
+                        $"Markup: {markup}";
 
                     if (positions.Count >= 470) message += "; !!!max count of position in day, please add limit!!!";
                     await TelegramSender.SendTextMessageAsync(PublisherSettings.ChatId, message);

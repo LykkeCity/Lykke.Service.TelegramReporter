@@ -62,11 +62,13 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
                 if (!pnLStopLossEngines.Any())
                     return;
                 
-                foreach (var slE in pnLStopLossEngines)
+                foreach (var engine in pnLStopLossEngines)
                 {
-                    var expectedTime = DateTime.UtcNow - (slE.LastTime + slE.Interval);
+                    var passedSinceStart = DateTime.UtcNow - engine.LastTime.Value;
+                    var expectedTime = DateTime.UtcNow + engine.Interval - passedSinceStart;
+                    var remainingTime = expectedTime - DateTime.UtcNow;
 
-                    sb.AppendLine($"{slE.AssetPairId}: Threshold={slE.Threshold}, Interval={slE.Interval}. ExpectedTime: {expectedTime}.");
+                    sb.AppendLine($"{engine.AssetPairId}: Threshold={engine.Threshold}, Interval={engine.Interval}. RemainingTime: {remainingTime:hh\\:mm\\:ss}.");
                 }
 
                 await SendMessage(sb.ToString());
