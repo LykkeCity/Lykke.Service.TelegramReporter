@@ -68,7 +68,9 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
                     var expectedTime = DateTime.UtcNow + engine.Interval - passedSinceStart;
                     var remainingTime = expectedTime - DateTime.UtcNow;
 
-                    sb.AppendLine($"{engine.AssetPairId}: Threshold={engine.Threshold}, Interval={engine.Interval}. RemainingTime: {remainingTime:hh\\:mm\\:ss}.");
+                    var markup = (engine.Markup * 100).ToString("0.##");
+
+                    sb.AppendLine($"{engine.AssetPairId}: Threshold={engine.Threshold}$, Interval={engine.Interval}, Markup={markup}%. RemainingTime: {remainingTime:hh\\:mm\\:ss}.");
                 }
 
                 await SendMessage(sb.ToString());
