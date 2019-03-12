@@ -49,28 +49,29 @@ namespace Lykke.Service.TelegramReporter.Services
             }
 
             _client.SetWebhookAsync("").GetAwaiter().GetResult();
-            _client.OnMessage += ClientOnOnMessage;
-            _client.OnMessageEdited += ClientOnOnMessage;
-            _client.OnCallbackQuery += ClientOnOnCallbackQuery;
-            _client.OnReceiveError += ClientOnOnReceiveError;
-            _client.OnReceiveGeneralError += ClientOnOnReceiveGeneralError;
+            _client.OnMessage += OnMessage;
+            _client.OnMessageEdited += OnMessage;
+            _client.OnCallbackQuery += OnCallbackQuery;
+            _client.OnReceiveError += OnReceiveError;
+            _client.OnReceiveGeneralError += OnReceiveGeneralError;
+            _client.OnUpdate += OnUpdate;
 
             _client.StartReceiving(Array.Empty<UpdateType>());
         }
 
-        private void ClientOnOnReceiveGeneralError(object sender, ReceiveGeneralErrorEventArgs receiveGeneralErrorEventArgs)
+        private void OnReceiveGeneralError(object sender, ReceiveGeneralErrorEventArgs receiveGeneralErrorEventArgs)
         {
-            _log.WriteErrorAsync(nameof(TelegramService), nameof(ClientOnOnReceiveGeneralError),
+            _log.WriteErrorAsync(nameof(TelegramService), nameof(OnReceiveGeneralError),
                 null, receiveGeneralErrorEventArgs.Exception).GetAwaiter().GetResult();
         }
 
-        private void ClientOnOnReceiveError(object sender, ReceiveErrorEventArgs receiveErrorEventArgs)
+        private void OnReceiveError(object sender, ReceiveErrorEventArgs receiveErrorEventArgs)
         {
-            _log.WriteInfoAsync(nameof(TelegramService), nameof(ClientOnOnReceiveError),
+            _log.WriteInfoAsync(nameof(TelegramService), nameof(OnReceiveError),
                 null, receiveErrorEventArgs.ApiRequestException.ToString()).GetAwaiter().GetResult();
         }
 
-        private async void ClientOnOnCallbackQuery(object sender, CallbackQueryEventArgs callbackQueryEventArgs)
+        private async void OnCallbackQuery(object sender, CallbackQueryEventArgs callbackQueryEventArgs)
         {
             try
             {
@@ -98,7 +99,7 @@ namespace Lykke.Service.TelegramReporter.Services
                     {
                         await SendMessageAsync("Unknown command", callbackQuery.Message);
 
-                        await _log.WriteInfoAsync(nameof(TelegramService), nameof(ClientOnOnCallbackQuery), $"callbackQueryEventArgs: {callbackQueryEventArgs.ToJson()}",
+                        await _log.WriteInfoAsync(nameof(TelegramService), nameof(OnCallbackQuery), $"callbackQueryEventArgs: {callbackQueryEventArgs.ToJson()}",
                             "Unknown command.");
                     }
                 }
@@ -106,18 +107,18 @@ namespace Lykke.Service.TelegramReporter.Services
                 {
                     await SendMessageAsync("Unknown command", callbackQuery.Message);
 
-                    await _log.WriteInfoAsync(nameof(TelegramService), nameof(ClientOnOnCallbackQuery), $"callbackQueryEventArgs: {callbackQueryEventArgs.ToJson()}",
+                    await _log.WriteInfoAsync(nameof(TelegramService), nameof(OnCallbackQuery), $"callbackQueryEventArgs: {callbackQueryEventArgs.ToJson()}",
                         "Unknown command.");
                 }
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(TelegramService), nameof(ClientOnOnCallbackQuery),
+                await _log.WriteErrorAsync(nameof(TelegramService), nameof(OnCallbackQuery),
                     callbackQueryEventArgs.ToJson(), ex);
             }
         }
 
-        private async void ClientOnOnMessage(object sender, MessageEventArgs messageEventArgs)
+        private async void OnMessage(object sender, MessageEventArgs messageEventArgs)
         {
             try
             {
@@ -143,7 +144,7 @@ namespace Lykke.Service.TelegramReporter.Services
                     {
                         await SendMessageAsync("Unknown command", messageEventArgs.Message);
 
-                        await _log.WriteInfoAsync(nameof(TelegramService), nameof(ClientOnOnMessage), $"messageEventArgs: {messageEventArgs.ToJson()}",
+                        await _log.WriteInfoAsync(nameof(TelegramService), nameof(OnMessage), $"messageEventArgs: {messageEventArgs.ToJson()}",
                             "Unknown command.");
                     }
                 }
@@ -151,15 +152,21 @@ namespace Lykke.Service.TelegramReporter.Services
                 {
                     await SendMessageAsync("Unknown command", messageEventArgs.Message);
 
-                    await _log.WriteInfoAsync(nameof(TelegramService), nameof(ClientOnOnMessage), $"messageEventArgs: {messageEventArgs.ToJson()}",
+                    await _log.WriteInfoAsync(nameof(TelegramService), nameof(OnMessage), $"messageEventArgs: {messageEventArgs.ToJson()}",
                         "Unknown command.");
                 }
             }
             catch (Exception ex)
             {
-                await _log.WriteErrorAsync(nameof(TelegramService), nameof(ClientOnOnMessage),
+                await _log.WriteErrorAsync(nameof(TelegramService), nameof(OnMessage),
                     messageEventArgs.ToJson(), ex);
             }
+        }
+
+        private void OnUpdate(object sender, UpdateEventArgs updateEventArgs)
+        {
+            _log.WriteInfoAsync(nameof(TelegramService), nameof(OnUpdate),
+                null, updateEventArgs.Update.ToString()).GetAwaiter().GetResult();
         }
 
         private static readonly Regex _commandRegex = new Regex(@"(?<command>/\w+)", RegexOptions.Multiline);
