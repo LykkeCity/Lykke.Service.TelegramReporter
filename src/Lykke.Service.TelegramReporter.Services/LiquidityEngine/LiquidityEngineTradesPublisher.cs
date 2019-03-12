@@ -76,7 +76,7 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
 
                     var markupModel = markups.Single(x => x.AssetPairId == position.AssetPairId);
                     var markupValue = position.Type == PositionType.Short ? markupModel.TotalAskMarkup : markupModel.TotalBidMarkup;
-                    var markup = markupValue == -1 ? "stop sell" : Math.Round(markupValue * 100, 2) + "%";
+                    var markup = markupValue == -1 ? "stopped" : (markupValue * 100).ToString("0.##") + "%";
 
                     var pnL = position.PnL ?? 0;
                     var closePrice = position.ClosePrice ?? 0;
