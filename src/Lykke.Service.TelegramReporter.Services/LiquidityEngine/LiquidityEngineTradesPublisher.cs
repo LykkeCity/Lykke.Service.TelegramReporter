@@ -61,7 +61,7 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
             var countTrade = 0;
             try
             {
-                var data = await client.Reports.GetPositionsReportAsync(fromDate, toDate, 1500);
+                var data = await client.Reports.GetPositionsReportAsync(fromDate, toDate, 5000);
                 var markups = await client.InstrumentMarkupsApi.GetAllAsync();
 
                 var positions = data.Where(e => e.CloseDate > lastClose).ToList();
@@ -92,7 +92,7 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
                         $"Close: {position.CloseDate:MM-dd HH:mm:ss}; " +
                         $"Markup: {markup}";
 
-                    if (positions.Count >= 470) message += "; !!!max count of position in day, please add limit!!!";
+                    if (positions.Count >= 4800) message += "; !!!max count of position in day, please add limit!!!";
                     await TelegramSender.SendTextMessageAsync(PublisherSettings.ChatId, message);
 
                     if (position.CloseDate.HasValue)
