@@ -61,7 +61,7 @@ namespace Lykke.Service.TelegramReporter.Services.LiquidityEngine
             var countTrade = 0;
             try
             {
-                var data = await client.Reports.GetPositionsReportAsync(fromDate, toDate, 1500);
+                var data = await client.Reports.GetPositionsReportAsync(fromDate, toDate, 5000);
                 var markups = await client.InstrumentMarkupsApi.GetAllAsync();
 
                 var positions = data.Where(e => e.CloseDate > lastClose).ToList();
