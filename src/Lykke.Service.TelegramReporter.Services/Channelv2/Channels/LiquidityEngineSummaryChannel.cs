@@ -40,7 +40,7 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
             {
                 foreach (var url in _settings.Urls)
                 {
-                    var client = CreateClient(url);
+                    var client = CreateLiquidityEngineClient(url);
                     _clients.Add(url, client);
                 }
             }
@@ -172,7 +172,7 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
             Log.Info($"Check api complete. Found: {countTrade} asset pairs. Api: {key}. LastTime: {_lastTime:yyyy-MM-dd HH:mm:ss}");
         }
 
-        private ILiquidityEngineClient CreateClient(string url)
+        private ILiquidityEngineClient CreateLiquidityEngineClient(string url)
         {
             var generator = HttpClientGenerator.HttpClientGenerator.BuildForUrl(url)
                 .WithAdditionalCallsWrapper(new HttpClientGenerator.Infrastructure.ExceptionHandlerCallsWrapper())
