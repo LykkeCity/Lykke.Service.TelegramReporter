@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Lykke.Common.Log;
 using Lykke.Service.Assets.Client;
-using Lykke.Service.LiquidityEngine.Client.Api;
+using Lykke.Service.LiquidityEngine.Client;
 using Lykke.Service.LiquidityEngine.Client.Models.Positions;
 using Lykke.Service.TelegramReporter.Core.Services;
 using Lykke.Service.TelegramReporter.Core.Services.Channelv2;
@@ -17,7 +17,7 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
     {
         private readonly LiquidityEngineUrlSettings _settings;
         private readonly IAssetsServiceWithCache _assetsServiceWithCache;
-        private readonly Dictionary<string, Apis> _clients = new Dictionary<string, Apis>();
+        private readonly Dictionary<string, ILiquidityEngineClient> _clients = new Dictionary<string, ILiquidityEngineClient>();
         private DateTime _lastTime;
 
         public const string Name = "LiquidityEngineSummary";
@@ -40,18 +40,18 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
             {
                 foreach (var url in _settings.Urls)
                 {
-                    var client = CreateApiClient(url);
+                    var client = CreateLiquidityEngineClient(url);
                     _clients.Add(url, client);
                 }
             }
 
             foreach (var client in _clients)
             {
-                await CheckApi(client.Key, client.Value.ReportsApi, client.Value.TradesApi);
+                await CheckApi(client.Key, client.Value);
             }
         }
 
-        private async Task CheckApi(string key, IReportsApi reportsApi, ITradesApi tradesApi)
+        private async Task CheckApi(string key, ILiquidityEngineClient client)
         {
             if (_lastTime == default(DateTime))
             {
@@ -73,14 +73,15 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
             var countTrade = 0;
             try
             {
-                var data = await reportsApi.GetPositionsReportAsync(fromDate, toDate, int.MaxValue);
+                var data = await client.Reports.GetPositionsReportAsync(fromDate, toDate, int.MaxValue);
                 var report = data
                     .Where(x => x.IsClosed)
                     .Where(x => x.CloseDate > fromDate)
                     .Where(x => x.CloseDate <= toDate)
                     .ToList();
 
-                var summary = await reportsApi.GetBalanceIndicatorsReportAsync();
+                var summary = await client.Reports.GetBalanceIndicatorsReportAsync();
+                var markups = await client.InstrumentMarkupsApi.GetAllAsync();
 
                 var grouped = report.GroupBy(x => x.AssetPairId).OrderBy(x => x.Key);
 
@@ -121,6 +122,16 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
                     assetPairMessage = $". Count: {count}; " +
                                        $"Sell: {Math.Round(sellVolume, 6)}; " +
                                        $"Buy: {Math.Round(buyVolume, 6)}; ";
+
+                    var markup = markups.SingleOrDefault(x => x.AssetPairId == assetPairId);
+                    if (markup != null)
+                    {
+                        var bidMarkup = $"{markup.TotalBidMarkup*100:0.##}%";
+                        var askMarkup = markup.TotalAskMarkup == -1 ? "stopped" : $"{markup.TotalAskMarkup*100:0.##}%";
+
+                        assetPairMessage += $"BidMarkup: {bidMarkup}, AskMarkup: {askMarkup}";
+                    }
+     
                     result.Add(assetPairMessage);
 
                     totalPl += pnLInUsd ?? 0m;
@@ -138,10 +149,10 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
 
                 await SendMessage(sb.ToString());
 
-                var sammuryMessage = $"Equity: {(int) summary.Equity} $.  RiskExposure: {(int) summary.RiskExposure} $";
-                await SendMessage(sammuryMessage);
+                var summaryMessage = $"Equity: {(int) summary.Equity} $.  RiskExposure: {(int) summary.RiskExposure} $";
+                await SendMessage(summaryMessage);
 
-                var fiatSettlement = await tradesApi.GetSettlementTradesAsync();
+                var fiatSettlement = await client.Trades.GetSettlementTradesAsync();
                 if (fiatSettlement.Any(e => !e.IsCompleted))
                 {
                     sb.Clear();
@@ -161,7 +172,7 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
             Log.Info($"Check api complete. Found: {countTrade} asset pairs. Api: {key}. LastTime: {_lastTime:yyyy-MM-dd HH:mm:ss}");
         }
 
-        private Apis CreateApiClient(string url)
+        private ILiquidityEngineClient CreateLiquidityEngineClient(string url)
         {
             var generator = HttpClientGenerator.HttpClientGenerator.BuildForUrl(url)
                 .WithAdditionalCallsWrapper(new HttpClientGenerator.Infrastructure.ExceptionHandlerCallsWrapper())
@@ -169,17 +180,9 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
                 .WithoutCaching()
                 .Create();
 
-            Apis api = new Apis();
-            api.ReportsApi = generator.Generate<IReportsApi>();
-            api.TradesApi = generator.Generate<ITradesApi>();
+            var client = new LiquidityEngineClient(generator);
 
-            return api;
-        }
-
-        public struct Apis
-        {
-            public IReportsApi ReportsApi { get; set; }
-            public ITradesApi TradesApi { get; set; }
+            return client;
         }
     }
 }
