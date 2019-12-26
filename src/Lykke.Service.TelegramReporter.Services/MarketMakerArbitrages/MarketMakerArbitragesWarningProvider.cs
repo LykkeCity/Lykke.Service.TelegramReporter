@@ -36,10 +36,19 @@ namespace Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages
                 sb.AppendLine($"{mmArbitrages.BiggestVolumeInUsdRow}");
             }
 
-            sb.Append(Environment.NewLine);
-            sb.AppendLine($"Most used asset pairs:");
-            sb.AppendLine($"{mmArbitrages.MostFrequentAssetPairs}");
+            if (mmArbitrages.MostFrequentAssetPairs.Length > 0)
+            {
+                sb.Append(Environment.NewLine);
+                sb.AppendLine($"Most used asset pairs:");
+                sb.AppendLine($"{mmArbitrages.MostFrequentAssetPairs}");
+            }
 
+            if (mmArbitrages.MarketMakers.Length > 0)
+            {
+                sb.Append(Environment.NewLine);
+                sb.AppendLine($"Market makers involved: {mmArbitrages.MarketMakers}");
+            }
+            
             return Task.FromResult(ChatMessageHelper.CheckSizeAndCutMessageIfNeeded(sb.ToString()));
         }
     }

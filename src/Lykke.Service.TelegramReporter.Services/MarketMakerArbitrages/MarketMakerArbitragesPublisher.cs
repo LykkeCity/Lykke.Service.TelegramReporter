@@ -71,6 +71,8 @@ namespace Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages
                 ? arbitrages.MaxBy(x => x.VolumeInUsd) : null;
             var biggestVolumeInUsdRow = $"{biggestVolumeInUsd?.Target} - {biggestVolumeInUsd?.Source}  ({biggestVolumeInUsd?.ConversionPath})";
 
+            var marketMakers = string.Join(", ", arbitrages.SelectMany(x => x.MarketMakers).Distinct().OrderBy(x => x));
+
             return new MarketMakersArbitragesWarning
             {
                 ArbitragesCount = arbitrages.Count,
@@ -84,7 +86,9 @@ namespace Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages
                 BiggestVolumeInUsd = biggestVolumeInUsd?.VolumeInUsd,
                 BiggestVolumeInUsdRow = biggestVolumeInUsdRow,
                 
-                MostFrequentAssetPairs = mostFrequent
+                MostFrequentAssetPairs = mostFrequent,
+
+                MarketMakers = marketMakers
             };
         }
     }

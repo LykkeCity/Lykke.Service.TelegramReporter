@@ -14,5 +14,7 @@
         string BiggestVolumeInUsdRow { get; }
 
         string MostFrequentAssetPairs { get; }
+
+        string MarketMakers { get; }
     }
 }

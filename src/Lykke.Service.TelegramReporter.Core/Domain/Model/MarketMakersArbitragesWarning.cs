@@ -14,5 +14,7 @@
         public string BiggestVolumeInUsdRow { get; set; }
 
         public string MostFrequentAssetPairs { get; set; }
+
+        public string MarketMakers { get; set; }
     }
 }
