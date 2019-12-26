@@ -46,7 +46,7 @@ namespace Lykke.Service.TelegramReporter.Services.MarketMakerArbitrages
             if (mmArbitrages.MarketMakers.Length > 0)
             {
                 sb.Append(Environment.NewLine);
-                sb.AppendLine($"Market makers involved: {mmArbitrages.MarketMakers}");
+                sb.AppendLine($"All market makers involved: {mmArbitrages.MarketMakers}");
             }
             
             return Task.FromResult(ChatMessageHelper.CheckSizeAndCutMessageIfNeeded(sb.ToString()));
