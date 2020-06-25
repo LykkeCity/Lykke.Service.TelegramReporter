@@ -19,10 +19,10 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
         private readonly ILog _log;
 
         public DwhStoreProcedureChannel(IReportChannel channel, ITelegramSender telegramSender, ILogFactory logFactory,
-            IDwhClient dwhClient, ILog log) : base(channel, telegramSender, logFactory)
+            IDwhClient dwhClient) : base(channel, telegramSender, logFactory)
         {
             _dwhClient = dwhClient;
-            _log = log;
+            _log = logFactory.CreateLog(this);
         }
 
         protected override async Task DoTimer()
