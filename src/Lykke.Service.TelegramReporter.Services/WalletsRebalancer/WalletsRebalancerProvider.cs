@@ -24,7 +24,12 @@ namespace Lykke.Service.TelegramReporter.Services.WalletsRebalancer
 
         public async Task<string> GetMessageAsync(RebalanceOperation message)
         {
+            _log.Info("Wallets Rebalancer Provider - formatting a message...", message);
+
             var messageText = await GetMessage(message);
+
+            _log.Info("Wallets Rebalancer Provider - finished formatting a message.", messageText);
+
             return ChatMessageHelper.CheckSizeAndCutMessageIfNeeded(messageText);
         }
 

@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Common.Log;
 using Lykke.Common.Log;
 using Lykke.Service.Dwh.Client;
 using Lykke.Service.TelegramReporter.Core.Services;
@@ -15,21 +16,26 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
     {
         private readonly IDwhClient _dwhClient;
         public const string Name = "DwhStoreProcedure";
+        private readonly ILog _log;
 
         public DwhStoreProcedureChannel(IReportChannel channel, ITelegramSender telegramSender, ILogFactory logFactory,
-            IDwhClient dwhClient) : base(channel, telegramSender, logFactory)
+            IDwhClient dwhClient, ILog log) : base(channel, telegramSender, logFactory)
         {
             _dwhClient = dwhClient;
+            _log = log;
         }
 
         protected override async Task DoTimer()
         {
+            _log.Info("DwhStoreProcedureChannel.DoTimer() - started...");
+
             ResponceDataSet response = await ExecuteProcedure();
+
+            _log.Info("DwhStoreProcedureChannel.DoTimer() - executed procedure.", response);
 
             var report = response.Data.Tables
                 .Cast<DataTable>()
                 .ToArray();
-
 
             foreach (var table in report)
             {
@@ -41,9 +47,15 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
                         str.AppendLine($"{column.ColumnName}: {row[column.ColumnName]}");
                     }
 
+                    _log.Info("DwhStoreProcedureChannel.DoTimer() - sending a message...", str);
+
                     await SendMessage(str.ToString());
+
+                    _log.Info("DwhStoreProcedureChannel.DoTimer() - finished sending a message.", str);
                 }
             }
+
+            _log.Info("DwhStoreProcedureChannel.DoTimer() - finished.");
         }
 
         private async Task<ResponceDataSet> ExecuteProcedure()
@@ -54,8 +66,17 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
                 countTry--;
                 try
                 {
+                    _log.Info("DwhStoreProcedureChannel.ExecuteProcedure() - calling DWH client...", Metainfo);
+
                     ResponceDataSet response =
                         await _dwhClient.Call(new Dictionary<string, string>(), Metainfo, "report");
+
+                    _log.Info("DwhStoreProcedureChannel.ExecuteProcedure() - successfully received response.", new
+                    {
+                        Procedure = Metainfo,
+                        Response = response
+                    });
+
                     return response;
                 }
                 catch (Exception ex)

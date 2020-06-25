@@ -28,6 +28,8 @@ namespace Lykke.Service.TelegramReporter.Services.WalletsRebalancer
 
         public async Task Publish(RebalanceOperation message)
         {
+            _log.Info("Wallets Rebalancer Publisher - publishing a message...", message);
+
             try
             {
                 var publisherSettings = await _repo.GetWalletsRebalancerChatPublisherSettings();
@@ -37,6 +39,8 @@ namespace Lykke.Service.TelegramReporter.Services.WalletsRebalancer
                     await _telegramSender.SendTextMessageAsync(settings.ChatId,
                         await _walletsRebalancerProvider.GetMessageAsync(message));
                 }
+
+                _log.Info("Wallets Rebalancer Publisher - successfully published a message.", message);
             }
             catch (Exception ex)
             {
