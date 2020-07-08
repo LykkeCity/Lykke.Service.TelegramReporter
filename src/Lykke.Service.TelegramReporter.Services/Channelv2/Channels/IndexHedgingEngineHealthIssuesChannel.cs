@@ -52,9 +52,8 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
             message.AppendLine("IHE Assets Errors");
 
             foreach (PositionReportModel position in positionsWithErrors)
-                if (!(position?.Error == "No quote" && 
-                      position?.AssetInvestment?.RemainingAmount == 0 &&
-                      position?.Volume > 0))
+                if (!(position.Error == "No quote" && 
+                      (position.AssetInvestment?.RemainingAmount == 0 || position.AssetInvestment == null)))
                 {
                     empty = false;
                     message.AppendLine($"{position.AssetId}: {position.Error}");
