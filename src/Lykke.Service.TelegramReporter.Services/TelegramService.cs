@@ -7,6 +7,7 @@ using MihaZupan;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -200,6 +201,18 @@ namespace Lykke.Service.TelegramReporter.Services
             {
                 await _log.WriteInfoAsync(nameof(TelegramService), nameof(SendTextMessageAsync),
                     $"ChatId: {chatId.ToJson()}, Exception: {ex}");
+            }
+            catch (HttpRequestException ex)
+            {
+                await _log.WriteWarningAsync(nameof(TelegramService), nameof(SendTextMessageAsync),
+                    $"ChatId: {chatId.ToJson()}, Exception: {ex}", ex: ex);
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync(nameof(TelegramService), nameof(SendTextMessageAsync),
+                    $"ChatId: {chatId.ToJson()}, Exception: {ex}", exception: ex);
+
+                throw;
             }
         }
 
