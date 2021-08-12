@@ -151,18 +151,6 @@ namespace Lykke.Service.TelegramReporter.Services.Channelv2.Channels
 
                 var summaryMessage = $"Equity: {(int) summary.Equity} $.  RiskExposure: {(int) summary.RiskExposure} $";
                 await SendMessage(summaryMessage);
-
-                var fiatSettlement = await client.Trades.GetSettlementTradesAsync();
-                if (fiatSettlement.Any(e => !e.IsCompleted))
-                {
-                    sb.Clear();
-                    sb.AppendLine("Detect fiat trades without settlement in lykke: ");
-                    foreach (var model in fiatSettlement.Where(e => !e.IsCompleted))
-                    {
-                        sb.AppendLine($"{model.AssetPair}, {model.Type}, price: {model.Price}, volume: {model.Volume}");
-                    }
-                    await SendMessage(sb.ToString());
-                }
             }
             catch (Exception ex)
             {
